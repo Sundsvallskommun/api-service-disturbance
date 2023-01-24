@@ -1,0 +1,24 @@
+{
+	"category": "ELECTRICITY",
+	"description": "Description updated.",
+	"id": "disturbance-13",
+	"affecteds": [
+		{
+			"partyId": "b6d929c8-fac3-4ac6-8b15-d255bad864df",
+			"reference": "Streetname 11",
+			"facilityId": "facility-11",
+			"coordinates": "coordinate-11"
+		},
+		{
+			"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3",
+			"reference": "Streetname 22",
+			"facilityId": "facility-22",
+			"coordinates": "coordinate-22"
+		}
+	],
+	"plannedStartDate": "2021-12-31T11:30:45+01:00",
+	"plannedStopDate": "2022-01-11T11:30:45+01:00",
+	"status": "OPEN",
+	"title": "Title",
+	"updated": "${json-unit.any-string}"
+}

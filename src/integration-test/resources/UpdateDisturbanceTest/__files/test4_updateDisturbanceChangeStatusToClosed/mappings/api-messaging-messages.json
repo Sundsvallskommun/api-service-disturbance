@@ -1,0 +1,94 @@
+{
+	"name": "api-messaging",
+	"request": {
+		"urlPath": "/api-messaging/messages/",
+		"method": "POST",
+		"bodyPatterns": [
+			{
+				"equalToJson": {
+					"messages": [
+						{
+							"party": {
+								"partyId": "affected-1"
+							},
+							"headers": [
+								{
+									"name": "TYPE",
+									"values": [
+										"DISTURBANCE"
+									]
+								},
+								{
+									"name": "FACILITY_ID",
+									"values": [
+										"facility-11"
+									]
+								},
+								{
+									"name": "CATEGORY",
+									"values": [
+										"ELECTRICITY"
+									]
+								}
+							],
+							"sender": {
+								"sms": {
+									"name": "[TEST] SvallElnat"
+								},
+								"email": {
+									"name": "[TEST] Sundsvall Elnät",
+									"address": "test@sundsvall.se"
+								}
+							},
+							"subject": "[TEST] Driftstörning på Streetname 11 åtgärdad",
+							"message": "[TEST] Hej! Nu är driftstörningen i elnätet på Streetname 11 åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig."
+						},
+						{
+							"party": {
+								"partyId": "affected-3"
+							},
+							"headers": [
+								{
+									"name": "TYPE",
+									"values": [
+										"DISTURBANCE"
+									]
+								},
+								{
+									"name": "FACILITY_ID",
+									"values": [
+										"facility-33"
+									]
+								},
+								{
+									"name": "CATEGORY",
+									"values": [
+										"ELECTRICITY"
+									]
+								}
+							],
+							"sender": {
+								"sms": {
+									"name": "[TEST] SvallElnat"
+								},
+								"email": {
+									"name": "[TEST] Sundsvall Elnät",
+									"address": "test@sundsvall.se"
+								}
+							},
+							"subject": "[TEST] Driftstörning på Streetname 33 åtgärdad",
+							"message": "[TEST] Hej! Nu är driftstörningen i elnätet på Streetname 33 åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig."
+						}
+					]
+				}
+			}
+		]
+	},
+	"response": {
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"status": 200,
+		"bodyFileName": "test4_updateDisturbanceChangeStatusToClosed/mocking/api-messaging-messages-response.json"
+	}
+}

@@ -1,0 +1,124 @@
+#========================================
+# General settings
+#========================================
+spring:
+  application:
+    name: api-disturbance
+  jpa:
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            database:
+              action: none
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+logging:
+  level:
+    root: INFO
+openapi:
+  name: ${spring.application.name}
+  title: ${spring.application.name}
+  version: '@project.version@'
+
+#========================================
+# Integration settings
+#========================================
+
+# Circuit breaker settings
+resilience4j:
+  circuitbreaker:
+    instances:
+      messaging:
+        ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+  
+#----------------------------------------
+# Message configuration
+#
+# Available variables:
+# ${disturbance.title} - Variable will be replaced with value in disturbance.title 
+# ${disturbance.description} - Variable will be replaced with value in disturbance.description 
+# ${disturbance.plannedStartDate} - Variable will be replaced with value in disturbance.plannedStartDate 
+# ${disturbance.plannedStopDate} - Variable will be replaced with value in disturbance.plannedStopDate
+# ${disturbance.affected.reference} Variable will be replaced with value in disturbance.affecteds[n].reference
+#----------------------------------------
+message:
+  template:
+    communication:
+      active: "true"
+      subject-new: Driftstörning på ${disturbance.affected.reference}
+      subject-update: Uppdatering om driftstörning på ${disturbance.affected.reference}
+      subject-close: Driftstörning på ${disturbance.affected.reference} åtgärdad
+      message-new: Hej! Just nu har vi en driftstörning i fibernätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, ServaNet
+      message-update: 'Hej! Uppdatering om driftstörningen i fibernätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-close: Hej! Nu är driftstörningen i fibernätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.
+      sender-email-name: ServaNet
+      sender-email-address: noreply@sundsvall.se
+      sender-sms-name: ServaNet
+    electricity:
+      active: "true"
+      subject-new: Driftstörning på ${disturbance.affected.reference}
+      subject-update: Uppdatering om driftstörning på ${disturbance.affected.reference}
+      subject-close: Driftstörning på ${affected.reference} åtgärdad
+      message-new: Hej! Just nu har vi en driftstörning i elnätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, Sundsvall Elnät
+      message-update: 'Hej! Uppdatering om driftstörningen i elnätet på ${affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-close: Hej! Nu är driftstörningen i elnätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.
+      sender-email-name: Sundsvall Elnät
+      sender-email-address: noreply@sundsvall.se
+      sender-sms-name: SvallElnat
+    electricity_trade:
+      active: "false"
+      subject-new: '?'
+      subject-update: '?'
+      subject-close: '?'
+      message-new: '?'
+      message-update: '?'
+      message-close: '?'
+      sender-email-name: '?'
+      sender-email-address: '?'
+      sender-sms-name: '?'
+    district_heating:
+      active: "true"
+      subject-new: Driftstörning på ${disturbance.affected.reference}
+      subject-update: Uppdatering om driftstörning på ${disturbance.affected.reference}
+      subject-close: Driftstörning på ${disturbance.affected.reference} åtgärdad
+      message-new: Hej! Just nu har vi en driftstörning i fjärrvärmenätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, Sundsvall Energi
+      message-update: 'Hej! Uppdatering om driftstörningen i fjärrvärmenätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-close: Hej! Nu är driftstörningen i fjärrvärmenätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.
+      sender-email-name: Sundsvall Energi
+      sender-email-address: noreply@sundsvall.se
+      sender-sms-name: SvallEnergi
+    district_cooling:
+      active: "false"
+      subject-new: '?'
+      subject-update: '?'
+      subject-close: '?'
+      message-new: '?'
+      message-update: '?'
+      message-close: '?'
+      sender-email-name: '?'
+      sender-email-address: '?'
+      sender-sms-name: '?'
+    waste_management:
+      active: "false"
+      subject-new: '?'
+      subject-update: '?'
+      subject-close: '?'
+      message-new: '?'
+      message-update: '?'
+      message-close: '?'
+      sender-email-name: '?'
+      sender-email-address: '?'
+      sender-sms-name: '?'
+    water:
+      active: "false"
+      subject-new: '?'
+      subject-update: '?'
+      subject-close: '?'
+      message-new: '?'
+      message-update: '?'
+      message-close: '?'
+      sender-email-name: '?'
+      sender-email-address: '?'
+      sender-sms-name: '?'

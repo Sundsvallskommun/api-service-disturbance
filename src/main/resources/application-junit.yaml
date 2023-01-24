@@ -1,0 +1,110 @@
+#========================================
+# TEST SPECIFIC SETTINGS (junit-test)
+#========================================
+spring:
+  jpa:
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            database:
+              action: update
+            scripts:
+              action: create
+              create-target: target/database/generated-schema.sql
+            create-source: metadata
+      hibernate:
+        hbm2ddl:
+          schema-generation:
+            script:
+              append: "false"
+        format_sql: "true"
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mariadb:10.6.4:///
+  security:
+    oauth2:
+      client:
+        registration:
+          messaging:
+            authorization-grant-type: client_credentials
+            client-id: the-client-id
+            client-secret: the-client-secret
+            provider: messaging
+        provider:
+          messaging:
+            token-uri: http://localhost:${wiremock.server.port:}/api-gateway/token
+integration:
+  messaging:
+    url: http://localhost:${wiremock.server.port:}/api-messaging
+    connectTimeout: "10"
+    readTimeout: "20"
+    
+#----------------------------------------
+# Message configuration
+#
+# Available variables:
+# ${disturbance.title} - Variable will be replaced with value in disturbance.title 
+# ${disturbance.description} - Variable will be replaced with value in disturbance.description 
+# ${disturbance.plannedStartDate} - Variable will be replaced with value in disturbance.plannedStartDate 
+# ${disturbance.plannedStopDate} - Variable will be replaced with value in disturbance.plannedStopDate
+# ${disturbance.affected.reference} Variable will be replaced with value in disturbance.affecteds[n].reference
+#----------------------------------------
+message:
+  template:
+    communication:
+      active: "true"
+      subject-new: '[TEST] Driftstörning på ${disturbance.affected.reference}'
+      subject-update: '[TEST] Uppdatering om driftstörning på ${disturbance.affected.reference}'
+      subject-close: '[TEST] Driftstörning på ${affected.reference} åtgärdad'
+      message-new: '[TEST] Hej! Just nu har vi en driftstörning i fibernätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, ServaNet'
+      message-update: '[TEST] Hej! Uppdatering om driftstörningen i fibernätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-close: '[TEST] Hej! Nu är driftstörningen i fibernätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.'
+      sender-email-name: '[TEST] ServaNet'
+      sender-email-address: test@sundsvall.se
+      sender-sms-name: '[TEST] ServaNet'
+    electricity:
+      active: "true"
+      subject-new: '[TEST] Driftstörning på ${disturbance.affected.reference}'
+      subject-update: '[TEST] Uppdatering om driftstörning på ${disturbance.affected.reference}'
+      subject-close: '[TEST] Driftstörning på ${disturbance.affected.reference} åtgärdad'
+      message-new: '[TEST] Hej! Just nu har vi en driftstörning i elnätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, Sundsvall Elnät'
+      message-update: '[TEST] Hej! Uppdatering om driftstörningen i elnätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-close: '[TEST] Hej! Nu är driftstörningen i elnätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.'
+      sender-email-name: '[TEST] Sundsvall Elnät'
+      sender-email-address: test@sundsvall.se
+      sender-sms-name: '[TEST] SvallElnat'
+    district_heating:
+      active: "true"
+      subject-new: '[TEST] Driftstörning på ${disturbance.affected.reference}'
+      subject-update: '[TEST] Uppdatering om driftstörning på ${disturbance.affected.reference}'
+      subject-close: '[TEST] Driftstörning på ${disturbance.affected.reference} åtgärdad'
+      message-new: '[TEST] Hej! Just nu har vi en driftstörning i fjärrvärmenätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, Sundsvall Energi'
+      message-update: '[TEST] Hej! Uppdatering om driftstörningen i fjärrvärmenätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtärdad: ${disturbance.plannedStopDate}'
+      message-close: '[TEST] Hej! Nu är driftstörningen i fjärrvärmenätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.'
+      sender-email-name: '[TEST] Sundsvall Energi'
+      sender-email-address: test@sundsvall.se
+      sender-sms-name: '[TEST] SvallEnergi'
+    district_cooling:
+      active: "false"
+      subject-new: '[TEST] Driftstörning på ${disturbance.affected.reference}'
+      subject-update: '[TEST] Uppdatering om driftstörning på ${disturbance.affected.reference}'
+      subject-close: '[TEST] Driftstörning på ${disturbance.affected.reference} åtgärdad'
+      message-new: '[TEST] Hej! Just nu har vi en driftstörning i fjärrkylanätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, Sundsvall Energi'
+      message-update: '[TEST] Hej! Uppdatering om driftstörningen i fjärrkylanätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-close: '[TEST] Hej! Nu är driftstörningen i fjärrkylanätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.'
+      sender-email-name: '[TEST] Sundsvall Energi'
+      sender-email-address: test@sundsvall.se
+      sender-sms-name: '[TEST] SvallEnergi'
+    water:
+      active: "false"
+      subject-new: '[TEST] Driftstörning på ${disturbance.affected.reference}'
+      subject-update: '[TEST] Uppdatering om driftstörning på ${disturbance.affected.reference}'
+      subject-close: '[TEST] Driftstörning på ${disturbance.affected.reference} åtgärdad'
+      message-new: '[TEST] Hej! Just nu har vi en driftstörning i vattennätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, MSVA'
+      message-update: '[TEST] Hej! Uppdatering om driftstörningen i vattennätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-close: '[TEST] Hej! Nu är driftstörningen i vattennätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.'
+      sender-email-name: '[TEST] MSVA'
+      sender-email-address: test@sundsvall.se
+      sender-sms-name: '[TEST] MSVA'
+      
