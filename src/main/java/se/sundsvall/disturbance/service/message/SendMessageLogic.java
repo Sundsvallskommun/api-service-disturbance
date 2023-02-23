@@ -14,6 +14,7 @@ import static se.sundsvall.disturbance.service.util.DateUtils.toMessageDateForma
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -63,61 +64,61 @@ public class SendMessageLogic {
 	/**
 	 * Send a "closed disturbance" message to all affected persons/organizations in a disturbance with an existing
 	 * disturbanceFeedback. The affectedEntities will get a message if a disturbanceFeedback exists for this disturbance.
-	 * 
+	 *
 	 * @param disturbanceEntity
 	 */
 	@Transactional
-	public void sendCloseMessageToAllApplicableAffecteds(DisturbanceEntity disturbanceEntity) {
+	public void sendCloseMessageToAllApplicableAffecteds(final DisturbanceEntity disturbanceEntity) {
 		sendCloseMessage(disturbanceEntity, disturbanceEntity.getAffectedEntities());
 	}
 
 	/**
 	 * Send a "closed disturbance" message to all affected persons/organizations with an existing disturbanceFeedback, in
 	 * the provided affectedEntities list. This will override the existing affectedEntities in the DisturbanceEntity.
-	 * 
+	 *
 	 * The affectedEntities will get a message if a disturbanceFeedback exists for this disturbance.
-	 * 
+	 *
 	 * @param disturbanceEntity The entity that is closed.
 	 * @param affectedEntities  The affectedEntities that will get a message (if a disturbanceFeedback exists)
 	 */
 	@Transactional
-	public void sendCloseMessageToProvidedApplicableAffecteds(DisturbanceEntity disturbanceEntity, List<AffectedEntity> affectedEntities) {
+	public void sendCloseMessageToProvidedApplicableAffecteds(final DisturbanceEntity disturbanceEntity, final List<AffectedEntity> affectedEntities) {
 		sendCloseMessage(disturbanceEntity, affectedEntities);
 	}
 
 	/**
 	 * Send a "new disturbance" message to all affected persons/organizations with an existing disturbanceFeedback in a
 	 * disturbance.
-	 * 
+	 *
 	 * @param disturbanceEntity
 	 */
 	@Transactional
-	public void sendCreateMessageToAllApplicableAffecteds(DisturbanceEntity disturbanceEntity) {
+	public void sendCreateMessageToAllApplicableAffecteds(final DisturbanceEntity disturbanceEntity) {
 		sendCreateMessage(disturbanceEntity, disturbanceEntity.getAffectedEntities());
 	}
 
 	/**
 	 * Send a "new disturbance" message to all affected persons/organizations with an existing disturbanceFeedback, in the
 	 * provided affectedEntities list. This will override the existing affectedEntities in the DisturbanceEntity.
-	 * 
+	 *
 	 * The affectedEntities will get a message if a disturbanceFeedback exists for this disturbance.
-	 * 
+	 *
 	 * @param disturbanceEntity The entity.
 	 * @param affectedEntities  The affectedEntities that will get a message (if a disturbanceFeedback exists)
 	 */
 	@Transactional
-	public void sendCreateMessageToProvidedApplicableAffecteds(DisturbanceEntity disturbanceEntity, List<AffectedEntity> affectedEntities) {
+	public void sendCreateMessageToProvidedApplicableAffecteds(final DisturbanceEntity disturbanceEntity, final List<AffectedEntity> affectedEntities) {
 		sendCreateMessage(disturbanceEntity, affectedEntities);
 	}
 
 	/**
 	 * Send a "updated disturbance" message to all affected persons/organizations with an existing disturbanceFeedback in a
 	 * disturbance.
-	 * 
+	 *
 	 * @param updatedDisturbanceEntity
 	 */
 	@Transactional
-	public void sendUpdateMessage(DisturbanceEntity updatedDisturbanceEntity) {
+	public void sendUpdateMessage(final DisturbanceEntity updatedDisturbanceEntity) {
 
 		// Fetch all feedbackEntities for this disturbance.
 		final var disturbanceFeedbackEntities = disturbanceFeedBackRepository.findByCategoryAndDisturbanceId(
@@ -134,7 +135,7 @@ public class SendMessageLogic {
 		sendMessages(messages);
 	}
 
-	private void sendCreateMessage(DisturbanceEntity createdDisturbanceEntity, List<AffectedEntity> affectedEntities) {
+	private void sendCreateMessage(final DisturbanceEntity createdDisturbanceEntity, final List<AffectedEntity> affectedEntities) {
 
 		// Fetch all feedbackEntities for this disturbance.
 		final var disturbanceFeedbackEntities = disturbanceFeedBackRepository.findByCategoryAndDisturbanceId(
@@ -151,7 +152,7 @@ public class SendMessageLogic {
 		sendMessages(messages);
 	}
 
-	private void sendCloseMessage(DisturbanceEntity disturbanceEntity, List<AffectedEntity> affectedEntities) {
+	private void sendCloseMessage(final DisturbanceEntity disturbanceEntity, final List<AffectedEntity> affectedEntities) {
 
 		// Fetch all feedbackEntities for this disturbance.
 		final var disturbanceFeedbackEntities = disturbanceFeedBackRepository.findByCategoryAndDisturbanceId(
@@ -168,14 +169,14 @@ public class SendMessageLogic {
 		sendMessages(messages);
 	}
 
-	private void persistFeedbackHistory(AffectedEntity affectedEntity) {
+	private void persistFeedbackHistory(final AffectedEntity affectedEntity) {
 		disturbanceFeedBackHistoryRepository.save(toDisturbanceFeedbackHistoryEntity(affectedEntity));
 	}
 
-	private Message mapToUpdateMessage(DisturbanceEntity disturbanceEntity, AffectedEntity affectedEntity) {
+	private Message mapToUpdateMessage(final DisturbanceEntity disturbanceEntity, final AffectedEntity affectedEntity) {
 
 		// Fetch message properties by category.
-		final var messageConfig = getMessageConfigByCategory(disturbanceEntity.getCategory());
+		final var messageConfig = getMessageConfigByCategory(disturbanceEntity.getCategory()).orElse(new CategoryConfig());
 		if (!messageConfig.isActive()) {
 			return null;
 		}
@@ -203,10 +204,10 @@ public class SendMessageLogic {
 		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
 	}
 
-	private Message mapToNewMessage(DisturbanceEntity disturbanceEntity, AffectedEntity affectedEntity) {
+	private Message mapToNewMessage(final DisturbanceEntity disturbanceEntity, final AffectedEntity affectedEntity) {
 
 		// Fetch message properties by category.
-		final var messageConfig = getMessageConfigByCategory(disturbanceEntity.getCategory());
+		final var messageConfig = getMessageConfigByCategory(disturbanceEntity.getCategory()).orElse(new CategoryConfig());
 		if (!messageConfig.isActive()) {
 			return null;
 		}
@@ -234,10 +235,10 @@ public class SendMessageLogic {
 		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
 	}
 
-	private Message mapToCloseMessage(DisturbanceEntity disturbanceEntity, AffectedEntity affectedEntity) {
+	private Message mapToCloseMessage(final DisturbanceEntity disturbanceEntity, final AffectedEntity affectedEntity) {
 
 		// Fetch message properties by category.
-		final var messageConfig = getMessageConfigByCategory(disturbanceEntity.getCategory());
+		final var messageConfig = getMessageConfigByCategory(disturbanceEntity.getCategory()).orElse(new CategoryConfig());
 		if (!messageConfig.isActive()) {
 			return null;
 		}
@@ -265,7 +266,7 @@ public class SendMessageLogic {
 		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
 	}
 
-	private void sendMessages(List<Message> messages) {
+	private void sendMessages(final List<Message> messages) {
 
 		LOGGER.debug("Messages to send to api-messaging-service: '{}'", messages);
 
@@ -277,7 +278,7 @@ public class SendMessageLogic {
 		}
 	}
 
-	private CategoryConfig getMessageConfigByCategory(String category) {
-		return messageConfiguration.getCategoryConfig(Category.valueOf(category));
+	private Optional<CategoryConfig> getMessageConfigByCategory(final String category) {
+		return Optional.ofNullable(messageConfiguration.getCategoryConfig(Category.valueOf(category)));
 	}
 }
