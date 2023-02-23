@@ -1,10 +1,10 @@
 package se.sundsvall.disturbance.integration.messaging.mapper;
 
-import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
 import java.util.List;
 
+import generated.se.sundsvall.businessrules.IssueType;
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Header;
 import generated.se.sundsvall.messaging.Header.NameEnum;
@@ -38,9 +38,9 @@ public class MessagingMapper {
 
 	public static List<Header> toHeaders(final Category category, final String facilityId) {
 		return List.of(
-			new Header().name(NameEnum.TYPE).values(List.of(valueOf(generated.se.sundsvall.businessrules.IssueType.DISTURBANCE))),
+			new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
 			new Header().name(NameEnum.FACILITY_ID).values(List.of(facilityId)),
-			new Header().name(NameEnum.CATEGORY).values(List.of(valueOf(toBusinessRulesCategory(category)))));
+			new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(toBusinessRulesCategory(category)))));
 	}
 
 	public static Email toEmail(final String senderEmailName, final String senderEmailAddress) {
