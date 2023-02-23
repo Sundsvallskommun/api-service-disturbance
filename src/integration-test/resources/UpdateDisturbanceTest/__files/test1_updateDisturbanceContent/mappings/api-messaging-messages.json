@@ -9,7 +9,8 @@
 					"messages": [
 						{
 							"party": {
-								"partyId": "affected-1"
+								"partyId": "affected-1",
+								"externalReferences" : [ ]
 							},
 							"headers": [
 								{
@@ -45,7 +46,8 @@
 						},
 						{
 							"party": {
-								"partyId": "affected-3"
+								"partyId": "affected-3",
+								"externalReferences" : [ ]
 							},
 							"headers": [
 								{
