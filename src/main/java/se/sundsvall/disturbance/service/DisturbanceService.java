@@ -62,30 +62,22 @@ public class DisturbanceService {
 
 	@Transactional
 	public Disturbance findByCategoryAndDisturbanceId(final Category category, final String disturbanceId) {
-		LOGGER.debug("Executing findByCategoryAndDisturbanceId() with parameters: category:'{}', disturbanceId:'{}'", category, disturbanceId);
-
 		return toDisturbance(disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
 			.orElseThrow(() -> Problem.valueOf(Status.NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId))));
 	}
 
 	@Transactional
 	public List<Disturbance> findByPartyIdAndCategoryAndStatus(final String partyId, final List<Category> categoryFilter, final List<se.sundsvall.disturbance.api.model.Status> statusFilter) {
-		LOGGER.debug("Executing findByPartyIdAndCategoryAndStatus() with parameters: partyId:'{}', categoryFilter:'{}', statusFilter:'{}'",
-			partyId, categoryFilter, statusFilter);
-
 		return toDisturbances(disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter));
 	}
 
 	@Transactional
 	public List<Disturbance> findByStatusAndCategory(final List<se.sundsvall.disturbance.api.model.Status> statusFilter, final List<Category> categoryFilter) {
-		LOGGER.debug("Execute findByStatusAndCategory() with parameters: statusFilter:'{}', categoryFilter:'{}'", statusFilter, categoryFilter);
-
 		return toDisturbances(disturbanceRepository.findByStatusAndCategory(statusFilter, categoryFilter));
 	}
 
 	@Transactional
 	public Disturbance createDisturbance(final DisturbanceCreateRequest disturbanceCreateRequest) {
-		LOGGER.debug("Executing createDisturbance() with parameters: request:'{}'", disturbanceCreateRequest);
 
 		// Check if disturbance already exists.
 		if (disturbanceRepository.findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()).isPresent()) {
@@ -111,8 +103,6 @@ public class DisturbanceService {
 
 	@Transactional
 	public Disturbance updateDisturbance(final Category category, final String disturbanceId, final DisturbanceUpdateRequest disturbanceUpdateRequest) {
-
-		LOGGER.debug("Executing updateDisturbance() with parameters: category:'{}', disturbanceId:'{}', request:'{}'", category, disturbanceId, disturbanceUpdateRequest);
 
 		// Get existing disturbance entity.
 		final var existingDisturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
@@ -178,8 +168,6 @@ public class DisturbanceService {
 
 	@Transactional
 	public void deleteDisturbance(final Category category, final String disturbanceId) {
-
-		LOGGER.debug("Executing deleteDisturbance() with parameters: category:'{}', disturbanceId:'{}'", category, disturbanceId);
 
 		final var disturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
 			.orElseThrow(() -> Problem.valueOf(Status.NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
