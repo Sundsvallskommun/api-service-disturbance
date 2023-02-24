@@ -16,7 +16,7 @@ public class DateUtils {
 	 * Formats a date on the format "yyyy-MM-dd HH:mm" to be used in the Message to send. If the date is null, "N/A" is
 	 * returned.
 	 *
-	 * @param date
+	 * @param date the date to format.
 	 * @return A formatted date on format "yyyy-MM-dd HH:mm".
 	 */
 	public static String toMessageDateFormat(final OffsetDateTime date) {

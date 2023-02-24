@@ -215,16 +215,16 @@ public class DisturbanceService {
 	 * The attributes that are checked are: description, title, plannedStartDate and plannedStopDate (and also if status is
 	 * changed from PLANNED to OPEN).
 	 *
-	 * @param oldEntity
-	 * @param newEntity
+	 * @param oldEntity the old entity
+	 * @param newEntity the new (changed) entity
 	 * @return true if the content is changed, false otherwise.
 	 */
 	private boolean contentIsChanged(final DisturbanceEntity oldEntity, final DisturbanceEntity newEntity) {
-		final var contentIsChanged = nonNull(newEntity.getDescription()) && !equalsIgnoreCase(oldEntity.getDescription(), newEntity.getDescription()) ||
-			nonNull(newEntity.getTitle()) && !equalsIgnoreCase(oldEntity.getTitle(), newEntity.getTitle()) ||
-			nonNull(newEntity.getPlannedStartDate()) && !equalsIgnoreCase(String.valueOf(oldEntity.getPlannedStartDate()), String.valueOf(newEntity.getPlannedStartDate())) ||
-			nonNull(newEntity.getPlannedStopDate()) && !equalsIgnoreCase(String.valueOf(oldEntity.getPlannedStopDate()), String.valueOf(newEntity.getPlannedStopDate())) ||
-			hasStatusOpen(newEntity) && hasStatusPlanned(oldEntity);
+		final var contentIsChanged = (nonNull(newEntity.getDescription()) && !equalsIgnoreCase(oldEntity.getDescription(), newEntity.getDescription())) ||
+			(nonNull(newEntity.getTitle()) && !equalsIgnoreCase(oldEntity.getTitle(), newEntity.getTitle())) ||
+			(nonNull(newEntity.getPlannedStartDate()) && !equalsIgnoreCase(String.valueOf(oldEntity.getPlannedStartDate()), String.valueOf(newEntity.getPlannedStartDate()))) ||
+			(nonNull(newEntity.getPlannedStopDate()) && !equalsIgnoreCase(String.valueOf(oldEntity.getPlannedStopDate()), String.valueOf(newEntity.getPlannedStopDate()))) ||
+			(hasStatusOpen(newEntity) && hasStatusPlanned(oldEntity));
 
 		if (contentIsChanged) {
 			LOGGER.debug("Disturbance content update was discovered. Old:'{}' New:'{}'", oldEntity, newEntity);

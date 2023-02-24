@@ -65,7 +65,7 @@ public class SendMessageLogic {
 	 * Send a "closed disturbance" message to all affected persons/organizations in a disturbance with an existing
 	 * disturbanceFeedback. The affectedEntities will get a message if a disturbanceFeedback exists for this disturbance.
 	 *
-	 * @param disturbanceEntity
+	 * @param disturbanceEntity the DisturbanceEntity.
 	 */
 	@Transactional
 	public void sendCloseMessageToAllApplicableAffecteds(final DisturbanceEntity disturbanceEntity) {
@@ -90,7 +90,7 @@ public class SendMessageLogic {
 	 * Send a "new disturbance" message to all affected persons/organizations with an existing disturbanceFeedback in a
 	 * disturbance.
 	 *
-	 * @param disturbanceEntity
+	 * @param disturbanceEntity the DisturbanceEntity.
 	 */
 	@Transactional
 	public void sendCreateMessageToAllApplicableAffecteds(final DisturbanceEntity disturbanceEntity) {
@@ -115,7 +115,7 @@ public class SendMessageLogic {
 	 * Send a "updated disturbance" message to all affected persons/organizations with an existing disturbanceFeedback in a
 	 * disturbance.
 	 *
-	 * @param updatedDisturbanceEntity
+	 * @param updatedDisturbanceEntity the updated DisturbanceEntity.
 	 */
 	@Transactional
 	public void sendUpdateMessage(final DisturbanceEntity updatedDisturbanceEntity) {
