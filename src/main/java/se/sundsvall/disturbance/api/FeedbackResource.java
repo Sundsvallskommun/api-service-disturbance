@@ -6,8 +6,6 @@ import static org.springframework.http.ResponseEntity.noContent;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,8 +34,6 @@ import se.sundsvall.disturbance.service.FeedbackService;
 @Tag(name = "Feedback", description = "Feedback operations")
 public class FeedbackResource {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackResource.class);
-
 	@Autowired
 	private FeedbackService feedbackService;
 
@@ -48,11 +44,8 @@ public class FeedbackResource {
 	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createFeedback(@RequestBody @Valid FeedbackCreateRequest body) {
-		LOGGER.debug("Received createFeedback request: body='{}'", body);
-
+	public ResponseEntity<Void> createFeedback(@RequestBody @Valid final FeedbackCreateRequest body) {
 		feedbackService.createFeedback(body);
-
 		return noContent().build();
 	}
 
@@ -64,11 +57,8 @@ public class FeedbackResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Void> deleteFeedback(
-		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @PathVariable(name = "partyId") String partyId) {
-		LOGGER.debug("Received deleteFeedback request: partyId='{}'", partyId);
-
+		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @PathVariable(name = "partyId") final String partyId) {
 		feedbackService.deleteFeedback(partyId);
-
 		return noContent().build();
 	}
 }

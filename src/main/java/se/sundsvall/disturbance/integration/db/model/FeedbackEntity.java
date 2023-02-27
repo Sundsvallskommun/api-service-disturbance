@@ -5,6 +5,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -17,9 +18,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "feedback", indexes = {
-	@Index(name = "party_id_index", columnList = "party_id")
-})
+@Table(name = "feedback",
+	indexes = {
+		@Index(name = "party_id_index", columnList = "party_id")
+	})
 public class FeedbackEntity implements Serializable {
 
 	private static final long serialVersionUID = 6378788262069529085L;
@@ -37,14 +39,14 @@ public class FeedbackEntity implements Serializable {
 
 	@PrePersist
 	void prePersist() {
-		created = now().truncatedTo(MILLIS);
+		created = now(ZoneId.systemDefault()).truncatedTo(MILLIS);
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -52,7 +54,7 @@ public class FeedbackEntity implements Serializable {
 		return partyId;
 	}
 
-	public void setPartyId(String partyId) {
+	public void setPartyId(final String partyId) {
 		this.partyId = partyId;
 	}
 
@@ -60,28 +62,33 @@ public class FeedbackEntity implements Serializable {
 		return created;
 	}
 
-	public void setCreated(OffsetDateTime created) {
+	public void setCreated(final OffsetDateTime created) {
 		this.created = created;
 	}
 
 	@Override
-	public int hashCode() { return Objects.hash(created, id, partyId); }
+	public int hashCode() {
+		return Objects.hash(created, id, partyId);
+	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		FeedbackEntity other = (FeedbackEntity) obj;
+		}
+		final FeedbackEntity other = (FeedbackEntity) obj;
 		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(partyId, other.partyId);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("FeedbackEntity [id=").append(id).append(", partyId=").append(partyId).append(", created=").append(created).append("]");
 		return builder.toString();
 	}

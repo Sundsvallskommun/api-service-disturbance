@@ -9,8 +9,6 @@ import static se.sundsvall.disturbance.service.mapper.DisturbanceFeedbackMapper.
 
 import javax.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zalando.problem.Problem;
@@ -24,8 +22,6 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 @Service
 public class DisturbanceFeedbackService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DisturbanceFeedbackService.class);
-
 	@Autowired
 	private DisturbanceRepository disturbanceRepository;
 
@@ -33,9 +29,7 @@ public class DisturbanceFeedbackService {
 	private DisturbanceFeedbackRepository disturbanceFeedbackRepository;
 
 	@Transactional
-	public void createDisturbanceFeedback(Category category, String disturbanceId, DisturbanceFeedbackCreateRequest request) {
-
-		LOGGER.debug("Executing createDisturbanceFeedback() with parameters: category:'{}', disturbanceId:'{}', request:'{}'", category, disturbanceId, request);
+	public void createDisturbanceFeedback(final Category category, final String disturbanceId, final DisturbanceFeedbackCreateRequest request) {
 
 		// Check that disturbance exists.
 		final var disturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)

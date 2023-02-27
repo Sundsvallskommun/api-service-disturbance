@@ -1,6 +1,5 @@
 package se.sundsvall.disturbance.integration.messaging.mapper;
 
-import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
 import java.util.List;
@@ -21,14 +20,14 @@ public class MessagingMapper {
 
 	/**
 	 * Create a Message object from provided parameters.
-	 * 
-	 * @param sender
-	 * @param party       (object with personId or organizationId)
-	 * @param subject
-	 * @param messageText
+	 *
+	 * @param sender      the mesage sender
+	 * @param party       the message party (an object with partyId and/or externalReferences)
+	 * @param subject     the message subject
+	 * @param messageText the message text.
 	 * @return A Message object.
 	 */
-	public static Message toMessage(List<Header> headers, Sender sender, Party party, String subject, String messageText) {
+	public static Message toMessage(final List<Header> headers, final Sender sender, final Party party, final String subject, final String messageText) {
 		return new Message()
 			.headers(headers)
 			.sender(sender)
@@ -37,30 +36,30 @@ public class MessagingMapper {
 			.subject(subject);
 	}
 
-	public static List<Header> toHeaders(Category category, String facilityId) {
+	public static List<Header> toHeaders(final Category category, final String facilityId) {
 		return List.of(
-			new Header().name(NameEnum.TYPE).values(List.of(valueOf(IssueType.DISTURBANCE))),
+			new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
 			new Header().name(NameEnum.FACILITY_ID).values(List.of(facilityId)),
-			new Header().name(NameEnum.CATEGORY).values(List.of(valueOf(toBusinessRulesCategory(category)))));
+			new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(toBusinessRulesCategory(category)))));
 	}
 
-	public static Email toEmail(String senderEmailName, String senderEmailAddress) {
+	public static Email toEmail(final String senderEmailName, final String senderEmailAddress) {
 		return new Email()
 			.name(senderEmailName)
 			.address(senderEmailAddress);
 	}
 
-	public static Sms toSms(String senderSmsName) {
+	public static Sms toSms(final String senderSmsName) {
 		return new Sms()
 			.name(senderSmsName);
 	}
 
-	public static Party toParty(String partyId) {
+	public static Party toParty(final String partyId) {
 		return new Party()
 			.partyId(partyId);
 	}
 
-	public static generated.se.sundsvall.businessrules.Category toBusinessRulesCategory(Category category) {
+	public static generated.se.sundsvall.businessrules.Category toBusinessRulesCategory(final Category category) {
 		if (isNull(category)) {
 			return null;
 		}
