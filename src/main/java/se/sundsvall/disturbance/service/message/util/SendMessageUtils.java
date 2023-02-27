@@ -14,12 +14,12 @@ public class SendMessageUtils {
 
 	/**
 	 * Returns true if the affectedEntity matches (exists in) the list of disturbanceFeedbackEntities.
-	 * 
-	 * @param affectedEntity
+	 *
+	 * @param affectedEntity              the affectedEntity to check.
 	 * @param disturbanceFeedbackEntities the list of disturbanceFeedbackEntities
 	 * @return True if there is a match, false otherwise.
 	 */
-	public static boolean hasDisturbanceFeedBackEntity(AffectedEntity affectedEntity, List<DisturbanceFeedbackEntity> disturbanceFeedbackEntities) {
+	public static boolean hasDisturbanceFeedBackEntity(final AffectedEntity affectedEntity, final List<DisturbanceFeedbackEntity> disturbanceFeedbackEntities) {
 		return ofNullable(disturbanceFeedbackEntities).orElse(emptyList()).stream()
 			.anyMatch(disturbanceFeedbackEntity -> affectedEntity.getPartyId().equalsIgnoreCase(disturbanceFeedbackEntity.getPartyId()));
 	}

@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,10 +25,11 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "disturbance", indexes = {
-	@Index(name = "disturbance_id_index", columnList = "disturbance_id"),
-	@Index(name = "category_index", columnList = "category")
-})
+@Table(name = "disturbance",
+	indexes = {
+		@Index(name = "disturbance_id_index", columnList = "disturbance_id"),
+		@Index(name = "category_index", columnList = "category")
+	})
 public class DisturbanceEntity implements Serializable {
 
 	private static final long serialVersionUID = -4882470746578837725L;
@@ -72,19 +74,19 @@ public class DisturbanceEntity implements Serializable {
 
 	@PrePersist
 	void prePersist() {
-		created = now().truncatedTo(MILLIS);
+		created = now(ZoneId.systemDefault()).truncatedTo(MILLIS);
 	}
 
 	@PreUpdate
 	void preUpdate() {
-		updated = now().truncatedTo(MILLIS);
+		updated = now(ZoneId.systemDefault()).truncatedTo(MILLIS);
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(final long id) {
 		this.id = id;
 	}
 
@@ -92,7 +94,7 @@ public class DisturbanceEntity implements Serializable {
 		return disturbanceId;
 	}
 
-	public void setDisturbanceId(String disturbanceId) {
+	public void setDisturbanceId(final String disturbanceId) {
 		this.disturbanceId = disturbanceId;
 	}
 
@@ -100,7 +102,7 @@ public class DisturbanceEntity implements Serializable {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
@@ -108,7 +110,7 @@ public class DisturbanceEntity implements Serializable {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -116,7 +118,7 @@ public class DisturbanceEntity implements Serializable {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -124,7 +126,7 @@ public class DisturbanceEntity implements Serializable {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(final String status) {
 		this.status = status;
 	}
 
@@ -132,7 +134,7 @@ public class DisturbanceEntity implements Serializable {
 		return plannedStartDate;
 	}
 
-	public void setPlannedStartDate(OffsetDateTime plannedStartDate) {
+	public void setPlannedStartDate(final OffsetDateTime plannedStartDate) {
 		this.plannedStartDate = plannedStartDate;
 	}
 
@@ -140,7 +142,7 @@ public class DisturbanceEntity implements Serializable {
 		return plannedStopDate;
 	}
 
-	public void setPlannedStopDate(OffsetDateTime plannedStopDate) {
+	public void setPlannedStopDate(final OffsetDateTime plannedStopDate) {
 		this.plannedStopDate = plannedStopDate;
 	}
 
@@ -148,7 +150,7 @@ public class DisturbanceEntity implements Serializable {
 		return created;
 	}
 
-	public void setCreated(OffsetDateTime created) {
+	public void setCreated(final OffsetDateTime created) {
 		this.created = created;
 	}
 
@@ -156,7 +158,7 @@ public class DisturbanceEntity implements Serializable {
 		return updated;
 	}
 
-	public void setUpdated(OffsetDateTime updated) {
+	public void setUpdated(final OffsetDateTime updated) {
 		this.updated = updated;
 	}
 
@@ -164,7 +166,7 @@ public class DisturbanceEntity implements Serializable {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public void setDeleted(final boolean deleted) {
 		this.deleted = deleted;
 	}
 
@@ -172,11 +174,11 @@ public class DisturbanceEntity implements Serializable {
 		return affectedEntities;
 	}
 
-	public void setAffectedEntities(List<AffectedEntity> affectedEntities) {
+	public void setAffectedEntities(final List<AffectedEntity> affectedEntities) {
 		this.affectedEntities = affectedEntities;
 	}
 
-	public void addAffectedEntities(List<AffectedEntity> affectedEntities) {
+	public void addAffectedEntities(final List<AffectedEntity> affectedEntities) {
 		ofNullable(affectedEntities).ifPresent(entities -> {
 			if (this.affectedEntities == null) {
 				this.affectedEntities = new ArrayList<>();
@@ -194,14 +196,17 @@ public class DisturbanceEntity implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		DisturbanceEntity other = (DisturbanceEntity) obj;
+		}
+		final DisturbanceEntity other = (DisturbanceEntity) obj;
 		return Objects.equals(affectedEntities, other.affectedEntities) && Objects.equals(category, other.category) && Objects.equals(created, other.created)
 			&& Objects.equals(description, other.description) && Objects.equals(disturbanceId, other.disturbanceId) && Objects.equals(id, other.id)
 			&& Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && Objects.equals(status, other.status)
@@ -210,7 +215,7 @@ public class DisturbanceEntity implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("DisturbanceEntity [id=").append(id).append(", disturbanceId=").append(disturbanceId).append(", category=").append(category).append(", title=").append(title)
 			.append(", description=").append(description).append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=")
 			.append(plannedStopDate).append(", created=").append(created).append(", updated=").append(updated).append(", deleted=").append(deleted).append(", affectedEntities=")

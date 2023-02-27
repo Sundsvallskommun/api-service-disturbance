@@ -3,7 +3,7 @@ package se.sundsvall.disturbance.service.mapper;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-import static se.sundsvall.disturbance.service.util.DateUtils.toOffsetDateTimeWithLocalOffset;
+import static se.sundsvall.dept44.util.DateUtils.toOffsetDateTimeWithLocalOffset;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class DisturbanceMapper {
 
 	private DisturbanceMapper() {}
 
-	public static Disturbance toDisturbance(DisturbanceEntity disturbanceEntity) {
+	public static Disturbance toDisturbance(final DisturbanceEntity disturbanceEntity) {
 		return Disturbance.create()
 			.withCategory(isNull(disturbanceEntity.getCategory()) ? null : Category.valueOf(disturbanceEntity.getCategory()))
 			.withTitle(disturbanceEntity.getTitle())
@@ -38,7 +38,7 @@ public class DisturbanceMapper {
 			.withUpdated(disturbanceEntity.getUpdated());
 	}
 
-	public static DisturbanceEntity toDisturbanceEntity(DisturbanceCreateRequest disturbanceCreateRequest) {
+	public static DisturbanceEntity toDisturbanceEntity(final DisturbanceCreateRequest disturbanceCreateRequest) {
 		final var disturbanceEntity = new DisturbanceEntity();
 		disturbanceEntity.addAffectedEntities(toAffectedEntities(disturbanceCreateRequest.getAffecteds()));
 		disturbanceEntity.setCategory(String.valueOf(disturbanceCreateRequest.getCategory()));
@@ -52,7 +52,7 @@ public class DisturbanceMapper {
 		return disturbanceEntity;
 	}
 
-	public static DisturbanceEntity toDisturbanceEntity(Category category, String disturbanceId, DisturbanceUpdateRequest disturbanceUpdateRequest) {
+	public static DisturbanceEntity toDisturbanceEntity(final Category category, final String disturbanceId, final DisturbanceUpdateRequest disturbanceUpdateRequest) {
 		final var disturbanceEntity = new DisturbanceEntity();
 		disturbanceEntity.addAffectedEntities(toAffectedEntities(disturbanceUpdateRequest.getAffecteds()));
 		disturbanceEntity.setCategory(String.valueOf(category));
@@ -68,12 +68,12 @@ public class DisturbanceMapper {
 
 	/**
 	 * Merge all new values from "newEntity" the the "oldEntity". Values are only used (copied) if they are not null.
-	 * 
-	 * @param oldEntity
-	 * @param newEntity
+	 *
+	 * @param oldEntity the old entity.
+	 * @param newEntity the new (changed) entity.
 	 * @return the old entity with available (non-null) values from the new entity.
 	 */
-	public static DisturbanceEntity toMergedDisturbanceEntity(DisturbanceEntity oldEntity, DisturbanceEntity newEntity) {
+	public static DisturbanceEntity toMergedDisturbanceEntity(final DisturbanceEntity oldEntity, final DisturbanceEntity newEntity) {
 
 		Optional.ofNullable(newEntity.getAffectedEntities()).ifPresent(ae -> {
 			final var removedAffectedEntities = MappingUtils.getRemovedAffectedEntities(oldEntity, newEntity);
@@ -100,7 +100,7 @@ public class DisturbanceMapper {
 		return oldEntity;
 	}
 
-	private static List<AffectedEntity> toAffectedEntities(List<Affected> affecteds) {
+	private static List<AffectedEntity> toAffectedEntities(final List<Affected> affecteds) {
 		if (isNull(affecteds)) {
 			return null;
 		}
@@ -112,7 +112,7 @@ public class DisturbanceMapper {
 			.toList();
 	}
 
-	private static AffectedEntity toAffectedEntity(Affected affected) {
+	private static AffectedEntity toAffectedEntity(final Affected affected) {
 		final var affectedEntity = new AffectedEntity();
 		affectedEntity.setFacilityId(affected.getFacilityId());
 		affectedEntity.setCoordinates(affected.getCoordinates());
@@ -122,7 +122,7 @@ public class DisturbanceMapper {
 		return affectedEntity;
 	}
 
-	private static List<Affected> toAffecteds(List<AffectedEntity> affectedEntityList) {
+	private static List<Affected> toAffecteds(final List<AffectedEntity> affectedEntityList) {
 		if (isNull(affectedEntityList)) {
 			return null;
 		}
@@ -133,7 +133,7 @@ public class DisturbanceMapper {
 			.toList();
 	}
 
-	private static Affected toAffected(AffectedEntity affectedEntity) {
+	private static Affected toAffected(final AffectedEntity affectedEntity) {
 		return Affected.create()
 			.withFacilityId(affectedEntity.getFacilityId())
 			.withCoordinates(affectedEntity.getCoordinates())
@@ -141,7 +141,7 @@ public class DisturbanceMapper {
 			.withReference(affectedEntity.getReference());
 	}
 
-	public static List<Disturbance> toDisturbances(List<DisturbanceEntity> disturbanceEntities) {
+	public static List<Disturbance> toDisturbances(final List<DisturbanceEntity> disturbanceEntities) {
 		return disturbanceEntities.stream()
 			.filter(Objects::nonNull)
 			.map(DisturbanceMapper::toDisturbance)

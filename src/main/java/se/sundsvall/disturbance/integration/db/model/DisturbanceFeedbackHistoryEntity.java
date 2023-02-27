@@ -5,6 +5,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -43,7 +44,7 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 
 	@PrePersist
 	void prePersist() {
-		created = now().truncatedTo(MILLIS);
+		created = now(ZoneId.systemDefault()).truncatedTo(MILLIS);
 		status = "SENT";
 	}
 
@@ -51,7 +52,7 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -59,7 +60,7 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 		return disturbanceId;
 	}
 
-	public void setDisturbanceId(String disturbanceId) {
+	public void setDisturbanceId(final String disturbanceId) {
 		this.disturbanceId = disturbanceId;
 	}
 
@@ -67,7 +68,7 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 		return partyId;
 	}
 
-	public void setPartyId(String partyId) {
+	public void setPartyId(final String partyId) {
 		this.partyId = partyId;
 	}
 
@@ -75,7 +76,7 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(final String status) {
 		this.status = status;
 	}
 
@@ -83,7 +84,7 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
@@ -91,17 +92,19 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 		return created;
 	}
 
-	public void setCreated(OffsetDateTime created) {
+	public void setCreated(final OffsetDateTime created) {
 		this.created = created;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
+	public boolean equals(final Object o) {
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
-		DisturbanceFeedbackHistoryEntity that = (DisturbanceFeedbackHistoryEntity) o;
+		}
+		final DisturbanceFeedbackHistoryEntity that = (DisturbanceFeedbackHistoryEntity) o;
 		return Objects.equals(id, that.id) && Objects.equals(disturbanceId, that.disturbanceId) && Objects.equals(partyId, that.partyId)
 			&& Objects.equals(category, that.category) && Objects.equals(status, that.status) && Objects.equals(created, that.created);
 	}
@@ -113,7 +116,7 @@ public class DisturbanceFeedbackHistoryEntity implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("DisturbanceFeedbackHistoryEntity [id=").append(id).append(", disturbanceId=").append(disturbanceId).append(", partyId=").append(partyId)
 			.append(", category=").append(category).append(", status=").append(status).append(", created=").append(created).append("]");
 		return builder.toString();
