@@ -14,11 +14,13 @@ import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 
 @Transactional
+@CircuitBreaker(name = "disturbanceRepository")
 public interface DisturbanceRepository extends JpaRepository<DisturbanceEntity, Long>, JpaSpecificationExecutor<DisturbanceEntity> {
 
 	default Optional<DisturbanceEntity> findByCategoryAndDisturbanceId(Category category, String disturbanceId) {

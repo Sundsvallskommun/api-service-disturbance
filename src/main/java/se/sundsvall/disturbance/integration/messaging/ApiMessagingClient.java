@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import generated.se.sundsvall.messaging.MessageRequest;
 import generated.se.sundsvall.messaging.MessageStatusResponse;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.disturbance.integration.messaging.configuration.ApiMessagingConfiguration;
 
 @FeignClient(name = CLIENT_REGISTRATION_ID, url = "${integration.messaging.url}", configuration = ApiMessagingConfiguration.class)
-@CircuitBreaker(name = CLIENT_REGISTRATION_ID)
 public interface ApiMessagingClient {
 
 	/**
