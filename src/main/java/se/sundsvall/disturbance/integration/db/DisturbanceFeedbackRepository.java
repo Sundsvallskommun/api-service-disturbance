@@ -12,10 +12,12 @@ import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceFeedbackEntity;
 
 @Transactional
+@CircuitBreaker(name = "disturbanceFeedbackRepository")
 public interface DisturbanceFeedbackRepository extends JpaRepository<DisturbanceFeedbackEntity, Long>, JpaSpecificationExecutor<DisturbanceFeedbackEntity> {
 
 	List<DisturbanceFeedbackEntity> findByPartyId(String partyId);
