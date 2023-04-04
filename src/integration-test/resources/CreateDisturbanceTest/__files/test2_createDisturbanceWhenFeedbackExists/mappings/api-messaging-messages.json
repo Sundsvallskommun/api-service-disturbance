@@ -9,8 +9,7 @@
 					"messages": [
 						{
 							"party": {
-								"partyId": "fbfbd90c-4c47-11ec-81d3-0242ac130003",
-								"externalReferences" : [ ]
+								"partyId": "fbfbd90c-4c47-11ec-81d3-0242ac130003"
 							},
 							"headers": [
 								{
@@ -46,8 +45,7 @@
 						},
 						{
 							"party": {
-								"partyId": "257f6aa0-4c48-11ec-81d3-0242ac130003",
-								"externalReferences" : [ ]
+								"partyId": "257f6aa0-4c48-11ec-81d3-0242ac130003"
 							},
 							"headers": [
 								{
