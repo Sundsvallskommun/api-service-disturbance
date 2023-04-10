@@ -23,7 +23,7 @@
 		<!-- Service properties -->
 		<openapi-generator-maven-plugin.version>6.5.0</openapi-generator-maven-plugin.version>
 		<commons-text.version>1.10.0</commons-text.version>
-		<testcontainers.version>1.17.6</testcontainers.version>
+		<testcontainers.version>1.18.0</testcontainers.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
 	</properties>
