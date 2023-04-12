@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +13,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import generated.se.sundsvall.businessrules.IssueType;
 import generated.se.sundsvall.messaging.Header;
 import generated.se.sundsvall.messaging.Header.NameEnum;
-import generated.se.sundsvall.messaging.Sender;
+import generated.se.sundsvall.messaging.MessageSender;
 import se.sundsvall.disturbance.api.model.Category;
 
 class MessagingMapperTest {
@@ -26,10 +27,10 @@ class MessagingMapperTest {
 		final var headerFacilityId = "facilityId";
 		final var headerIssueType = IssueType.DISTURBANCE;
 
-		final var sender = new Sender()
+		final var sender = new MessageSender()
 			.email(email)
 			.sms(sms);
-		final var partyId = "partyId";
+		final var partyId = UUID.randomUUID().toString();
 		final var subject = "subject";
 		final var messageText = "message";
 
@@ -93,7 +94,7 @@ class MessagingMapperTest {
 
 	@ParameterizedTest
 	@EnumSource(Category.class)
-	void toBusinessRulesCategory(Category category) {
+	void toBusinessRulesCategory(final Category category) {
 		assertThat(MessagingMapper.toBusinessRulesCategory(category))
 			.isInstanceOf(generated.se.sundsvall.businessrules.Category.class)
 			.asString().isEqualTo(category.toString());
