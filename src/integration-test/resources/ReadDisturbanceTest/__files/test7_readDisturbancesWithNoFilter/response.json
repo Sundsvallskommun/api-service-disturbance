@@ -74,19 +74,19 @@
 		"plannedStopDate": "2022-01-11T11:30:45+01:00",
 		"affecteds": [
 			{
-				"partyId": "affected-1",
+				"partyId": "00000001-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 11",
 				"facilityId": "facility-11",
 				"coordinates": "coordinate-11"
 			},
 			{
-				"partyId": "affected-2",
+				"partyId": "00000002-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 22",
 				"facilityId": "facility-22",
 				"coordinates": "coordinate-22"
 			},
 			{
-				"partyId": "affected-3",
+				"partyId": "00000003-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 33",
 				"facilityId": "facility-33",
 				"coordinates": "coordinate-33"
@@ -103,19 +103,19 @@
 		"plannedStopDate": "2022-01-11T11:30:45+01:00",
 		"affecteds": [
 			{
-				"partyId": "affected-1",
+				"partyId": "00000001-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 11",
 				"facilityId": "facility-11",
 				"coordinates": "coordinate-11"
 			},
 			{
-				"partyId": "affected-2",
+				"partyId": "00000002-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 22",
 				"facilityId": "facility-22",
 				"coordinates": "coordinate-22"
 			},
 			{
-				"partyId": "0d64c42a-3aea-11ec-8d3d-0242ac130003",
+				"partyId": "00000003-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 33",
 				"facilityId": "facility-33",
 				"coordinates": "coordinate-33"
@@ -161,19 +161,19 @@
 		"plannedStopDate": "2022-01-11T11:30:45+01:00",
 		"affecteds": [
 			{
-				"partyId": "affected-1",
+				"partyId": "00000001-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 11",
 				"facilityId": "facility-11",
 				"coordinates": "coordinate-11"
 			},
 			{
-				"partyId": "affected-2",
+				"partyId": "00000002-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 22",
 				"facilityId": "facility-22",
 				"coordinates": "coordinate-22"
 			},
 			{
-				"partyId": "affected-3",
+				"partyId": "00000003-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 33",
 				"facilityId": "facility-33",
 				"coordinates": "coordinate-33"
@@ -235,8 +235,7 @@
 		"description": "Description",
 		"plannedStartDate": "2021-12-31T11:30:45+01:00",
 		"plannedStopDate": "2022-01-11T11:30:45+01:00",
-		"affecteds": [
-		]
+		"affecteds": []
 	},
 	{
 		"id": "disturbance-11",
@@ -277,19 +276,19 @@
 		"plannedStopDate": "2022-01-11T11:30:45+01:00",
 		"affecteds": [
 			{
-				"partyId": "affected-1",
+				"partyId": "00000001-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 11",
 				"facilityId": "facility-11",
 				"coordinates": "coordinate-11"
 			},
 			{
-				"partyId": "affected-2",
+				"partyId": "00000002-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 22",
 				"facilityId": "facility-22",
 				"coordinates": "coordinate-22"
 			},
 			{
-				"partyId": "affected-3",
+				"partyId": "00000003-0000-1000-8000-00805f9b34fb",
 				"reference": "Streetname 33",
 				"facilityId": "facility-33",
 				"coordinates": "coordinate-33"

@@ -4,19 +4,19 @@
 	"id": "disturbance-12",
 	"affecteds": [
 		{
-			"partyId": "affected-1",
+			"partyId": "00000001-0000-1000-8000-00805f9b34fb",
 			"reference": "Streetname 11",
 			"facilityId": "facility-11",
 			"coordinates": "coordinate-11"
 		},
 		{
-			"partyId": "affected-2",
+			"partyId": "00000002-0000-1000-8000-00805f9b34fb",
 			"reference": "Streetname 22",
 			"facilityId": "facility-22",
 			"coordinates": "coordinate-22"
 		},
 		{
-			"partyId": "affected-3",
+			"partyId": "00000003-0000-1000-8000-00805f9b34fb",
 			"reference": "Streetname 33",
 			"facilityId": "facility-33",
 			"coordinates": "coordinate-33"
