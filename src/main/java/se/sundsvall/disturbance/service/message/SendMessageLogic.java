@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageRequest;
-import generated.se.sundsvall.messaging.Sender;
+import generated.se.sundsvall.messaging.MessageSender;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackHistoryRepository;
 import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackRepository;
@@ -190,7 +190,7 @@ public class SendMessageLogic {
 			MSG_AFFECTED_REFERENCE, affectedEntity.getReference()));
 
 		// Assemble message and subject based on the properties.
-		final var sender = new Sender()
+		final var sender = new MessageSender()
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
 
@@ -221,7 +221,7 @@ public class SendMessageLogic {
 			MSG_AFFECTED_REFERENCE, affectedEntity.getReference()));
 
 		// Assemble message and subject based on the properties.
-		final var sender = new Sender()
+		final var sender = new MessageSender()
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
 
@@ -252,7 +252,7 @@ public class SendMessageLogic {
 			MSG_AFFECTED_REFERENCE, affectedEntity.getReference()));
 
 		// Assemble message and subject based on the properties.
-		final var sender = new Sender()
+		final var sender = new MessageSender()
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
 

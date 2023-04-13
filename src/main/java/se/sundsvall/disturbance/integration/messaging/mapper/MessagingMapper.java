@@ -3,14 +3,15 @@ package se.sundsvall.disturbance.integration.messaging.mapper;
 import static java.util.Objects.isNull;
 
 import java.util.List;
+import java.util.UUID;
 
 import generated.se.sundsvall.businessrules.IssueType;
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Header;
 import generated.se.sundsvall.messaging.Header.NameEnum;
 import generated.se.sundsvall.messaging.Message;
-import generated.se.sundsvall.messaging.Party;
-import generated.se.sundsvall.messaging.Sender;
+import generated.se.sundsvall.messaging.MessageParty;
+import generated.se.sundsvall.messaging.MessageSender;
 import generated.se.sundsvall.messaging.Sms;
 import se.sundsvall.disturbance.api.model.Category;
 
@@ -27,7 +28,7 @@ public class MessagingMapper {
 	 * @param messageText the message text.
 	 * @return A Message object.
 	 */
-	public static Message toMessage(final List<Header> headers, final Sender sender, final Party party, final String subject, final String messageText) {
+	public static Message toMessage(final List<Header> headers, final MessageSender sender, final MessageParty party, final String subject, final String messageText) {
 		return new Message()
 			.headers(headers)
 			.sender(sender)
@@ -54,9 +55,9 @@ public class MessagingMapper {
 			.name(senderSmsName);
 	}
 
-	public static Party toParty(final String partyId) {
-		return new Party()
-			.partyId(partyId);
+	public static MessageParty toParty(final String partyId) {
+		return new MessageParty()
+			.partyId(UUID.fromString(partyId));
 	}
 
 	public static generated.se.sundsvall.businessrules.Category toBusinessRulesCategory(final Category category) {

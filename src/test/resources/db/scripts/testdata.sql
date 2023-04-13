@@ -44,16 +44,16 @@ INSERT INTO disturbance(id, category, description, disturbance_id, planned_start
 VALUES(5, 'ELECTRICITY', 'Description', 'disturbance-5', '2021-12-31 11:30:45', '2022-01-11 11:30:45', 'OPEN', 'Title', 0);
 
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-1', 'Streetname 11', 'facility-11', 'coordinate-11', 5); -- will have feedback
+VALUES('00000001-0000-1000-8000-00805f9b34fb', 'Streetname 11', 'facility-11', 'coordinate-11', 5); -- will have feedback
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-2', 'Streetname 22', 'facility-22', 'coordinate-22', 5);
+VALUES('00000002-0000-1000-8000-00805f9b34fb', 'Streetname 22', 'facility-22', 'coordinate-22', 5);
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-3', 'Streetname 33', 'facility-33', 'coordinate-33', 5); -- will have feedback
+VALUES('00000003-0000-1000-8000-00805f9b34fb', 'Streetname 33', 'facility-33', 'coordinate-33', 5); -- will have feedback
 
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-5', 'affected-1');
+VALUES('ELECTRICITY', 'disturbance-5', '00000001-0000-1000-8000-00805f9b34fb');
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-5', 'affected-3');
+VALUES('ELECTRICITY', 'disturbance-5', '00000003-0000-1000-8000-00805f9b34fb');
 
 -------------------------------------
 -- UpdateDisturbanceTest.test2
@@ -62,16 +62,16 @@ INSERT INTO disturbance(id, category, description, disturbance_id, planned_start
 VALUES(6, 'ELECTRICITY', 'Description', 'disturbance-6', '2021-12-31 11:30:45', '2022-01-11 11:30:45', 'OPEN', 'Title', 0);
 
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-1', 'Streetname 11', 'facility-11', 'coordinate-11', 6); -- will have feedback
+VALUES('00000001-0000-1000-8000-00805f9b34fb', 'Streetname 11', 'facility-11', 'coordinate-11', 6); -- will have feedback
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-2', 'Streetname 22', 'facility-22', 'coordinate-22', 6);
+VALUES('00000002-0000-1000-8000-00805f9b34fb', 'Streetname 22', 'facility-22', 'coordinate-22', 6);
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('0d64c42a-3aea-11ec-8d3d-0242ac130003', 'Streetname 33', 'facility-33', 'coordinate-33', 6); -- will have feedback
+VALUES('00000003-0000-1000-8000-00805f9b34fb', 'Streetname 33', 'facility-33', 'coordinate-33', 6); -- will have feedback
 
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-6', 'affected-1');
+VALUES('ELECTRICITY', 'disturbance-6', '00000001-0000-1000-8000-00805f9b34fb');
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-6', '0d64c42a-3aea-11ec-8d3d-0242ac130003');
+VALUES('ELECTRICITY', 'disturbance-6', '00000003-0000-1000-8000-00805f9b34fb');
 
 -------------------------------------
 -- UpdateDisturbanceTest.test3
@@ -101,16 +101,16 @@ INSERT INTO disturbance(id, category, description, disturbance_id, planned_start
 VALUES(8, 'ELECTRICITY', 'Description', 'disturbance-8', '2021-12-31 11:30:45', '2022-01-11 11:30:45', 'OPEN', 'Title', 0);
 
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-1', 'Streetname 11', 'facility-11', 'coordinate-11', 8); -- will have feedback
+VALUES('00000001-0000-1000-8000-00805f9b34fb', 'Streetname 11', 'facility-11', 'coordinate-11', 8); -- will have feedback
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-2', 'Streetname 22', 'facility-22', 'coordinate-22', 8);
+VALUES('00000002-0000-1000-8000-00805f9b34fb', 'Streetname 22', 'facility-22', 'coordinate-22', 8);
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-3', 'Streetname 33', 'facility-33', 'coordinate-33', 8); -- will have feedback
+VALUES('00000003-0000-1000-8000-00805f9b34fb', 'Streetname 33', 'facility-33', 'coordinate-33', 8); -- will have feedback
 
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-8', 'affected-1');
+VALUES('ELECTRICITY', 'disturbance-8', '00000001-0000-1000-8000-00805f9b34fb');
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-8', 'affected-3');
+VALUES('ELECTRICITY', 'disturbance-8', '00000003-0000-1000-8000-00805f9b34fb');
 
 -------------------------------------
 -- UpdateDisturbanceTest.test5
@@ -119,16 +119,16 @@ INSERT INTO disturbance(id, category, description, disturbance_id, planned_start
 VALUES(12, 'ELECTRICITY', 'Description', 'disturbance-12', '2021-12-31 11:30:45', '2022-01-11 11:30:45', 'PLANNED', 'Title', 0);
 
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-1', 'Streetname 11', 'facility-11', 'coordinate-11', 12); -- will have feedback
+VALUES('00000001-0000-1000-8000-00805f9b34fb', 'Streetname 11', 'facility-11', 'coordinate-11', 12); -- will have feedback
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-2', 'Streetname 22', 'facility-22', 'coordinate-22', 12);
+VALUES('00000002-0000-1000-8000-00805f9b34fb', 'Streetname 22', 'facility-22', 'coordinate-22', 12);
 INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
-VALUES('affected-3', 'Streetname 33', 'facility-33', 'coordinate-33', 12); -- will have feedback
+VALUES('00000003-0000-1000-8000-00805f9b34fb', 'Streetname 33', 'facility-33', 'coordinate-33', 12); -- will have feedback
 
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-12', 'affected-1');
+VALUES('ELECTRICITY', 'disturbance-12', '00000001-0000-1000-8000-00805f9b34fb');
 INSERT INTO disturbance_feedback(category, disturbance_id, party_id)
-VALUES('ELECTRICITY', 'disturbance-12', 'affected-3');
+VALUES('ELECTRICITY', 'disturbance-12', '00000003-0000-1000-8000-00805f9b34fb');
 
 -------------------------------------
 -- UpdateDisturbanceTest.test6
