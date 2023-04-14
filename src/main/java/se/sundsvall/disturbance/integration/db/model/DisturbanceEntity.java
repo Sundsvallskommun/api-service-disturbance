@@ -192,7 +192,7 @@ public class DisturbanceEntity implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(affectedEntities, category, created, description, disturbanceId, id, plannedStartDate, plannedStopDate, status, title, updated, deleted);
+		return Objects.hash(affectedEntities, category, created, deleted, description, disturbanceId, id, plannedStartDate, plannedStopDate, status, title, updated);
 	}
 
 	@Override
@@ -200,17 +200,12 @@ public class DisturbanceEntity implements Serializable {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
+		if (!(obj instanceof DisturbanceEntity other)) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final DisturbanceEntity other = (DisturbanceEntity) obj;
-		return Objects.equals(affectedEntities, other.affectedEntities) && Objects.equals(category, other.category) && Objects.equals(created, other.created)
-			&& Objects.equals(description, other.description) && Objects.equals(disturbanceId, other.disturbanceId) && Objects.equals(id, other.id)
-			&& Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && Objects.equals(status, other.status)
-			&& Objects.equals(title, other.title) && Objects.equals(updated, other.updated) && Objects.equals(deleted, other.deleted);
+		return Objects.equals(affectedEntities, other.affectedEntities) && Objects.equals(category, other.category) && Objects.equals(created, other.created) && (deleted == other.deleted) && Objects.equals(description, other.description) && Objects.equals(
+			disturbanceId, other.disturbanceId) && (id == other.id) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && Objects.equals(status, other.status) && Objects.equals(title,
+				other.title) && Objects.equals(updated, other.updated);
 	}
 
 	@Override
