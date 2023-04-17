@@ -19,6 +19,6 @@ public interface ApiMessagingClient {
 	 * @param messageRequest with a list of messages.
 	 * @return a MessageStatusResponse
 	 */
-	@PostMapping(path = "messages/?async=true", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/messages?async=true", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	MessageResult sendMessage(MessageRequest messageRequest);
 }
