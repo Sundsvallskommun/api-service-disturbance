@@ -16,7 +16,6 @@ import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import se.sundsvall.dept44.test.AbstractAppTest;
@@ -27,7 +26,7 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 
 /**
  * Update disturbance application tests
- * 
+ *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
 @WireMockAppTestSuite(files = "classpath:/UpdateDisturbanceTest/", classes = Application.class)
@@ -35,7 +34,6 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata.sql"
 })
-@ActiveProfiles("junit")
 class UpdateDisturbanceTest extends AbstractAppTest {
 
 	@Autowired

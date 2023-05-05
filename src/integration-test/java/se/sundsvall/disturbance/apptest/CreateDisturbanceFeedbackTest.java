@@ -6,7 +6,6 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import se.sundsvall.dept44.test.AbstractAppTest;
@@ -17,7 +16,7 @@ import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackRepository;
 
 /**
  * Create disturbance feedback application tests
- * 
+ *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
 @WireMockAppTestSuite(files = "classpath:/CreateDisturbanceFeedbackTest/", classes = Application.class)
@@ -25,7 +24,6 @@ import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackRepository;
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata.sql"
 })
-@ActiveProfiles("junit")
 class CreateDisturbanceFeedbackTest extends AbstractAppTest {
 
 	@Autowired

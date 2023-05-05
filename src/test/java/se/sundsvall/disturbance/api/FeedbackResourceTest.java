@@ -2,6 +2,7 @@ package se.sundsvall.disturbance.api;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.util.UUID;
@@ -18,7 +19,7 @@ import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.FeedbackCreateRequest;
 import se.sundsvall.disturbance.service.FeedbackService;
 
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class FeedbackResourceTest {
 
@@ -31,9 +32,10 @@ class FeedbackResourceTest {
 	@Test
 	void createFeedback() {
 
-		// Parameter values.
+		// Arrange
 		final var body = FeedbackCreateRequest.create().withPartyId(UUID.randomUUID().toString());
 
+		// Act
 		webTestClient.post().uri("/feedback")
 			.contentType(APPLICATION_JSON)
 			.bodyValue(body)
@@ -42,6 +44,7 @@ class FeedbackResourceTest {
 			.expectHeader().doesNotExist(HttpHeaders.CONTENT_TYPE)
 			.expectBody().isEmpty();
 
+		// Assert
 		verify(feedbackServiceMock).createFeedback(body);
 		verifyNoMoreInteractions(feedbackServiceMock);
 	}
@@ -49,15 +52,17 @@ class FeedbackResourceTest {
 	@Test
 	void deleteFeedback() {
 
-		// Parameter values.
+		// Arrange
 		final var partyId = UUID.randomUUID().toString();
 
+		// Act
 		webTestClient.delete().uri("/feedback/{partyId}", partyId)
 			.exchange()
 			.expectStatus().isNoContent()
 			.expectHeader().doesNotExist(HttpHeaders.CONTENT_TYPE)
 			.expectBody().isEmpty();
 
+		// Assert
 		verify(feedbackServiceMock).deleteFeedback(partyId);
 		verifyNoMoreInteractions(feedbackServiceMock);
 	}

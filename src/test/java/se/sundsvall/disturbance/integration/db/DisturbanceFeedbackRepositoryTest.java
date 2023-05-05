@@ -3,13 +3,13 @@ package se.sundsvall.disturbance.integration.db;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
-
-import javax.transaction.Transactional;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -18,16 +18,16 @@ import se.sundsvall.disturbance.integration.db.model.DisturbanceFeedbackEntity;
 
 /**
  * Disturbance feedback repository tests.
- * 
+ *
  * @see src/test/resources/db/testdata.sql for data setup.
  */
-@SpringBootTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 @ActiveProfiles("junit")
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata.sql"
 })
-@Transactional
 class DisturbanceFeedbackRepositoryTest {
 
 	private static final Category CATEGORY = Category.ELECTRICITY;
@@ -107,7 +107,7 @@ class DisturbanceFeedbackRepositoryTest {
 			.hasSize(2);
 
 		// Delete all disturbanceFeedbacks in disturbance-8.
-		long numberOfDeletedEntities = disturbanceFeedbackRepository.deleteByCategoryAndDisturbanceId(CATEGORY, DISTURBANCE_ID_8);
+		final long numberOfDeletedEntities = disturbanceFeedbackRepository.deleteByCategoryAndDisturbanceId(CATEGORY, DISTURBANCE_ID_8);
 
 		// Verify that we only deleted 2 and that we doesn't have any disturbanceFeedbacks left in in disturbance-8.
 		assertThat(numberOfDeletedEntities).isEqualTo(2);
