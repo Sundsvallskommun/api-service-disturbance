@@ -6,12 +6,11 @@ spring:
     name: api-disturbance
   jpa:
     properties:
-      javax:
+      jakarta:
         persistence:
           schema-generation:
             database:
               action: none
-    database-platform: org.hibernate.dialect.MariaDB106Dialect
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
 logging:

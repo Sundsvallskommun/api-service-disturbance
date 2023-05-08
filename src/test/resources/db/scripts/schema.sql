@@ -61,7 +61,7 @@ create index disturbance_id_index on disturbance (disturbance_id);
 create index category_index on disturbance (category);
 create index party_id_index on feedback (party_id);
 
-    alter table affected 
+    alter table if exists affected 
        add constraint fk_affected_parent_id_disturbance_id 
        foreign key (parent_id) 
        references disturbance (id);

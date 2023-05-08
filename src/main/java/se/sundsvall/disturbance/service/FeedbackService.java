@@ -5,7 +5,7 @@ import static se.sundsvall.disturbance.service.ServiceConstants.ERROR_FEEDBACK_A
 import static se.sundsvall.disturbance.service.ServiceConstants.ERROR_FEEDBACK_NOT_FOUND;
 import static se.sundsvall.disturbance.service.mapper.FeedbackMapper.toFeedbackEntity;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

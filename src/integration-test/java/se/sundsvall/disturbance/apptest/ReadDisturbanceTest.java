@@ -4,7 +4,6 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.OK;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import se.sundsvall.dept44.test.AbstractAppTest;
@@ -13,7 +12,7 @@ import se.sundsvall.disturbance.Application;
 
 /**
  * Read disturbance application tests
- * 
+ *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
 @WireMockAppTestSuite(files = "classpath:/ReadDisturbanceTest/", classes = Application.class)
@@ -21,7 +20,6 @@ import se.sundsvall.disturbance.Application;
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata.sql"
 })
-@ActiveProfiles("junit")
 class ReadDisturbanceTest extends AbstractAppTest {
 
 	@Test

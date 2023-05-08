@@ -2,7 +2,7 @@ package se.sundsvall.disturbance.integration.db;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.repository.CrudRepository;
 
