@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.Assertions.within;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 import static se.sundsvall.disturbance.api.model.Category.COMMUNICATION;
 import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 import static se.sundsvall.disturbance.api.model.Status.CLOSED;
@@ -17,11 +18,10 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -30,16 +30,16 @@ import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 
 /**
  * Disturbance repository tests.
- * 
+ *
  * @see src/test/resources/db/testdata.sql for data setup.
  */
-@SpringBootTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 @ActiveProfiles("junit")
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata.sql"
 })
-@Transactional
 class DisturbanceRepositoryTest {
 
 	private static final String DISTURBANCE_ID_2 = "disturbance-2";
@@ -201,7 +201,7 @@ class DisturbanceRepositoryTest {
 				tuple(12L, ELECTRICITY.toString(), PLANNED.toString()));
 	}
 
-	private void assertAsDisturbanceEntity2(DisturbanceEntity disturbanceEntity) {
+	private void assertAsDisturbanceEntity2(final DisturbanceEntity disturbanceEntity) {
 
 		assertThat(disturbanceEntity.getId()).isEqualTo(2);
 		assertThat(disturbanceEntity.getCategory()).isEqualTo(COMMUNICATION.toString());
@@ -232,14 +232,14 @@ class DisturbanceRepositoryTest {
 		assertThat(disturbanceEntity.getAffectedEntities().get(2).getCoordinates()).isEqualTo("coordinate-33");
 	}
 
-	private static OffsetDateTime getOffsetDateTime(int year, int month, int day, int hour, int minute, int second, int nanoOfSecond) {
-		var utcOffsetDateTime = OffsetDateTime.of(year, month, day, hour, minute, second, nanoOfSecond, ZoneOffset.UTC);
-		ZoneOffset currentOffset = ZoneId.systemDefault().getRules().getOffset(utcOffsetDateTime.toInstant());
+	private static OffsetDateTime getOffsetDateTime(final int year, final int month, final int day, final int hour, final int minute, final int second, final int nanoOfSecond) {
+		final var utcOffsetDateTime = OffsetDateTime.of(year, month, day, hour, minute, second, nanoOfSecond, ZoneOffset.UTC);
+		final ZoneOffset currentOffset = ZoneId.systemDefault().getRules().getOffset(utcOffsetDateTime.toInstant());
 
 		return OffsetDateTime.of(year, month, day, hour, minute, second, nanoOfSecond, currentOffset);
 	}
 
-	private DisturbanceEntity setupNewDisturbanceEntity(String disturbanceId) {
+	private DisturbanceEntity setupNewDisturbanceEntity(final String disturbanceId) {
 		final var affectedEntity = new AffectedEntity();
 		affectedEntity.setPartyId("partyId-1");
 		affectedEntity.setCoordinates("coordinates-1");

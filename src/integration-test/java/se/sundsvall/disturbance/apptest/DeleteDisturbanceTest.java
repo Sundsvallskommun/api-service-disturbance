@@ -4,7 +4,6 @@ import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import se.sundsvall.dept44.test.AbstractAppTest;
@@ -14,7 +13,7 @@ import se.sundsvall.disturbance.api.model.Category;
 
 /**
  * Delete disturbance application tests
- * 
+ *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
 @WireMockAppTestSuite(files = "classpath:/DeleteDisturbanceTest/", classes = Application.class)
@@ -22,7 +21,6 @@ import se.sundsvall.disturbance.api.model.Category;
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata.sql"
 })
-@ActiveProfiles("junit")
 class DeleteDisturbanceTest extends AbstractAppTest {
 
 	@Test
