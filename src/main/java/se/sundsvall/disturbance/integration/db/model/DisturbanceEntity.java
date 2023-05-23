@@ -3,6 +3,7 @@ package se.sundsvall.disturbance.integration.db.model;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Optional.ofNullable;
+import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -10,6 +11,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import org.hibernate.annotations.TimeZoneStorage;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,15 +58,19 @@ public class DisturbanceEntity implements Serializable {
 	private String status;
 
 	@Column(name = "planned_start_date")
+	@TimeZoneStorage(NORMALIZE)
 	private OffsetDateTime plannedStartDate;
 
 	@Column(name = "planned_stop_date")
+	@TimeZoneStorage(NORMALIZE)
 	private OffsetDateTime plannedStopDate;
 
 	@Column(name = "created")
+	@TimeZoneStorage(NORMALIZE)
 	private OffsetDateTime created;
 
 	@Column(name = "updated")
+	@TimeZoneStorage(NORMALIZE)
 	private OffsetDateTime updated;
 
 	@Column(name = "deleted")
@@ -200,7 +207,7 @@ public class DisturbanceEntity implements Serializable {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof DisturbanceEntity other)) {
+		if (!(obj instanceof final DisturbanceEntity other)) {
 			return false;
 		}
 		return Objects.equals(affectedEntities, other.affectedEntities) && Objects.equals(category, other.category) && Objects.equals(created, other.created) && (deleted == other.deleted) && Objects.equals(description, other.description) && Objects.equals(
