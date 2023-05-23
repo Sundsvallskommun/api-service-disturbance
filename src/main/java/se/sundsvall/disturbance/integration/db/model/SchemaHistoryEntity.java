@@ -1,8 +1,12 @@
 package se.sundsvall.disturbance.integration.db.model;
 
+import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
+
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+
+import org.hibernate.annotations.TimeZoneStorage;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +27,7 @@ public class SchemaHistoryEntity implements Serializable {
 	private String comment;
 
 	@Column(name = "applied", nullable = false)
+	@TimeZoneStorage(NORMALIZE)
 	private OffsetDateTime applied;
 
 	public String getSchemaVersion() {
@@ -50,23 +55,28 @@ public class SchemaHistoryEntity implements Serializable {
 	}
 
 	@Override
-	public int hashCode() { return Objects.hash(applied, comment, schemaVersion); }
+	public int hashCode() {
+		return Objects.hash(applied, comment, schemaVersion);
+	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		SchemaHistoryEntity other = (SchemaHistoryEntity) obj;
+		}
+		final SchemaHistoryEntity other = (SchemaHistoryEntity) obj;
 		return Objects.equals(applied, other.applied) && Objects.equals(comment, other.comment) && Objects.equals(schemaVersion, other.schemaVersion);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("SchemaHistoryEntity [schemaVersion=").append(schemaVersion).append(", comment=").append(comment).append(", applied=").append(applied).append("]");
 		return builder.toString();
 	}
