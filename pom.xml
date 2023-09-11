@@ -17,7 +17,6 @@
 	<properties>
 		<!-- Pipeline properties -->
 		<docker.image.name>ms-disturbance</docker.image.name>
-		<published.container.port.sandbox>9095</published.container.port.sandbox>
 		<published.container.port.test>8723</published.container.port.test>
 		<published.container.port.production>8724</published.container.port.production>
 		<!-- Service properties -->
