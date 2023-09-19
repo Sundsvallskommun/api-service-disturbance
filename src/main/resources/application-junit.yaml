@@ -7,8 +7,6 @@ spring:
       jakarta:
         persistence:
           schema-generation:
-            database:
-              action: update
             scripts:
               action: create
               create-target: target/database/generated-schema.sql

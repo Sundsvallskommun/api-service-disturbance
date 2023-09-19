@@ -13,6 +13,8 @@ spring:
               action: none
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
+  flyway:
+    baselineOnMigrate: true
 logging:
   level:
     root: INFO
