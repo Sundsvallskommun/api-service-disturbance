@@ -22,8 +22,6 @@ import static se.sundsvall.disturbance.service.util.MappingUtils.getRemovedAffec
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
 
+import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
@@ -203,9 +202,9 @@ public class DisturbanceService {
 	 * The attributes that are checked are: description, title, plannedStartDate and plannedStopDate (and also if status is
 	 * changed from PLANNED to OPEN).
 	 *
-	 * @param oldEntity the old entity
-	 * @param newEntity the new (changed) entity
-	 * @return true if the content is changed, false otherwise.
+	 * @param  oldEntity the old entity
+	 * @param  newEntity the new (changed) entity
+	 * @return           true if the content is changed, false otherwise.
 	 */
 	private boolean contentIsChanged(final DisturbanceEntity oldEntity, final DisturbanceEntity newEntity) {
 		final var contentIsChanged = (nonNull(newEntity.getDescription()) && !equalsIgnoreCase(oldEntity.getDescription(), newEntity.getDescription())) ||

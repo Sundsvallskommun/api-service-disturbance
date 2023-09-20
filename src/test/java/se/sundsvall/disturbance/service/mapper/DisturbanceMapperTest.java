@@ -8,8 +8,8 @@ import static org.assertj.core.groups.Tuple.tuple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -168,10 +168,10 @@ class DisturbanceMapperTest {
 		oldEntity.setDescription("oldDescription");
 		oldEntity.setTitle("oldTitle");
 		oldEntity.setStatus("oldStatus");
-		oldEntity.setPlannedStartDate(now().minusDays(RandomUtils.nextInt(1, 1000)));
-		oldEntity.setPlannedStopDate(now().plusDays(RandomUtils.nextInt(1, 1000)));
-		oldEntity.setCreated(now().minusDays(RandomUtils.nextInt(1, 1000)));
-		oldEntity.setUpdated(now().minusDays(RandomUtils.nextInt(1, 1000)));
+		oldEntity.setPlannedStartDate(now().minusDays(new Random().nextInt(1, 1000)));
+		oldEntity.setPlannedStopDate(now().plusDays(new Random().nextInt(1, 1000)));
+		oldEntity.setCreated(now().minusDays(new Random().nextInt(1, 1000)));
+		oldEntity.setUpdated(now().minusDays(new Random().nextInt(1, 1000)));
 		oldEntity.setAffectedEntities(new ArrayList<>(List.of(oldAffected1, oldAffected2, oldAffected3)));
 
 		/**
@@ -196,10 +196,10 @@ class DisturbanceMapperTest {
 		newEntity.setDescription("newDescription");
 		newEntity.setTitle("newTitle");
 		newEntity.setStatus("newStatus");
-		newEntity.setPlannedStartDate(now().minusDays(RandomUtils.nextInt(1, 1000)));
-		newEntity.setPlannedStopDate(now().plusDays(RandomUtils.nextInt(1, 1000)));
-		newEntity.setCreated(now().minusDays(RandomUtils.nextInt(1, 1000)));
-		newEntity.setUpdated(now().minusDays(RandomUtils.nextInt(1, 1000)));
+		newEntity.setPlannedStartDate(now().minusDays(new Random().nextInt(1, 1000)));
+		newEntity.setPlannedStopDate(now().plusDays(new Random().nextInt(1, 1000)));
+		newEntity.setCreated(now().minusDays(new Random().nextInt(1, 1000)));
+		newEntity.setUpdated(now().minusDays(new Random().nextInt(1, 1000)));
 		newEntity.setAffectedEntities(new ArrayList<>(List.of(newAffected1, newAffected2)));
 
 		final var mergedDisturbanceEntity = DisturbanceMapper.toMergedDisturbanceEntity(oldEntity, newEntity);
@@ -249,10 +249,10 @@ class DisturbanceMapperTest {
 		oldEntity.setDescription("oldDescription");
 		oldEntity.setTitle("oldTitle");
 		oldEntity.setStatus("oldStatus");
-		oldEntity.setPlannedStartDate(now().minusDays(RandomUtils.nextInt(1, 1000)));
-		oldEntity.setPlannedStopDate(now().plusDays(RandomUtils.nextInt(1, 1000)));
-		oldEntity.setCreated(now().minusDays(RandomUtils.nextInt(1, 1000)));
-		oldEntity.setUpdated(now().minusDays(RandomUtils.nextInt(1, 1000)));
+		oldEntity.setPlannedStartDate(now().minusDays(new Random().nextInt(1, 1000)));
+		oldEntity.setPlannedStopDate(now().plusDays(new Random().nextInt(1, 1000)));
+		oldEntity.setCreated(now().minusDays(new Random().nextInt(1, 1000)));
+		oldEntity.setUpdated(now().minusDays(new Random().nextInt(1, 1000)));
 		oldEntity.setAffectedEntities(new ArrayList<>(List.of(oldAffected1, oldAffected2, oldAffected3)));
 
 		final var mergedDisturbanceEntity = DisturbanceMapper.toMergedDisturbanceEntity(oldEntity, new DisturbanceEntity());
