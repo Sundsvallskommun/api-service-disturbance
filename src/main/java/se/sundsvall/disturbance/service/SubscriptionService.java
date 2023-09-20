@@ -1,19 +1,35 @@
 package se.sundsvall.disturbance.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import se.sundsvall.disturbance.api.model.OptOutValue;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
+import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
+import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
+import se.sundsvall.disturbance.integration.db.model.SubscriptionOptOutEntity;
 
 @Service
 public class SubscriptionService {
 
-	// @Autowired
-	// private SubscriptionRepository subscriptionRepository;
+	private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
+
+	private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+	@Autowired
+	private SubscriptionRepository subscriptionRepository;
 
 	@Transactional
 	public Subscription create(final SubscriptionCreateRequest request) {
@@ -24,7 +40,19 @@ public class SubscriptionService {
 		// }
 
 		// TODO: map and save
-		return Subscription.create().withId(1L);
+		SubscriptionEntity entity = new SubscriptionEntity()
+				.withPartyId(request.getPartyId())
+				.withOptOuts(request.getOptOutSettings().stream()
+						.map(optOutSetting -> new SubscriptionOptOutEntity()
+								.withCategory(optOutSetting.getCategory())
+								.withOptOuts(optOutSetting.getValues().stream()
+										.collect(HashMap::new, (map, optOutValue) -> map.put(optOutValue.getKey(), optOutValue.getValue()), HashMap::putAll)))
+						.collect(Collectors.toSet()));
+
+		SubscriptionEntity saved = subscriptionRepository.save(entity);
+		log.info("Created subscription: {}", gson.toJson(saved));
+
+		return Subscription.create().withId(saved.getId());
 	}
 
 	@Transactional
