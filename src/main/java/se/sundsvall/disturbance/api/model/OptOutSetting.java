@@ -1,11 +1,9 @@
 package se.sundsvall.disturbance.api.model;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 
 @Schema(description = "Opt out model")
 public class OptOutSetting {
@@ -13,8 +11,7 @@ public class OptOutSetting {
 	@Schema(implementation = Category.class)
 	private Category category;
 
-	@ArraySchema(schema = @Schema(implementation = OptOutValue.class))
-	private List<@Valid OptOutValue> values;
+	private Map<String, String> values;
 
 	public static OptOutSetting create() {
 		return new OptOutSetting();
@@ -33,15 +30,15 @@ public class OptOutSetting {
 		return this;
 	}
 
-	public List<OptOutValue> getValues() {
+	public Map<String, String> getValues() {
 		return values;
 	}
 
-	public void setValues(List<OptOutValue> values) {
+	public void setValues(Map<String, String> values) {
 		this.values = values;
 	}
 
-	public OptOutSetting withValues(List<OptOutValue> values) {
+	public OptOutSetting withValues(Map<String, String> values) {
 		this.values = values;
 		return this;
 	}

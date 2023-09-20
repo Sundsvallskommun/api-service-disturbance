@@ -27,7 +27,6 @@ import org.zalando.problem.Problem;
 import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.OptOutSetting;
-import se.sundsvall.disturbance.api.model.OptOutValue;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
@@ -55,9 +54,7 @@ class SubscriptionResourceTest {
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
-				.withValues(List.of(OptOutValue.create()
-					.withKey("key")
-					.withValue("value")))));
+				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.create(any())).thenReturn(Subscription.create().withId(id));
 
@@ -85,9 +82,7 @@ class SubscriptionResourceTest {
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
-				.withValues(List.of(OptOutValue.create()
-					.withKey("key")
-					.withValue("value")))));
+				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.read(anyLong())).thenReturn(subscription);
 
@@ -116,9 +111,7 @@ class SubscriptionResourceTest {
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
-				.withValues(List.of(OptOutValue.create()
-					.withKey("key")
-					.withValue("value")))));
+				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.findByPartyId(any())).thenReturn(List.of(subscription));
 
@@ -153,9 +146,7 @@ class SubscriptionResourceTest {
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
-				.withValues(List.of(OptOutValue.create()
-					.withKey("key")
-					.withValue("value")))));
+				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.update(anyLong(), any())).thenReturn(subscription);
 

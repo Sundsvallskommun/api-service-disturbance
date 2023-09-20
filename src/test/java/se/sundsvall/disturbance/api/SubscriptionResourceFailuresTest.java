@@ -22,7 +22,6 @@ import org.zalando.problem.violations.Violation;
 
 import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.OptOutSetting;
-import se.sundsvall.disturbance.api.model.OptOutValue;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
 import se.sundsvall.disturbance.service.SubscriptionService;
@@ -38,7 +37,7 @@ class SubscriptionResourceFailuresTest {
 	private WebTestClient webTestClient;
 
 	@Test
-	void createnSubscriptionMissingBody() {
+	void createSubscriptionMissingBody() {
 
 		// Act
 		final var response = webTestClient.post().uri("/subscriptions")
@@ -157,33 +156,10 @@ class SubscriptionResourceFailuresTest {
 	}
 
 	@Test
-	void updateSubscriptionMissingBody() {
-
-		// Act
-		final var response = webTestClient.patch().uri("/subscriptions/{id}", "1234")
-			.contentType(APPLICATION_JSON)
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(Problem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: public org.springframework.http.ResponseEntity<se.sundsvall.disturbance.api.model.Subscription> se.sundsvall.disturbance.api.SubscriptionResource.updateSubscription(long,se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest)");
-
-		verifyNoInteractions(subscriptionServiceMock);
-	}
-
-	@Test
-	void updateSubscriptionEmptyOptOutValues() {
+	void updateSubscriptionEmptyBody() {
 
 		// Arrange
-		final var request = SubscriptionUpdateRequest.create()
-			.withOptOutSettings(List.of(OptOutSetting.create().withValues(List.of(OptOutValue.create()))));
+		final var request = SubscriptionUpdateRequest.create();
 
 		// Act
 		final var response = webTestClient.patch().uri("/subscriptions/{id}", "1234")
@@ -197,13 +173,12 @@ class SubscriptionResourceFailuresTest {
 			.getResponseBody();
 
 		// Assert
+		// Assert
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(
-				tuple("optOutSettings[0].values[0].key", "must not be blank"),
-				tuple("optOutSettings[0].values[0].value", "must not be blank"));
+			.containsExactly(tuple("optOutSettings", "must not be null"));
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}

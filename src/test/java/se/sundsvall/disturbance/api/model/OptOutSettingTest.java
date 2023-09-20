@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ class OptOutSettingTest {
 	void testBuilderMethods() {
 
 		final var category = Category.ELECTRICITY;
-		final var values = List.of(OptOutValue.create());
+		final var values = Map.of("key", "value");
 
 		final var bean = OptOutSetting.create()
 			.withCategory(category)
@@ -42,7 +42,7 @@ class OptOutSettingTest {
 
 	@Test
 	void testNoDirtOnCreatedBean() {
-		assertThat(OptOutValue.create()).hasAllNullFieldsOrProperties();
-		assertThat(new OptOutValue()).hasAllNullFieldsOrProperties();
+		assertThat(OptOutSetting.create()).hasAllNullFieldsOrProperties();
+		assertThat(new OptOutSetting()).hasAllNullFieldsOrProperties();
 	}
 }

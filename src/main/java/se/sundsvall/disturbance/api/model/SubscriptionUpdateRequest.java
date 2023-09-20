@@ -5,11 +5,13 @@ import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Subscription create request model")
 public class SubscriptionUpdateRequest {
 
 	@Schema(description = "Opt out settings")
+	@NotNull
 	private List<@Valid OptOutSetting> optOutSettings;
 
 	public static SubscriptionUpdateRequest create() {
