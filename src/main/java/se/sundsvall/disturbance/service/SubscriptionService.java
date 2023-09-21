@@ -1,8 +1,6 @@
 package se.sundsvall.disturbance.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,15 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
-
-import se.sundsvall.disturbance.api.model.OptOutValue;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
+import se.sundsvall.disturbance.integration.db.OptOutSettingsRepository;
 import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
-import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
-import se.sundsvall.disturbance.integration.db.model.SubscriptionOptOutEntity;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class SubscriptionService {
@@ -31,6 +27,9 @@ public class SubscriptionService {
 	@Autowired
 	private SubscriptionRepository subscriptionRepository;
 
+	@Autowired
+	private OptOutSettingsRepository optOutSettingsRepository;
+
 	@Transactional
 	public Subscription create(final SubscriptionCreateRequest request) {
 
@@ -39,20 +38,30 @@ public class SubscriptionService {
 		// throw Problem.valueOf(CONFLICT, format(ERROR_SUBSCRIPTION_ALREADY_EXISTS, request.getPartyId()));
 		// }
 
-		// TODO: map and save
-		SubscriptionEntity entity = new SubscriptionEntity()
+		//Temp-implementation
+		/*Set<OptOutSettingsEntity> optOutSettingsEntities = new HashSet<>();
+		request.getOptOutSettings().forEach(optOutSetting -> {
+			OptOutSettingsEntity optOutSettingsEntity = new OptOutSettingsEntity();
+			optOutSettingsEntity.setCategory(optOutSetting.getCategory());
+			optOutSettingsEntity.setOptOuts(optOutSetting.getValues());
+			optOutSettingsEntities.add(optOutSettingsEntity);
+		});
+
+		var subscriptionEntity = new SubscriptionEntity()
 				.withPartyId(request.getPartyId())
-				.withOptOuts(request.getOptOutSettings().stream()
-						.map(optOutSetting -> new SubscriptionOptOutEntity()
-								.withCategory(optOutSetting.getCategory())
-								.withOptOuts(optOutSetting.getValues().stream()
-										.collect(HashMap::new, (map, optOutValue) -> map.put(optOutValue.getKey(), optOutValue.getValue()), HashMap::putAll)))
-						.collect(Collectors.toSet()));
+				.withOptOuts(optOutSettingsEntities);
+		//Save the optOutSettings
+		optOutSettingsEntities.forEach(optOutSettingsEntity -> {
+			optOutSettingsEntity.setSubscriptionEntity(subscriptionEntity);
+			optOutSettingsRepository.save(optOutSettingsEntity);
+		});
 
-		SubscriptionEntity saved = subscriptionRepository.save(entity);
-		log.info("Created subscription: {}", gson.toJson(saved));
+		//Save the SubscriptionEntity
+		var savedSubscriptionEntity = subscriptionRepository.save(subscriptionEntity);
 
-		return Subscription.create().withId(saved.getId());
+		return Subscription.create().withId(savedSubscriptionEntity.getId());*/
+
+		return Subscription.create().withId(1L);
 	}
 
 	@Transactional

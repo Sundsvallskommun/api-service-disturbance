@@ -1,16 +1,13 @@
 package se.sundsvall.disturbance.integration.db.model;
 
-import static java.util.Objects.isNull;
-
-import java.util.HashSet;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
-
-import se.sundsvall.disturbance.api.model.Category;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,7 +20,7 @@ import jakarta.persistence.Table;
 		indexes = {
 				@Index(name = "party_id_index", columnList = "party_id")
 		})
-public class SubscriptionEntity {
+public class SubscriptionEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,18 +30,15 @@ public class SubscriptionEntity {
 	@Column(name = "party_id", nullable = false)
 	private String partyId;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<SubscriptionOptOutEntity> optOuts;
-
-	public void addOptOut(SubscriptionOptOutEntity optOut) {
-		if(isNull(this.optOuts)) {
-			this.optOuts = new HashSet<>();
-		}
-		optOuts.add(optOut);
-	}
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "opt_out_settings_id")
+	private transient Set<OptOutSettingsEntity> optOuts;
 
 	public Long getId() {
 		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getPartyId() {
@@ -55,11 +49,11 @@ public class SubscriptionEntity {
 		this.partyId = partyId;
 	}
 
-	public Set<SubscriptionOptOutEntity> getOptOuts() {
+	public Set<OptOutSettingsEntity> getOptOuts() {
 		return optOuts;
 	}
 
-	public void setOptOuts(Set<SubscriptionOptOutEntity> optOuts) {
+	public void setOptOuts(Set<OptOutSettingsEntity> optOuts) {
 		this.optOuts = optOuts;
 	}
 
@@ -68,8 +62,30 @@ public class SubscriptionEntity {
 		return this;
 	}
 
-	public SubscriptionEntity withOptOuts(Set<SubscriptionOptOutEntity> optOuts) {
+	public SubscriptionEntity withOptOuts(Set<OptOutSettingsEntity> optOuts) {
 		this.optOuts = optOuts;
 		return this;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, partyId, optOuts);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SubscriptionEntity entity = (SubscriptionEntity) o;
+		return Objects.equals(id, entity.id) && Objects.equals(partyId, entity.partyId) && Objects.equals(optOuts, entity.optOuts);
+	}
+
+	@Override
+	public String toString() {
+		return "SubscriptionEntity{" +
+				"id=" + id +
+				", partyId='" + partyId + '\'' +
+				", optOuts=" + optOuts +
+				'}';
 	}
 }
