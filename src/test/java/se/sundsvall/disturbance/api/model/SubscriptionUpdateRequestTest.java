@@ -9,15 +9,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.util.UUID;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-class FeedbackCreateRequestTest {
+class SubscriptionUpdateRequestTest {
 
 	@Test
 	void testBean() {
-		assertThat(FeedbackCreateRequest.class, allOf(
+		assertThat(SubscriptionUpdateRequest.class, allOf(
 			hasValidBeanConstructor(),
 			hasValidGettersAndSetters(),
 			hasValidBeanHashCode(),
@@ -28,17 +28,18 @@ class FeedbackCreateRequestTest {
 	@Test
 	void testBuilderMethods() {
 
-		final var partyId = UUID.randomUUID().toString();
+		final var optOutSettings = List.of(OptOutSetting.create());
 
-		final var feedBackRequest = FeedbackCreateRequest.create()
-			.withPartyId(partyId);
+		final var bean = SubscriptionUpdateRequest.create()
+			.withOptOutSettings(optOutSettings);
 
-		assertThat(feedBackRequest).isNotNull().hasNoNullFieldsOrProperties();
-		assertThat(feedBackRequest.getPartyId()).isEqualTo(partyId);
+		assertThat(bean).isNotNull().hasNoNullFieldsOrProperties();
+		assertThat(bean.getOptOutSettings()).isEqualTo(optOutSettings);
 	}
 
 	@Test
 	void testNoDirtOnCreatedBean() {
-		assertThat(FeedbackCreateRequest.create()).hasAllNullFieldsOrProperties();
+		assertThat(SubscriptionUpdateRequest.create()).hasAllNullFieldsOrProperties();
+		assertThat(new SubscriptionUpdateRequest()).hasAllNullFieldsOrProperties();
 	}
 }

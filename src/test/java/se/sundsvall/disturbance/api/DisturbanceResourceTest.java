@@ -26,7 +26,6 @@ import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
 import se.sundsvall.disturbance.service.DisturbanceFeedbackService;
 import se.sundsvall.disturbance.service.DisturbanceService;
@@ -192,26 +191,6 @@ class DisturbanceResourceTest {
 		// Assert
 		verify(disturbanceServiceMock).createDisturbance(body);
 		verifyNoInteractions(disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedback() {
-
-		// Arrange
-		final var category = Category.COMMUNICATION;
-		final var disturbanceId = "12345";
-		final var body = DisturbanceFeedbackCreateRequest.create().withPartyId(UUID.randomUUID().toString());
-
-		webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", category, disturbanceId)
-			.contentType(APPLICATION_JSON)
-			.bodyValue(body)
-			.exchange()
-			.expectStatus().isNoContent()
-			.expectHeader().doesNotExist(HttpHeaders.CONTENT_TYPE)
-			.expectBody().isEmpty();
-
-		verify(disturbanceFeedbackServiceMock).createDisturbanceFeedback(category, disturbanceId, body);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
 	}
 
 	@Test

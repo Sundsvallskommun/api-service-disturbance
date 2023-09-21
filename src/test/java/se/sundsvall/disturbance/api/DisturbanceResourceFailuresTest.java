@@ -26,7 +26,6 @@ import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
 import se.sundsvall.disturbance.service.DisturbanceFeedbackService;
 import se.sundsvall.disturbance.service.DisturbanceService;
@@ -398,103 +397,6 @@ class DisturbanceResourceFailuresTest {
 				tuple("affecteds[0].reference", "size must be between 0 and 512"),
 				tuple("description", "size must be between 0 and 8192"),
 				tuple("title", "size must be between 0 and 255"));
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	/**
-	 * Create disturbance feedback tests:
-	 */
-
-	@Test
-	void createDisturbanceFeedbackMissingBody() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(Problem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.DisturbanceResource.createDisturbanceFeedback(se.sundsvall.disturbance.api.model.Category,java.lang.String,se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest)");
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedbackMissingPartyId() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.bodyValue(DisturbanceFeedbackCreateRequest.create().withPartyId(null)) // Missing partyId
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(ConstraintViolationProblem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("partyId", "not a valid UUID"));
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedbackBadBodyFormat() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.bodyValue("badformat")
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(Problem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"JSON parse error: Unrecognized token 'badformat': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')");
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedbackBadPartyId() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.bodyValue(DisturbanceFeedbackCreateRequest.create().withPartyId("bad-party-id"))
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(ConstraintViolationProblem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("partyId", "not a valid UUID"));
 
 		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
 	}

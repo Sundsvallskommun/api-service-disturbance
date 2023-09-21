@@ -916,7 +916,7 @@ class DisturbanceServiceTest {
 		try (MockedStatic<DisturbanceMapper> disturbanceMapperMock = Mockito.mockStatic(DisturbanceMapper.class)) {
 			disturbanceMapperMock.when(() -> DisturbanceMapper.toDisturbances(any())).thenReturn(disturbancesMock);
 
-			var result = disturbanceService.findByStatusAndCategory(statusFilterMock, categoryFilterMock);
+			final var result = disturbanceService.findByStatusAndCategory(statusFilterMock, categoryFilterMock);
 
 			verify(disturbanceRepositoryMock).findByStatusAndCategory(same(statusFilterMock), same(categoryFilterMock));
 			disturbanceMapperMock.verify(() -> DisturbanceMapper.toDisturbances(same(disturbanceEntitiesMock)));
