@@ -7,8 +7,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.zalando.problem.Status.BAD_REQUEST;
+import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +91,7 @@ class SubscriptionResourceFailuresTest {
 		// Arrange
 		final var request = SubscriptionCreateRequest.create()
 			.withPartyId(null)  // missing partyId.
-			.withOptOutSettings(List.of(OptOutSetting.create()));
+			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY)));
 
 		// Act
 		final var response = webTestClient.post().uri("/subscriptions")
@@ -108,6 +110,36 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("partyId", "not a valid UUID"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
+	void createSubscriptionMissingOptOutCategory() {
+
+		// Arrange
+		final var request = SubscriptionCreateRequest.create()
+			.withPartyId(UUID.randomUUID().toString())
+			.withOptOutSettings(List.of(OptOutSetting.create()
+				.withCategory(null))); // missing category.
+
+		// Act
+		final var response = webTestClient.post().uri("/subscriptions")
+			.contentType(APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("optOutSettings[0].category", "must not be null"));
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}
@@ -156,10 +188,12 @@ class SubscriptionResourceFailuresTest {
 	}
 
 	@Test
-	void updateSubscriptionEmptyBody() {
+	void updateSubscriptionMissingOptOutCategory() {
 
 		// Arrange
-		final var request = SubscriptionUpdateRequest.create();
+		final var request = SubscriptionUpdateRequest.create()
+			.withOptOutSettings(List.of(OptOutSetting.create()
+				.withCategory(null))); // missing category.
 
 		// Act
 		final var response = webTestClient.patch().uri("/subscriptions/{id}", "1234")
@@ -178,7 +212,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("optOutSettings", "must not be null"));
+			.containsExactly(tuple("optOutSettings[0].category", "must not be null"));
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}

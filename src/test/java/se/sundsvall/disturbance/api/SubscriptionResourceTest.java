@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
+import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.List;
 import java.util.Map;
@@ -137,9 +138,8 @@ class SubscriptionResourceTest {
 
 		// Arrange
 		final var id = 1L;
-
 		final var subscriptionUpdateRequest = SubscriptionUpdateRequest.create()
-			.withOptOutSettings(List.of(OptOutSetting.create()));
+			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY)));
 
 		final var subscription = Subscription.create()
 			.withId(id)

@@ -16,7 +16,7 @@ public class SubscriptionCreateRequest {
 	@Schema(description = "PartyId (e.g. a personId or an organizationId)", example = "81471222-5798-11e9-ae24-57fa13b361e1", requiredMode = REQUIRED)
 	private String partyId;
 
-	@Schema(description = "Opt out settings")
+	@Schema(description = "Opt-out settings")
 	private List<@Valid OptOutSetting> optOutSettings;
 
 	public static SubscriptionCreateRequest create() {

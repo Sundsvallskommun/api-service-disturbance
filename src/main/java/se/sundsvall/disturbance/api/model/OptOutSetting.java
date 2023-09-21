@@ -4,11 +4,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
-@Schema(description = "Opt out model")
+@Schema(description = "Opt-out setting model")
 public class OptOutSetting {
 
 	@Schema(implementation = Category.class)
+	@NotNull
 	private Category category;
 
 	private Map<String, String> values;

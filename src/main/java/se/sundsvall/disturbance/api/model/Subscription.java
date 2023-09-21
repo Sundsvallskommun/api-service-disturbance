@@ -9,10 +9,10 @@ import java.util.Objects;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 
-@Schema(description = "Subscription create request model", accessMode = READ_ONLY)
+@Schema(description = "Subscription model", accessMode = READ_ONLY)
 public class Subscription {
 
-	@Schema(description = "Subscriptionb ID", example = "1234")
+	@Schema(description = "Subscription ID", example = "1234")
 	private Long id;
 
 	@Schema(description = "PartyId (e.g. a personId or an organizationId)", example = "81471222-5798-11e9-ae24-57fa13b361e1")
