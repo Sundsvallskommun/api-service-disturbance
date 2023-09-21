@@ -151,7 +151,7 @@ class SubscriptionResourceTest {
 		when(subscriptionServiceMock.update(anyLong(), any())).thenReturn(subscription);
 
 		// Act
-		final var response = webTestClient.patch().uri("/subscriptions/{id}", id)
+		final var response = webTestClient.put().uri("/subscriptions/{id}", id)
 			.contentType(APPLICATION_JSON)
 			.bodyValue(subscriptionUpdateRequest)
 			.exchange()

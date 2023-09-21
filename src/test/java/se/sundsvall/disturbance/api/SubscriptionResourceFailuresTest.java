@@ -196,7 +196,7 @@ class SubscriptionResourceFailuresTest {
 				.withCategory(null))); // missing category.
 
 		// Act
-		final var response = webTestClient.patch().uri("/subscriptions/{id}", "1234")
+		final var response = webTestClient.put().uri("/subscriptions/{id}", "1234")
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
