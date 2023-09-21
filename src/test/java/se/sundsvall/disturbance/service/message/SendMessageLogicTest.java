@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.ISSUE_TYPE;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -26,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import generated.se.sundsvall.businessrules.IssueType;
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Header;
 import generated.se.sundsvall.messaging.Header.NameEnum;
@@ -115,7 +115,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-2"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
@@ -129,7 +129,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-4"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
@@ -143,7 +143,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-6"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
@@ -235,7 +235,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-4"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
@@ -249,7 +249,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-6"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
@@ -335,7 +335,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-2"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
@@ -348,7 +348,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-4"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
@@ -362,7 +362,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-6"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
@@ -417,7 +417,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-1"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(1)))
@@ -431,7 +431,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-2"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
@@ -500,7 +500,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-2"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
@@ -514,7 +514,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-4"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
@@ -528,7 +528,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-6"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
@@ -620,7 +620,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-4"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
@@ -634,7 +634,7 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 					new Header().name(NameEnum.FACILITY_ID).values(List.of(String.valueOf("facilityId-6"))),
 					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))

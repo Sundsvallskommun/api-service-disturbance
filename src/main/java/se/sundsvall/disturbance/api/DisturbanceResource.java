@@ -54,7 +54,7 @@ public class DisturbanceResource {
 
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Create a new disturbance.")
-	@ApiResponse(responseCode = "201", headers = @Header(name = LOCATION, schema = @Schema(type = "string")), description = "Successful operation", useReturnTypeSchema = true)
+	@ApiResponse(responseCode = "201", headers = @Header(name = LOCATION, description = "Location of the created resource.", schema = @Schema(type = "string")), description = "Successful operation", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
@@ -62,7 +62,6 @@ public class DisturbanceResource {
 	public ResponseEntity<Void> createDisturbance(final UriComponentsBuilder uriComponentsBuilder, @RequestBody @Valid final DisturbanceCreateRequest body) {
 
 		final var result = disturbanceService.createDisturbance(body);
-
 		return created(uriComponentsBuilder.path("/disturbances/{category}/{disturbanceId}").buildAndExpand(result.getCategory(), result.getId()).toUri())
 			.header(CONTENT_TYPE, ALL_VALUE)
 			.build();
@@ -137,7 +136,6 @@ public class DisturbanceResource {
 		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId) {
 
 		disturbanceService.deleteDisturbance(category, disturbanceId);
-
 		return noContent().build();
 	}
 }

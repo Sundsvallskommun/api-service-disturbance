@@ -1,11 +1,9 @@
 package se.sundsvall.disturbance.integration.messaging.mapper;
 
-import static java.util.Objects.isNull;
-
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import generated.se.sundsvall.businessrules.IssueType;
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Header;
 import generated.se.sundsvall.messaging.Header.NameEnum;
@@ -17,16 +15,18 @@ import se.sundsvall.disturbance.api.model.Category;
 
 public class MessagingMapper {
 
+	public static final String ISSUE_TYPE = "DISTURBANCE";
+
 	private MessagingMapper() {}
 
 	/**
 	 * Create a Message object from provided parameters.
 	 *
-	 * @param sender      the mesage sender
-	 * @param party       the message party (an object with partyId and/or externalReferences)
-	 * @param subject     the message subject
-	 * @param messageText the message text.
-	 * @return A Message object.
+	 * @param  sender      the mesage sender
+	 * @param  party       the message party (an object with partyId and/or externalReferences)
+	 * @param  subject     the message subject
+	 * @param  messageText the message text.
+	 * @return             A Message object.
 	 */
 	public static Message toMessage(final List<Header> headers, final MessageSender sender, final MessageParty party, final String subject, final String messageText) {
 		return new Message()
@@ -39,9 +39,9 @@ public class MessagingMapper {
 
 	public static List<Header> toHeaders(final Category category, final String facilityId) {
 		return List.of(
-			new Header().name(NameEnum.TYPE).values(List.of(String.valueOf(IssueType.DISTURBANCE))),
+			new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
 			new Header().name(NameEnum.FACILITY_ID).values(List.of(facilityId)),
-			new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(toBusinessRulesCategory(category)))));
+			new Header().name(NameEnum.CATEGORY).values(List.of(Objects.toString(category, null))));
 	}
 
 	public static Email toEmail(final String senderEmailName, final String senderEmailAddress) {
@@ -58,21 +58,5 @@ public class MessagingMapper {
 	public static MessageParty toParty(final String partyId) {
 		return new MessageParty()
 			.partyId(UUID.fromString(partyId));
-	}
-
-	public static generated.se.sundsvall.businessrules.Category toBusinessRulesCategory(final Category category) {
-		if (isNull(category)) {
-			return null;
-		}
-
-		return switch (category) {
-			case COMMUNICATION -> generated.se.sundsvall.businessrules.Category.COMMUNICATION;
-			case DISTRICT_COOLING -> generated.se.sundsvall.businessrules.Category.DISTRICT_COOLING;
-			case DISTRICT_HEATING -> generated.se.sundsvall.businessrules.Category.DISTRICT_HEATING;
-			case ELECTRICITY -> generated.se.sundsvall.businessrules.Category.ELECTRICITY;
-			case ELECTRICITY_TRADE -> generated.se.sundsvall.businessrules.Category.ELECTRICITY_TRADE;
-			case WASTE_MANAGEMENT -> generated.se.sundsvall.businessrules.Category.WASTE_MANAGEMENT;
-			case WATER -> generated.se.sundsvall.businessrules.Category.WATER;
-		};
 	}
 }
