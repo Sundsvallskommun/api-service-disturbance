@@ -3,7 +3,7 @@ package se.sundsvall.disturbance.integration.messaging.configuration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.sundsvall.disturbance.integration.messaging.configuration.ApiMessagingConfiguration.CLIENT_REGISTRATION_ID;
+import static se.sundsvall.disturbance.integration.messaging.configuration.ApiMessagingConfiguration.CLIENT_ID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +51,7 @@ class ApiMessagingConfigurationTest {
 
 		when(propertiesMock.connectTimeout()).thenReturn(connectTimeout);
 		when(propertiesMock.readTimeout()).thenReturn(readTimeout);
-		when(clientRepositoryMock.findByRegistrationId(CLIENT_REGISTRATION_ID)).thenReturn(clientRegistrationMock);
+		when(clientRepositoryMock.findByRegistrationId(CLIENT_ID)).thenReturn(clientRegistrationMock);
 
 		// Mock static FeignMultiCustomizer to enable spy and to verify that static method is being called
 		try (MockedStatic<FeignMultiCustomizer> feignMultiCustomizerMock = Mockito.mockStatic(FeignMultiCustomizer.class)) {
@@ -65,7 +65,7 @@ class ApiMessagingConfigurationTest {
 		// Verifications
 		verify(propertiesMock).connectTimeout();
 		verify(propertiesMock).readTimeout();
-		verify(clientRepositoryMock).findByRegistrationId(CLIENT_REGISTRATION_ID);
+		verify(clientRepositoryMock).findByRegistrationId(CLIENT_ID);
 		verify(feignMultiCustomizerSpy).withErrorDecoder(errorDecoderCaptor.capture());
 		verify(feignMultiCustomizerSpy).withRequestTimeoutsInSeconds(connectTimeout, readTimeout);
 		verify(feignMultiCustomizerSpy).withRetryableOAuth2InterceptorForClientRegistration(clientRegistrationMock);
@@ -74,6 +74,6 @@ class ApiMessagingConfigurationTest {
 		// Assert ErrorDecoder
 		assertThat(errorDecoderCaptor.getValue())
 			.isInstanceOf(ProblemErrorDecoder.class)
-			.hasFieldOrPropertyWithValue("integrationName", CLIENT_REGISTRATION_ID);
+			.hasFieldOrPropertyWithValue("integrationName", CLIENT_ID);
 	}
 }

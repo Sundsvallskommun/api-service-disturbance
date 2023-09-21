@@ -12,7 +12,7 @@
 	</parent>
 	<groupId>se.sundsvall</groupId>
 	<artifactId>api-service-disturbance</artifactId>
-	<version>3.0</version>
+	<version>4.0</version>
 	<name>api-service-disturbance</name>
 	<properties>
 		<!-- Pipeline properties -->
@@ -118,31 +118,6 @@
 								<sourceFolder>${generated-sources-java-path}</sourceFolder>
 								<dateLibrary>java8</dateLibrary>
 								<modelPackage>generated.se.sundsvall.messaging</modelPackage>
-								<openApiNullable>false</openApiNullable>
-								<generatePom>false</generatePom>
-								<interfaceOnly>true</interfaceOnly>
-							</configOptions>
-						</configuration>
-					</execution>
-					<execution>
-						<!-- Model used for the header values in Messaging -->
-						<id>business-rules-api</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<inputSpec>src/main/resources/integrations/business-rules-api.yaml</inputSpec>
-							<output>${generated-sources-path}</output>
-							<generatorName>jaxrs-spec</generatorName>
-							<generateApis>false</generateApis>
-							<generateSupportingFiles>false</generateSupportingFiles>
-							<configOptions>
-								<useSpringBoot3>true</useSpringBoot3>
-								<useBeanValidation>false</useBeanValidation>
-								<useSwaggerAnnotations>false</useSwaggerAnnotations>
-								<sourceFolder>${generated-sources-java-path}</sourceFolder>
-								<dateLibrary>java8</dateLibrary>
-								<modelPackage>generated.se.sundsvall.businessrules</modelPackage>
 								<openApiNullable>false</openApiNullable>
 								<generatePom>false</generatePom>
 								<interfaceOnly>true</interfaceOnly>

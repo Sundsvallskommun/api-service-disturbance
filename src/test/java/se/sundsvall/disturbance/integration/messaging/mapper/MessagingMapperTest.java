@@ -2,15 +2,13 @@ package se.sundsvall.disturbance.integration.messaging.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.ISSUE_TYPE;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
-import generated.se.sundsvall.businessrules.IssueType;
 import generated.se.sundsvall.messaging.Header;
 import generated.se.sundsvall.messaging.Header.NameEnum;
 import generated.se.sundsvall.messaging.MessageSender;
@@ -25,7 +23,7 @@ class MessagingMapperTest {
 		final var sms = MessagingMapper.toSms("smsName");
 		final var headerCategory = Category.ELECTRICITY;
 		final var headerFacilityId = "facilityId";
-		final var headerIssueType = IssueType.DISTURBANCE;
+		final var headerIssueType = ISSUE_TYPE;
 
 		final var sender = new MessageSender()
 			.email(email)
@@ -87,21 +85,8 @@ class MessagingMapperTest {
 		assertThat(headers)
 			.extracting(Header::getName, Header::getValues)
 			.containsExactly(
-				tuple(NameEnum.TYPE, List.of(IssueType.DISTURBANCE.toString())),
+				tuple(NameEnum.TYPE, List.of(ISSUE_TYPE)),
 				tuple(NameEnum.FACILITY_ID, List.of("facilityId")),
 				tuple(NameEnum.CATEGORY, List.of(Category.WATER.toString())));
-	}
-
-	@ParameterizedTest
-	@EnumSource(Category.class)
-	void toBusinessRulesCategory(final Category category) {
-		assertThat(MessagingMapper.toBusinessRulesCategory(category))
-			.isInstanceOf(generated.se.sundsvall.businessrules.Category.class)
-			.asString().isEqualTo(category.toString());
-	}
-
-	@Test
-	void toBusinessRulesCategoryWhenInputIsNull() {
-		assertThat(MessagingMapper.toBusinessRulesCategory(null)).isNull();
 	}
 }

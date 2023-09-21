@@ -5,6 +5,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.zalando.problem.Status.CONFLICT;
+import static org.zalando.problem.Status.NOT_FOUND;
 import static se.sundsvall.disturbance.api.model.Status.CLOSED;
 import static se.sundsvall.disturbance.api.model.Status.OPEN;
 import static se.sundsvall.disturbance.api.model.Status.PLANNED;
@@ -27,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zalando.problem.Problem;
-import org.zalando.problem.Status;
 
 import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
@@ -62,7 +63,7 @@ public class DisturbanceService {
 	@Transactional
 	public Disturbance findByCategoryAndDisturbanceId(final Category category, final String disturbanceId) {
 		return toDisturbance(disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
-			.orElseThrow(() -> Problem.valueOf(Status.NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId))));
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId))));
 	}
 
 	@Transactional
@@ -80,7 +81,7 @@ public class DisturbanceService {
 
 		// Check if disturbance already exists.
 		if (disturbanceRepository.findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()).isPresent()) {
-			throw Problem.valueOf(Status.CONFLICT, format(ERROR_DISTURBANCE_ALREADY_EXISTS, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()));
+			throw Problem.valueOf(CONFLICT, format(ERROR_DISTURBANCE_ALREADY_EXISTS, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()));
 		}
 
 		// Persist disturbance entity.
@@ -105,11 +106,11 @@ public class DisturbanceService {
 
 		// Get existing disturbance entity.
 		final var existingDisturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
-			.orElseThrow(() -> Problem.valueOf(Status.NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
 
 		// No updates allowed on closed disturbance.
 		if (hasStatusClosed(existingDisturbanceEntity)) {
-			throw Problem.valueOf(Status.CONFLICT, format(ERROR_DISTURBANCE_CLOSED_NO_UPDATES_ALLOWED, category, disturbanceId));
+			throw Problem.valueOf(CONFLICT, format(ERROR_DISTURBANCE_CLOSED_NO_UPDATES_ALLOWED, category, disturbanceId));
 		}
 
 		// Get new (incoming) disturbance entity.
@@ -169,7 +170,7 @@ public class DisturbanceService {
 	public void deleteDisturbance(final Category category, final String disturbanceId) {
 
 		final var disturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
-			.orElseThrow(() -> Problem.valueOf(Status.NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
 
 		// Delete all related disturbanceFeedback-entities.
 		disturbanceFeedbackRepository.deleteByCategoryAndDisturbanceId(category, disturbanceId);

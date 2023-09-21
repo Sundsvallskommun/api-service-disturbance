@@ -5,7 +5,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: "3.0"
+  version: "3.1"
 servers:
 - url: https://api-i-test.sundsvall.se/messaging
   description: Generated server url
@@ -45,8 +45,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/MessageResult'
-        "502":
-          description: Bad Gateway
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -63,8 +63,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-        "400":
-          description: Bad Request
+        "502":
+          description: Bad Gateway
           content:
             application/json:
               schema:
@@ -76,7 +76,7 @@ paths:
     post:
       tags:
       - Sending Resources
-      summary: Send a single snailmail
+      summary: Send a single snail mail
       operationId: sendSnailMail
       parameters:
       - name: async
@@ -107,8 +107,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/MessageResult'
-        "502":
-          description: Bad Gateway
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -125,8 +125,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-        "400":
-          description: Bad Request
+        "502":
+          description: Bad Gateway
           content:
             application/json:
               schema:
@@ -155,24 +155,6 @@ paths:
               $ref: '#/components/schemas/SmsRequest'
         required: true
       responses:
-        "502":
-          description: Bad Gateway
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Problem'
         "201":
           description: Successful Operation
           headers:
@@ -189,6 +171,86 @@ paths:
                 $ref: '#/components/schemas/MessageResult'
         "400":
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "502":
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /slack:
+    post:
+      tags:
+      - Sending Resources
+      summary: Send a single Slack message
+      operationId: sendToSlack
+      parameters:
+      - name: async
+        in: query
+        description: Whether to send the message asynchronously
+        required: false
+        schema:
+          type: boolean
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlackRequest'
+        required: true
+      responses:
+        "201":
+          description: Successful Operation
+          headers:
+            Location:
+              style: simple
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResult'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/MessageResult'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "502":
+          description: Bad Gateway
           content:
             application/json:
               schema:
@@ -227,12 +289,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageResult'
+                $ref: '#/components/schemas/MessageBatchResult'
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/MessageResult'
-        "502":
-          description: Bad Gateway
+                $ref: '#/components/schemas/MessageBatchResult'
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -249,8 +311,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-        "400":
-          description: Bad Request
+        "502":
+          description: Bad Gateway
           content:
             application/json:
               schema:
@@ -289,12 +351,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageResult'
+                $ref: '#/components/schemas/MessageBatchResult'
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/MessageResult'
-        "502":
-          description: Bad Gateway
+                $ref: '#/components/schemas/MessageBatchResult'
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -311,8 +373,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-        "400":
-          description: Bad Request
+        "502":
+          description: Bad Gateway
           content:
             application/json:
               schema:
@@ -355,8 +417,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/MessageResult'
-        "502":
-          description: Bad Gateway
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -373,8 +435,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-        "400":
-          description: Bad Request
+        "502":
+          description: Bad Gateway
           content:
             application/json:
               schema:
@@ -413,12 +475,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageResult'
+                $ref: '#/components/schemas/MessageBatchResult'
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/MessageResult'
-        "502":
-          description: Bad Gateway
+                $ref: '#/components/schemas/MessageBatchResult'
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -435,8 +497,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-        "400":
-          description: Bad Request
+        "502":
+          description: Bad Gateway
           content:
             application/json:
               schema:
@@ -588,6 +650,7 @@ paths:
           - DIGITAL_MAIL
           - SNAIL_MAIL
           - LETTER
+          - SLACK
       - name: from
         in: query
         description: "From-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
@@ -785,6 +848,7 @@ components:
       - DIGITAL_MAIL
       - SNAIL_MAIL
       - LETTER
+      - SLACK
     ExternalReference:
       required:
       - key
@@ -883,12 +947,12 @@ components:
           type: object
           additionalProperties:
             type: object
-        status:
-          $ref: '#/components/schemas/StatusType'
         title:
           type: string
         detail:
           type: string
+        status:
+          $ref: '#/components/schemas/StatusType'
     StatusType:
       type: object
       properties:
@@ -989,6 +1053,27 @@ components:
           items:
             $ref: '#/components/schemas/ExternalReference'
       description: Party
+    SlackRequest:
+      required:
+      - channel
+      - message
+      - token
+      type: object
+      properties:
+        headers:
+          type: array
+          description: Headers
+          items:
+            $ref: '#/components/schemas/Header'
+        token:
+          type: string
+          description: App/bot token
+        channel:
+          type: string
+          description: Channel name/id
+        message:
+          type: string
+          description: Message (supports Slack markdown formatting)
     MessageBatchResult:
       type: object
       properties:
@@ -1137,8 +1222,6 @@ components:
     LetterRequest:
       required:
       - attachments
-      - body
-      - contentType
       - department
       - party
       - subject
@@ -1435,6 +1518,7 @@ components:
           - DIGITAL_MAIL
           - SNAIL_MAIL
           - LETTER
+          - SLACK
         status:
           type: string
           enum:
@@ -1451,3 +1535,4 @@ components:
           type: string
           format: date-time
   securitySchemes: {}
+  

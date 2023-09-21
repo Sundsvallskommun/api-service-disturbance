@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import jakarta.transaction.Transactional;
-
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +25,7 @@ import org.springframework.stereotype.Component;
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageRequest;
 import generated.se.sundsvall.messaging.MessageSender;
+import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackHistoryRepository;
 import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackRepository;
@@ -255,15 +254,15 @@ public class SendMessageLogic {
 		final var sender = new MessageSender()
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
-
 		final var headers = toHeaders(Category.valueOf(disturbanceEntity.getCategory()), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectClose());
 		final var message = propertyResolver.replace(messageConfig.getMessageClose());
+		final var party = toParty(affectedEntity.getPartyId());
 
 		// Store feedback history.
 		persistFeedbackHistory(affectedEntity);
 
-		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
+		return toMessage(headers, sender, party, subject, message);
 	}
 
 	private void sendMessages(final List<Message> messages) {

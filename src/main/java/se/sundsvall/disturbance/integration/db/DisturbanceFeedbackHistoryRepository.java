@@ -2,11 +2,10 @@ package se.sundsvall.disturbance.integration.db;
 
 import java.util.List;
 
-import jakarta.transaction.Transactional;
-
 import org.springframework.data.repository.CrudRepository;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceFeedbackHistoryEntity;
 
 @Transactional
