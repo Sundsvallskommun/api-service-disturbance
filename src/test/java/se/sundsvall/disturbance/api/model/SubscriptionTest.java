@@ -7,6 +7,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToString;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static com.google.code.beanmatchers.BeanMatchers.registerValueGenerator;
 import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,7 +24,7 @@ class SubscriptionTest {
 
 	@BeforeAll
 	static void setup() {
-		registerValueGenerator(() -> now().plusDays(new Random().nextInt()), OffsetDateTime.class);
+		registerValueGenerator(() -> now(systemDefault()).plusDays(new Random().nextInt()), OffsetDateTime.class);
 	}
 
 	@Test
@@ -39,11 +40,11 @@ class SubscriptionTest {
 	@Test
 	void testBuilderMethods() {
 
-		final var created = now();
+		final var created = now(systemDefault());
 		final var id = 1L;
 		final var optOutSettings = List.of(OptOutSetting.create());
 		final var partyId = UUID.randomUUID().toString();
-		final var updated = now().plusHours(5);
+		final var updated = now(systemDefault()).plusHours(5);
 
 		final var bean = Subscription.create()
 			.withCreated(created)

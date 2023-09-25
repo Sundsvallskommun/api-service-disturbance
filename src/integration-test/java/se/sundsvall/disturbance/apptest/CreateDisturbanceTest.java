@@ -27,7 +27,7 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 @WireMockAppTestSuite(files = "classpath:/CreateDisturbanceTest/", classes = Application.class)
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
-	"/db/scripts/testdata.sql"
+	"/db/scripts/testdata-it.sql"
 })
 class CreateDisturbanceTest extends AbstractAppTest {
 

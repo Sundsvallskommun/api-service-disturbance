@@ -1,6 +1,7 @@
 package se.sundsvall.disturbance.apptest;
 
 import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
@@ -32,7 +33,7 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 @WireMockAppTestSuite(files = "classpath:/UpdateDisturbanceTest/", classes = Application.class)
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
-	"/db/scripts/testdata.sql"
+	"/db/scripts/testdata-it.sql"
 })
 class UpdateDisturbanceTest extends AbstractAppTest {
 
@@ -155,7 +156,7 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 
 		final var updatedDisturbance = disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)));
 		assertThat(updatedDisturbance).isPresent();
-		assertThat(updatedDisturbance.get().getUpdated()).isCloseTo(now(), within(2, SECONDS));
+		assertThat(updatedDisturbance.get().getUpdated()).isCloseTo(now(systemDefault()), within(2, SECONDS));
 	}
 
 	@Test

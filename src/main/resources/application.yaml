@@ -33,7 +33,17 @@ resilience4j:
     instances:
       messaging:
         ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
-  
+
+#========================================
+# Scheduler settings
+#
+# - To disable the scheduling, set spring cron expression to "-" or remove "cronExpression"-property.
+#========================================
+scheduler:
+  dbcleaner:
+    cron: "0 0 2 * * *"
+    deleteDisturbancesOlderThanMonths: 24
+
 #----------------------------------------
 # Message configuration
 #

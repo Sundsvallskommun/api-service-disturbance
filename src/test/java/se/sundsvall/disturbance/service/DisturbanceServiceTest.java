@@ -1,6 +1,7 @@
 package se.sundsvall.disturbance.service;
 
 import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -465,8 +466,8 @@ class DisturbanceServiceTest {
 		final var disturbanceId = "12345";
 		final var title = "title";
 		final var description = "description";
-		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 6).atOffset(now().getOffset());
-		final var plannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 6).atOffset(now().getOffset());
+		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 6).atOffset(now(systemDefault()).getOffset());
+		final var plannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 6).atOffset(now(systemDefault()).getOffset());
 
 		// Parameters
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
@@ -538,8 +539,8 @@ class DisturbanceServiceTest {
 		final var disturbanceId = "12345";
 		final var title = "title";
 		final var description = "description";
-		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 6).atOffset(now().getOffset());
-		final var plannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 6).atOffset(now().getOffset());
+		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 6).atOffset(now(systemDefault()).getOffset());
+		final var plannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 6).atOffset(now(systemDefault()).getOffset());
 
 		// Parameters
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
@@ -615,9 +616,9 @@ class DisturbanceServiceTest {
 		final var newTitle = "new title";
 		final var existingDescription = "description";
 		final var newDescription = "new description";
-		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 0).atOffset(now().getOffset());
-		final var existingPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now().getOffset());
-		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now().getOffset());
+		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 0).atOffset(now(systemDefault()).getOffset());
+		final var existingPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
+		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
 		final var status = se.sundsvall.disturbance.api.model.Status.OPEN;
 
 		// Parameters
@@ -758,9 +759,9 @@ class DisturbanceServiceTest {
 		final var newTitle = "new title";
 		final var existingDescription = "description";
 		final var newDescription = "new description";
-		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 0).atOffset(now().getOffset());
-		final var existingPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now().getOffset());
-		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now().getOffset());
+		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 0).atOffset(now(systemDefault()).getOffset());
+		final var existingPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
+		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
 		final var status = se.sundsvall.disturbance.api.model.Status.PLANNED;
 
 		// Parameters
@@ -835,9 +836,9 @@ class DisturbanceServiceTest {
 		final var disturbanceId = "12345";
 		final var existingTitle = "title";
 		final var existingDescription = "description";
-		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 0).atOffset(now().getOffset());
-		final var existingPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now().getOffset());
-		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now().getOffset());
+		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 0).atOffset(now(systemDefault()).getOffset());
+		final var existingPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
+		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
 		final var existingStatus = se.sundsvall.disturbance.api.model.Status.PLANNED;
 		final var newStatus = se.sundsvall.disturbance.api.model.Status.OPEN;
 

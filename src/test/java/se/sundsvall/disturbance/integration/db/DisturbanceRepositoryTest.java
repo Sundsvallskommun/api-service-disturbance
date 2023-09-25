@@ -1,5 +1,7 @@
 package se.sundsvall.disturbance.integration.db;
 
+import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +40,7 @@ import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 @ActiveProfiles("junit")
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
-	"/db/scripts/testdata.sql"
+	"/db/scripts/testdata-junit.sql"
 })
 class DisturbanceRepositoryTest {
 
@@ -70,11 +72,11 @@ class DisturbanceRepositoryTest {
 			.containsExactly(tuple("partyId-1", "facility-1", "coordinates-1"));
 		assertThat(disturbance.getDisturbanceId()).isEqualTo("persistAndFetch-disturbanceId");
 		assertThat(disturbance.getCategory()).isEqualTo(COMMUNICATION.toString());
-		assertThat(disturbance.getCreated()).isCloseTo(OffsetDateTime.now(), within(2, SECONDS));
+		assertThat(disturbance.getCreated()).isCloseTo(OffsetDateTime.now(systemDefault()), within(2, SECONDS));
 		assertThat(disturbance.getDeleted()).isFalse();
 		assertThat(disturbance.getDescription()).isEqualTo("description");
-		assertThat(disturbance.getPlannedStartDate()).isCloseTo(OffsetDateTime.now(), within(2, SECONDS));
-		assertThat(disturbance.getPlannedStopDate()).isCloseTo(OffsetDateTime.now().plusDays(6), within(2, SECONDS));
+		assertThat(disturbance.getPlannedStartDate()).isCloseTo(OffsetDateTime.now(systemDefault()), within(2, SECONDS));
+		assertThat(disturbance.getPlannedStopDate()).isCloseTo(OffsetDateTime.now(systemDefault()).plusDays(6), within(2, SECONDS));
 		assertThat(disturbance.getStatus()).isEqualTo(OPEN.toString());
 	}
 
@@ -180,11 +182,12 @@ class DisturbanceRepositoryTest {
 
 		assertThat(disturbances)
 			.isNotEmpty()
-			.hasSize(2)
+			.hasSize(3)
 			.extracting(DisturbanceEntity::getId, DisturbanceEntity::getStatus)
 			.containsExactly(
 				tuple(4L, CLOSED.toString()),
-				tuple(10L, CLOSED.toString()));
+				tuple(10L, CLOSED.toString()),
+				tuple(15L, CLOSED.toString()));
 	}
 
 	@Test
@@ -199,6 +202,27 @@ class DisturbanceRepositoryTest {
 				tuple(4L, COMMUNICATION.toString(), CLOSED.toString()),
 				tuple(10L, ELECTRICITY.toString(), CLOSED.toString()),
 				tuple(12L, ELECTRICITY.toString(), PLANNED.toString()));
+	}
+
+	@Test
+	void deleteByCreatedBeforeAndStatusIn() {
+
+		// Arrange
+		final var deleteOlderThanMonths = 24;
+		final var expiryDate = now(systemDefault()).minusMonths(deleteOlderThanMonths);
+		final var disturbanceNotEligibleForDelete = disturbanceRepository.findById(14L).get();
+		final var disturbanceEligibleForDelete = disturbanceRepository.findById(15L).get();
+
+		// Assert that both is older than 24 months.
+		assertThat(disturbanceEligibleForDelete.getCreated()).isBefore(expiryDate);
+		assertThat(disturbanceNotEligibleForDelete.getCreated()).isBefore(expiryDate);
+
+		// Act
+		disturbanceRepository.deleteByCreatedBeforeAndStatusIn(expiryDate, CLOSED.toString());
+
+		// Assert
+		assertThat(disturbanceRepository.findById(disturbanceEligibleForDelete.getId())).isNotPresent();
+		assertThat(disturbanceRepository.findById(disturbanceNotEligibleForDelete.getId())).isPresent();
 	}
 
 	private void assertAsDisturbanceEntity2(final DisturbanceEntity disturbanceEntity) {
@@ -251,8 +275,8 @@ class DisturbanceRepositoryTest {
 		entity.setTitle("title");
 		entity.setDescription("description");
 		entity.setStatus(OPEN.toString());
-		entity.setPlannedStartDate(OffsetDateTime.now());
-		entity.setPlannedStopDate(OffsetDateTime.now().plusDays(6));
+		entity.setPlannedStartDate(OffsetDateTime.now(systemDefault()));
+		entity.setPlannedStopDate(OffsetDateTime.now(systemDefault()).plusDays(6));
 		entity.addAffectedEntities(Arrays.asList(affectedEntity));
 
 		return entity;

@@ -1,12 +1,12 @@
 package se.sundsvall.disturbance.integration.db.model;
 
 import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Objects;
 
 import org.hibernate.annotations.TimeZoneStorage;
@@ -45,7 +45,7 @@ public class DisturbanceFeedbackEntity implements Serializable {
 
 	@PrePersist
 	void prePersist() {
-		created = now(ZoneId.systemDefault()).truncatedTo(MILLIS);
+		created = now(systemDefault()).truncatedTo(MILLIS);
 	}
 
 	public Long getId() {
