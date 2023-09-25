@@ -43,6 +43,15 @@ integration:
     connectTimeout: "10"
     readTimeout: "20"
     
+#========================================
+# Scheduler settings
+#
+# - To disable the scheduling, set spring cron expression to "-" or remove "cron"-property.
+#========================================
+scheduler:
+  dbcleaner:
+    cron: "-"
+    
 #----------------------------------------
 # Message configuration
 #
