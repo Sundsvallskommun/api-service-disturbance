@@ -4,4 +4,7 @@ TRUNCATE table disturbance;
 TRUNCATE table disturbance_feedback;
 TRUNCATE table disturbance_feedback_history;
 TRUNCATE table feedback;
+TRUNCATE table opt_out_settings;
+TRUNCATE table opt_out_settings_key_values;
+TRUNCATE table subscription;
 SET FOREIGN_KEY_CHECKS = 1;

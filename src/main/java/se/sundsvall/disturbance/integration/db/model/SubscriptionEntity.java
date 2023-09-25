@@ -30,8 +30,8 @@ public class SubscriptionEntity implements Serializable {
 	@Column(name = "party_id", nullable = false)
 	private String partyId;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "opt_out_settings_id")
-	private transient Set<OptOutSettingsEntity> optOuts;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "subscriptionEntity")
+	private Set<OptOutSettingsEntity> optOuts;
 
 	public Long getId() {
 		return id;

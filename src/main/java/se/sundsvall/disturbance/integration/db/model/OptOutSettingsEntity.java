@@ -11,8 +11,6 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +30,6 @@ public class OptOutSettingsEntity implements Serializable {
 	private Long id;
 
 	@Column(name = "category", nullable = false)
-	@Enumerated(EnumType.STRING)
 	private Category category;
 
 	@ManyToOne(cascade = CascadeType.PERSIST)

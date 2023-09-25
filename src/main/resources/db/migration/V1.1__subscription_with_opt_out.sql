@@ -1,15 +1,8 @@
-create table subscription
-(
-    id       bigint       not null auto_increment,
-    party_id varchar(255) not null,
-    primary key (id)
-) engine = InnoDB;
-
 create table opt_out_settings
 (
-    id              bigint                                                                                                                    not null auto_increment,
+    id              bigint       not null auto_increment,
     subscription_id bigint,
-    category        enum ('COMMUNICATION','DISTRICT_COOLING','DISTRICT_HEATING','ELECTRICITY','ELECTRICITY_TRADE','WASTE_MANAGEMENT','WATER') not null,
+    category        varchar(255) not null,
     primary key (id)
 ) engine = InnoDB;
 
@@ -20,6 +13,16 @@ create table opt_out_settings_key_values
     opt_outs_key        varchar(255) not null,
     primary key (opt_out_settings_id, opt_outs_key)
 ) engine = InnoDB;
+
+create table subscription
+(
+    id       bigint       not null auto_increment,
+    party_id varchar(255) not null,
+    primary key (id)
+) engine = InnoDB;
+
+create index party_id_index
+    on subscription (party_id);
 
 alter table if exists opt_out_settings
     add constraint fk_opt_out_settings_subscription_id

@@ -1,6 +1,9 @@
 package se.sundsvall.disturbance.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,8 +15,9 @@ import org.springframework.stereotype.Service;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
-import se.sundsvall.disturbance.integration.db.OptOutSettingsRepository;
 import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
+import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
+import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
 
 import jakarta.transaction.Transactional;
 
@@ -27,9 +31,6 @@ public class SubscriptionService {
 	@Autowired
 	private SubscriptionRepository subscriptionRepository;
 
-	@Autowired
-	private OptOutSettingsRepository optOutSettingsRepository;
-
 	@Transactional
 	public Subscription create(final SubscriptionCreateRequest request) {
 
@@ -39,22 +40,13 @@ public class SubscriptionService {
 		// }
 
 		//Temp-implementation
-		/*Set<OptOutSettingsEntity> optOutSettingsEntities = new HashSet<>();
-		request.getOptOutSettings().forEach(optOutSetting -> {
-			OptOutSettingsEntity optOutSettingsEntity = new OptOutSettingsEntity();
-			optOutSettingsEntity.setCategory(optOutSetting.getCategory());
-			optOutSettingsEntity.setOptOuts(optOutSetting.getValues());
-			optOutSettingsEntities.add(optOutSettingsEntity);
-		});
-
-		var subscriptionEntity = new SubscriptionEntity()
+		/*var subscriptionEntity = new SubscriptionEntity()
 				.withPartyId(request.getPartyId())
-				.withOptOuts(optOutSettingsEntities);
-		//Save the optOutSettings
-		optOutSettingsEntities.forEach(optOutSettingsEntity -> {
-			optOutSettingsEntity.setSubscriptionEntity(subscriptionEntity);
-			optOutSettingsRepository.save(optOutSettingsEntity);
-		});
+				.withOptOuts(request.getOptOutSettings().stream()
+						.map(optOutSetting -> new OptOutSettingsEntity()
+								.withCategory(optOutSetting.getCategory())
+								.withOptOuts(optOutSetting.getValues()))
+						.collect(Collectors.toSet()));
 
 		//Save the SubscriptionEntity
 		var savedSubscriptionEntity = subscriptionRepository.save(subscriptionEntity);

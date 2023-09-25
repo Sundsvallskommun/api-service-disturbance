@@ -53,7 +53,7 @@ create table feedback (
 create table opt_out_settings (
                                   id bigint not null auto_increment,
                                   subscription_id bigint,
-                                  category enum ('COMMUNICATION','DISTRICT_COOLING','DISTRICT_HEATING','ELECTRICITY','ELECTRICITY_TRADE','WASTE_MANAGEMENT','WATER') not null,
+                                  category varchar(255) not null,
                                   primary key (id)
 ) engine=InnoDB;
 
@@ -62,13 +62,6 @@ create table opt_out_settings_key_values (
                                              opt_outs varchar(255),
                                              opt_outs_key varchar(255) not null,
                                              primary key (opt_out_settings_id, opt_outs_key)
-) engine=InnoDB;
-
-create table schema_history (
-                                applied datetime(6) not null,
-                                comment varchar(8192) not null,
-                                schema_version varchar(255) not null,
-                                primary key (schema_version)
 ) engine=InnoDB;
 
 create table subscription (

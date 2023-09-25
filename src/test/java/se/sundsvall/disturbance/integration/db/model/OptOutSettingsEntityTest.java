@@ -77,13 +77,10 @@ class OptOutSettingsEntityTest {
 	@Test
 	void testCategoryHasCorrectAnnotationsAndValues() {
 		var category = FieldUtils.getDeclaredField(OptOutSettingsEntity.class, "category", true);
-		Assertions.assertThat(category.getAnnotations()).hasSize(2);
+		Assertions.assertThat(category.getAnnotations()).hasSize(1);
 
 		var column = category.getDeclaredAnnotation(Column.class);
 		Assertions.assertThat(column.name()).isEqualTo("category");
-
-		var enumerated = category.getDeclaredAnnotation(Enumerated.class);
-		Assertions.assertThat(enumerated.value()).isEqualTo(EnumType.STRING);
 	}
 
 	@Test
