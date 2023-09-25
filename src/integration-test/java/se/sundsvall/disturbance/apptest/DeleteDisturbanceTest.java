@@ -19,7 +19,7 @@ import se.sundsvall.disturbance.api.model.Category;
 @WireMockAppTestSuite(files = "classpath:/DeleteDisturbanceTest/", classes = Application.class)
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
-	"/db/scripts/testdata.sql"
+	"/db/scripts/testdata-it.sql"
 })
 class DeleteDisturbanceTest extends AbstractAppTest {
 

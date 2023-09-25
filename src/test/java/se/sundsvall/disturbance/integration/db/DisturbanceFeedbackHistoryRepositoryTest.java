@@ -22,7 +22,7 @@ import se.sundsvall.disturbance.integration.db.model.DisturbanceFeedbackHistoryE
 @ActiveProfiles("junit")
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
-	"/db/scripts/testdata.sql"
+	"/db/scripts/testdata-junit.sql"
 })
 class DisturbanceFeedbackHistoryRepositoryTest {
 
