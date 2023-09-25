@@ -1,19 +1,35 @@
 package se.sundsvall.disturbance.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
+import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
+import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
+import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class SubscriptionService {
 
-	// @Autowired
-	// private SubscriptionRepository subscriptionRepository;
+	private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
+
+	private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+	@Autowired
+	private SubscriptionRepository subscriptionRepository;
 
 	@Transactional
 	public Subscription create(final SubscriptionCreateRequest request) {
@@ -23,7 +39,20 @@ public class SubscriptionService {
 		// throw Problem.valueOf(CONFLICT, format(ERROR_SUBSCRIPTION_ALREADY_EXISTS, request.getPartyId()));
 		// }
 
-		// TODO: map and save
+		//Temp-implementation
+		/*var subscriptionEntity = new SubscriptionEntity()
+				.withPartyId(request.getPartyId())
+				.withOptOuts(request.getOptOutSettings().stream()
+						.map(optOutSetting -> new OptOutSettingsEntity()
+								.withCategory(optOutSetting.getCategory())
+								.withOptOuts(optOutSetting.getValues()))
+						.collect(Collectors.toSet()));
+
+		//Save the SubscriptionEntity
+		var savedSubscriptionEntity = subscriptionRepository.save(subscriptionEntity);
+
+		return Subscription.create().withId(savedSubscriptionEntity.getId());*/
+
 		return Subscription.create().withId(1L);
 	}
 
