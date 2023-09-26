@@ -93,14 +93,15 @@ public class SubscriptionEntity implements Serializable {
 	}
 
 	public void setOptOuts(Set<OptOutSettingsEntity> optOuts) {
+		if (this.optOuts == null) {
+			this.optOuts = new HashSet<>();
+		}
+
 		if (nonNull(optOuts)) {
-			if (this.optOuts == null) {
-				this.optOuts = new HashSet<>();
-			}
 			this.optOuts.retainAll(optOuts);
 			this.optOuts.addAll(optOuts);
 		} else {
-			this.optOuts = optOuts;
+			this.optOuts.clear();
 		}
 	}
 

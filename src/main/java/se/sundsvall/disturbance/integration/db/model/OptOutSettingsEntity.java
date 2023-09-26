@@ -54,7 +54,7 @@ public class OptOutSettingsEntity implements Serializable {
 	}
 
 	public OptOutSettingsEntity withId(Long id) {
-		this.id = id;
+		this.setId(id);
 		return this;
 	}
 
@@ -67,7 +67,7 @@ public class OptOutSettingsEntity implements Serializable {
 	}
 
 	public OptOutSettingsEntity withCategory(Category category) {
-		this.category = category;
+		this.setCategory(category);
 		return this;
 	}
 
@@ -80,7 +80,7 @@ public class OptOutSettingsEntity implements Serializable {
 	}
 
 	public OptOutSettingsEntity withOptOuts(Map<String, String> optOuts) {
-		this.optOuts = optOuts;
+		this.setOptOuts(optOuts);
 		return this;
 	}
 

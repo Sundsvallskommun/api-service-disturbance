@@ -1,5 +1,7 @@
 package se.sundsvall.disturbance.service.mapper;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toSet;
 
@@ -51,7 +53,7 @@ public class SubscriptionMapper {
 
 	private static Set<OptOutSettingsEntity> toOptOuts(List<OptOutSetting> optOutSettingsList) {
 		if (isNull(optOutSettingsList)) {
-			return null;
+			return emptySet();
 		}
 
 		return optOutSettingsList.stream()
@@ -63,7 +65,7 @@ public class SubscriptionMapper {
 
 	private static List<OptOutSetting> toOptOuts(Set<OptOutSettingsEntity> optOutSettingsEntityList) {
 		if (isNull(optOutSettingsEntityList)) {
-			return null;
+			return emptyList();
 		}
 
 		return optOutSettingsEntityList.stream()
