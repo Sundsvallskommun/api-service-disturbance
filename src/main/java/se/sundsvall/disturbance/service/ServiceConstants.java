@@ -13,5 +13,6 @@ class ServiceConstants {
 
 	// Subscription
 	static final String ERROR_SUBSCRIPTION_ALREADY_EXISTS = "A subscription entity for partyId:'%s' already exists!";
-	static final String ERROR_SUBSCRIPTION_NOT_FOUND = "No subscription entity found for partyId:'%s'!";
+	static final String ERROR_SUBSCRIPTION_NOT_FOUND_BY_ID = "No subscription entity found for id:'%s'!";
+	static final String ERROR_SUBSCRIPTION_NOT_FOUND_BY_PARTY_ID = "No subscription entity found for partyId:'%s'!";
 }

@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.zalando.problem.Status.CONFLICT;
+import static org.zalando.problem.Status.NOT_FOUND;
 
 import java.util.Optional;
 
@@ -17,7 +19,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.Status;
 import org.zalando.problem.ThrowableProblem;
 
 import se.sundsvall.disturbance.api.model.Category;
@@ -80,7 +81,7 @@ class DisturbanceFeedbackServiceTest {
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceFeedbackService.createDisturbanceFeedback(category, disturbanceId, request));
 
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'1337'!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.NOT_FOUND);
+		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -103,7 +104,7 @@ class DisturbanceFeedbackServiceTest {
 
 		assertThat(throwableProblem.getMessage())
 			.isEqualTo("Conflict: A disturbance feedback with category:'COMMUNICATION', id:'1337' and partyId:'81471222-5798-11e9-ae24-57fa13b361e1' already exists!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.CONFLICT);
+		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(category, disturbanceId, partyId);
@@ -126,7 +127,7 @@ class DisturbanceFeedbackServiceTest {
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceFeedbackService.createDisturbanceFeedback(category, disturbanceId, requestBody));
 
 		assertThat(throwableProblem.getMessage()).isEqualTo("Conflict: A disturbance with category:'COMMUNICATION' and id:'1337' exists, but is closed!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.CONFLICT);
+		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);

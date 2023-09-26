@@ -1,15 +1,18 @@
 package se.sundsvall.disturbance.integration.db;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
+import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
 
 @Transactional
 @CircuitBreaker(name = "subscriptionRepository")
 public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, Long> {
 
-	SubscriptionEntity findByPartyId(String partyId);
+	Optional<SubscriptionEntity> findByPartyId(String partyId);
+
+	boolean existsByPartyId(String partyId);
 }

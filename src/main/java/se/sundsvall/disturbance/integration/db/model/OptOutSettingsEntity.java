@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-import se.sundsvall.disturbance.api.model.Category;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -17,12 +14,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import se.sundsvall.disturbance.api.model.Category;
 
 @Entity
 @Table(name = "opt_out_settings")
 public class OptOutSettingsEntity implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,21 +31,19 @@ public class OptOutSettingsEntity implements Serializable {
 	@Column(name = "category", nullable = false)
 	private Category category;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "subscription_id", foreignKey = @ForeignKey(name = "fk_opt_out_settings_subscription_id"))
-	private SubscriptionEntity subscriptionEntity;
-
-	//e.g. Key: "facilityId", Value: "123456"
+	// E.g. Key: "facilityId", Value: "123456"
 	@CollectionTable(
-			name = "opt_out_settings_key_values",
-			joinColumns = @JoinColumn(
-					name = "opt_out_settings_id",
-					referencedColumnName = "id",
-					foreignKey = @ForeignKey(name = "fk_opt_out_settings_opt_out_values")
-			)
-	)
+		name = "opt_out_settings_key_values",
+		joinColumns = @JoinColumn(
+			name = "opt_out_settings_id",
+			referencedColumnName = "id",
+			foreignKey = @ForeignKey(name = "fk_opt_out_settings_key_values_opt_out_settings_id")))
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, String> optOuts;
+
+	public static OptOutSettingsEntity create() {
+		return new OptOutSettingsEntity();
+	}
 
 	public Long getId() {
 		return id;
@@ -56,12 +53,9 @@ public class OptOutSettingsEntity implements Serializable {
 		this.id = id;
 	}
 
-	public SubscriptionEntity getSubscriptionEntity() {
-		return subscriptionEntity;
-	}
-
-	public void setSubscriptionEntity(SubscriptionEntity subscriptionEntity) {
-		this.subscriptionEntity = subscriptionEntity;
+	public OptOutSettingsEntity withId(Long id) {
+		this.id = id;
+		return this;
 	}
 
 	public Category getCategory() {
@@ -72,6 +66,11 @@ public class OptOutSettingsEntity implements Serializable {
 		this.category = category;
 	}
 
+	public OptOutSettingsEntity withCategory(Category category) {
+		this.category = category;
+		return this;
+	}
+
 	public Map<String, String> getOptOuts() {
 		return optOuts;
 	}
@@ -80,41 +79,27 @@ public class OptOutSettingsEntity implements Serializable {
 		this.optOuts = optOuts;
 	}
 
-	public OptOutSettingsEntity withCategory(Category category) {
-		this.category = category;
-		return this;
-	}
-
 	public OptOutSettingsEntity withOptOuts(Map<String, String> optOuts) {
 		this.optOuts = optOuts;
 		return this;
 	}
 
-	public OptOutSettingsEntity withSubscriptionEntity(SubscriptionEntity subscriptionEntity) {
-		this.subscriptionEntity = subscriptionEntity;
-		return this;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		OptOutSettingsEntity that = (OptOutSettingsEntity) o;
-		return Objects.equals(id, that.id) && category == that.category && Objects.equals(subscriptionEntity, that.subscriptionEntity) && Objects.equals(optOuts, that.optOuts);
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, category, subscriptionEntity, optOuts);
+		return Objects.hash(category, id, optOuts);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) { return true; }
+		if (!(obj instanceof final OptOutSettingsEntity other)) { return false; }
+		return (category == other.category) && Objects.equals(id, other.id) && Objects.equals(optOuts, other.optOuts);
 	}
 
 	@Override
 	public String toString() {
-		return "OptOutSettingsEntity{" +
-				"id=" + id +
-				", category=" + category +
-				", subscriptionEntity=" + subscriptionEntity +
-				", optOuts=" + optOuts +
-				'}';
+		final StringBuilder builder = new StringBuilder();
+		builder.append("OptOutSettingsEntity [id=").append(id).append(", category=").append(category).append(", optOuts=").append(optOuts).append("]");
+		return builder.toString();
 	}
 }
