@@ -11,7 +11,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.zalando.problem.Status.CONFLICT;
 import static org.zalando.problem.Status.NOT_FOUND;
+import static se.sundsvall.disturbance.api.model.Category.DISTRICT_COOLING;
+import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -239,5 +242,181 @@ class SubscriptionServiceTest {
 
 		verify(subscriptionRepository).findById(id);
 		verify(subscriptionRepository, never()).save(any());
+	}
+
+	@Test
+	void hasApplicableSubscription() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withPartyId(partyId);
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, ELECTRICITY, "some-facilityId");
+
+		// Assert
+		assertThat(result).isTrue();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
+	}
+
+	@Test
+	void hasApplicableSubscriptionWithNoMatchingCategoryOptOut() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withPartyId(partyId)
+			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+				.withCategory(DISTRICT_COOLING)));
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, ELECTRICITY, "some-facilityId");
+
+		// Assert
+		assertThat(result).isTrue();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
+	}
+
+	@Test
+	void hasApplicableSubscriptionWithNoMatchingCategoryAndFacilityIdOptOut() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withPartyId(partyId)
+			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+				.withCategory(DISTRICT_COOLING)
+				.withOptOuts(Map.of("facilityId", "12345"))));
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, ELECTRICITY, "some-facilityId");
+
+		// Assert
+		assertThat(result).isTrue();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
+	}
+
+	@Test
+	void hasApplicableSubscriptionWithNoSubscription() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(empty());
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "some-facilityId");
+
+		// Assert
+		assertThat(result).isFalse();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
+	}
+
+	@Test
+	void hasApplicableSubscriptionWithMatchingCategoryOptOut() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withPartyId(partyId)
+			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+				.withCategory(DISTRICT_COOLING)));
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "some-facilityId");
+
+		// Assert
+		assertThat(result).isFalse();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
+	}
+
+	@Test
+	void hasApplicableSubscriptionWithMatchingCategoryAndFacilityIdOptOut() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withPartyId(partyId)
+			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+				.withCategory(DISTRICT_COOLING)
+				.withOptOuts(Map.of("facilityId", "12345"))));
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "12345");
+
+		// Assert
+		assertThat(result).isFalse();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
+	}
+
+	@Test
+	void hasApplicableSubscriptionWithAllMatchingOptOutsPlusSomeMorePropertiesThatDoesNotMatch() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withPartyId(partyId)
+			.withOptOuts(Set.of(
+				OptOutSettingsEntity.create()
+					.withCategory(DISTRICT_COOLING)
+					.withOptOuts(Map.of(
+						"facilityId", "12345",
+						"property1", "value1",
+						"property2", "value2"))));
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "12345");
+
+		// Assert
+		assertThat(result).isTrue();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
+	}
+
+	@Test
+	void hasApplicableSubscriptionWithOneMatchingOptOutAndOneNoMatchingOptOut() {
+
+		// Arrange
+		final var partyId = randomUUID().toString();
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withPartyId(partyId)
+			.withOptOuts(Set.of(
+				OptOutSettingsEntity.create()
+					.withCategory(DISTRICT_COOLING)
+					.withOptOuts(Map.of(
+						"facilityId", "12345")),
+				OptOutSettingsEntity.create()
+					.withCategory(DISTRICT_COOLING)
+					.withOptOuts(Map.of(
+						"facilityId", "67890"))));
+
+		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+
+		// Act
+		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "12345");
+
+		// Assert
+		assertThat(result).isFalse();
+
+		verify(subscriptionRepository).findByPartyId(partyId);
 	}
 }
