@@ -15,7 +15,9 @@ public class OptOutSetting {
 
 	@Schema(description = """
 		Key/value pairs of opt-out values. E.g. ["facilityId" : "12345"].
-		If multiple entries are added, they will have an "and"-relation. I.e. all properties must match in order for the opt-out to be evaluated as true.""")
+		If multiple entries are added, they will have an "and"-relation. I.e. all properties must match in order for the opt-out to be evaluated as true.""",
+		implementation = Map.class,
+		example = "{\"facilityId\": \"123456\"}")
 	private Map<String, String> values;
 
 	public static OptOutSetting create() {

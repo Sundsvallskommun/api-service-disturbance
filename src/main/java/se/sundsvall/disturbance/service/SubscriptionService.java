@@ -120,7 +120,7 @@ public class SubscriptionService {
 		return categoryMatch && optOutValueMatch;
 	}
 
-	private <T, U> boolean matches(Map<T, U> optOutSettingValues, Map<T, U> actualValues) {
+	private <K, V> boolean matches(Map<K, V> optOutSettingValues, Map<K, V> actualValues) {
 		if (isEmpty(optOutSettingValues) || isEmpty(actualValues)) {
 			return false;
 		}
