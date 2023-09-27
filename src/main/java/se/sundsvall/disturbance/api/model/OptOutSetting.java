@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Opt-out setting model")
@@ -18,7 +19,7 @@ public class OptOutSetting {
 		If multiple entries are added, they will have an "and"-relation. I.e. all properties must match in order for the opt-out to be evaluated as true.""",
 		implementation = Map.class,
 		example = "{\"facilityId\": \"123456\"}")
-	private Map<String, String> values;
+	private Map<@NotBlank String, @NotBlank String> values;
 
 	public static OptOutSetting create() {
 		return new OptOutSetting();
