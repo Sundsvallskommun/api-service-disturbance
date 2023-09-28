@@ -17,7 +17,7 @@ public interface DisturbanceSpecification {
 	static Specification<DisturbanceEntity> withCategoryFilter(List<Category> categoryList) {
 		return (disturbanceEntity, cq, cb) -> {
 			if (isNotEmpty(categoryList)) {
-				return disturbanceEntity.get("category").in(toStringList(categoryList));
+				return disturbanceEntity.get("category").in(categoryList);
 			}
 			// always-true predicate, means that no filtering would be applied
 			return cb.and();
@@ -43,7 +43,7 @@ public interface DisturbanceSpecification {
 	}
 
 	static Specification<DisturbanceEntity> withCategory(Category category) {
-		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.get("category"), String.valueOf(category));
+		return (disturbanceEntity, cq, cb) -> cb.equal(disturbanceEntity.get("category"), category);
 	}
 
 	private static List<String> toStringList(List<? extends Enum<?>> enumList) {

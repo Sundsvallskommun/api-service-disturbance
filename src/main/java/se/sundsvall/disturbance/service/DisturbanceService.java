@@ -67,7 +67,7 @@ public class DisturbanceService {
 	public Disturbance createDisturbance(final DisturbanceCreateRequest disturbanceCreateRequest) {
 
 		// Check if disturbance already exists.
-		if (disturbanceRepository.findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()).isPresent()) {
+		if (disturbanceRepository.findByCategoryAndDisturbanceId(Category.fromValue(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId()).isPresent()) {
 			throw Problem.valueOf(CONFLICT, format(ERROR_DISTURBANCE_ALREADY_EXISTS, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()));
 		}
 

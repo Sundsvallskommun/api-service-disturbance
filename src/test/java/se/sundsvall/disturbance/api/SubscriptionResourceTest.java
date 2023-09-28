@@ -54,7 +54,7 @@ class SubscriptionResourceTest {
 		final var request = SubscriptionCreateRequest.create()
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(Category.ELECTRICITY)
+				.withCategory(Category.ELECTRICITY.toString())
 				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.create(any())).thenReturn(Subscription.create().withId(id));
@@ -65,7 +65,8 @@ class SubscriptionResourceTest {
 			.bodyValue(request)
 			.exchange()
 			.expectStatus().isCreated()
-			.expectHeader().location("http://localhost:".concat(String.valueOf(port)).concat(fromPath("/subscriptions/{id}").build(Map.of("id", id)).toString()))
+			.expectHeader().location("http://localhost:".concat(String.valueOf(port)).concat(fromPath("/subscriptions/{id}").build(Map.of("id", id))
+								.toString()))
 			.expectBody().isEmpty();
 
 		// Assert
@@ -82,7 +83,7 @@ class SubscriptionResourceTest {
 		final var subscription = Subscription.create()
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(Category.ELECTRICITY)
+				.withCategory(Category.ELECTRICITY.toString())
 				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.read(anyLong())).thenReturn(subscription);
@@ -111,7 +112,7 @@ class SubscriptionResourceTest {
 		final var subscription = Subscription.create()
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(Category.ELECTRICITY)
+				.withCategory(Category.ELECTRICITY.toString())
 				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.findByPartyId(any())).thenReturn(subscription);
@@ -139,13 +140,13 @@ class SubscriptionResourceTest {
 		// Arrange
 		final var id = 1L;
 		final var subscriptionUpdateRequest = SubscriptionUpdateRequest.create()
-			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY)));
+			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY.toString())));
 
 		final var subscription = Subscription.create()
 			.withId(id)
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(Category.ELECTRICITY)
+				.withCategory(Category.ELECTRICITY.toString())
 				.withValues(Map.of("key", "value"))));
 
 		when(subscriptionServiceMock.update(anyLong(), any())).thenReturn(subscription);

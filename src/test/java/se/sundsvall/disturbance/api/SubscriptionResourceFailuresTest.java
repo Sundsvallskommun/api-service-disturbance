@@ -92,7 +92,7 @@ class SubscriptionResourceFailuresTest {
 		// Arrange
 		final var request = SubscriptionCreateRequest.create()
 			.withPartyId(null)  // missing partyId.
-			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY)));
+			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY.toString())));
 
 		// Act
 		final var response = webTestClient.post().uri("/subscriptions")
@@ -140,7 +140,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("optOutSettings[0].category", "must not be null"));
+			.containsExactly(tuple("optOutSettings[0].category", "must be one of: [COMMUNICATION, DISTRICT_COOLING, DISTRICT_HEATING, ELECTRICITY, ELECTRICITY_TRADE, WASTE_MANAGEMENT, WATER]"));
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}
@@ -152,7 +152,7 @@ class SubscriptionResourceFailuresTest {
 		final var request = SubscriptionCreateRequest.create()
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(ELECTRICITY)
+				.withCategory(ELECTRICITY.toString())
 				.withValues(Map.of(" ", "123456")))); // Blank key
 
 		// Act
@@ -183,7 +183,7 @@ class SubscriptionResourceFailuresTest {
 		final var request = SubscriptionCreateRequest.create()
 			.withPartyId(UUID.randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(ELECTRICITY)
+				.withCategory(ELECTRICITY.toString())
 				.withValues(Map.of("facilityId", " ")))); // Blank value
 
 		// Act
@@ -274,7 +274,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("optOutSettings[0].category", "must not be null"));
+			.containsExactly(tuple("optOutSettings[0].category", "must be one of: [COMMUNICATION, DISTRICT_COOLING, DISTRICT_HEATING, ELECTRICITY, ELECTRICITY_TRADE, WASTE_MANAGEMENT, WATER]"));
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}
@@ -285,7 +285,7 @@ class SubscriptionResourceFailuresTest {
 		// Arrange
 		final var request = SubscriptionUpdateRequest.create()
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(ELECTRICITY)
+				.withCategory(ELECTRICITY.toString())
 				.withValues(Map.of(" ", "12345")))); // Blank key
 
 		// Act
@@ -315,7 +315,7 @@ class SubscriptionResourceFailuresTest {
 		// Arrange
 		final var request = SubscriptionUpdateRequest.create()
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(ELECTRICITY)
+				.withCategory(ELECTRICITY.toString())
 				.withValues(Map.of("facilityId", " ")))); // Blank value
 
 		// Act

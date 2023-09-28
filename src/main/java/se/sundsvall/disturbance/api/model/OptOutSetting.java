@@ -1,18 +1,21 @@
 package se.sundsvall.disturbance.api.model;
 
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+
 import java.util.Map;
 import java.util.Objects;
 
+import se.sundsvall.disturbance.api.validation.OneOf;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Opt-out setting model")
 public class OptOutSetting {
 
-	@Schema(implementation = Category.class)
-	@NotNull
-	private Category category;
+	@Schema(requiredMode = REQUIRED, description = "Category of the disturbance", example = "ELECTRICITY")
+	@OneOf({"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
+	private String category;
 
 	@Schema(description = """
 		Key/value pairs of opt-out values. E.g. ["facilityId" : "12345"].
@@ -25,15 +28,15 @@ public class OptOutSetting {
 		return new OptOutSetting();
 	}
 
-	public Category getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 
-	public OptOutSetting withCategory(Category category) {
+	public OptOutSetting withCategory(String category) {
 		this.category = category;
 		return this;
 	}
@@ -57,16 +60,18 @@ public class OptOutSetting {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final OptOutSetting other)) { return false; }
-		return (category == other.category) && Objects.equals(values, other.values);
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		OptOutSetting that = (OptOutSetting) o;
+		return Objects.equals(category, that.category) && Objects.equals(values, that.values);
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("OptOutSetting [category=").append(category).append(", values=").append(values).append("]");
-		return builder.toString();
+		return "OptOutSetting{" +
+				"category='" + category + '\'' +
+				", values=" + values +
+				'}';
 	}
 }

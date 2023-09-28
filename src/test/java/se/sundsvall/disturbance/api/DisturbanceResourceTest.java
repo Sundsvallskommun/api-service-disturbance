@@ -90,7 +90,7 @@ class DisturbanceResourceTest {
 		final var disturbanceId = "12345";
 
 		when(disturbanceServiceMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Disturbance.create()
-			.withCategory(category)
+			.withCategory(category.toString())
 			.withId(disturbanceId));
 
 		// Act
@@ -118,7 +118,7 @@ class DisturbanceResourceTest {
 			.withDescription(description);
 
 		when(disturbanceServiceMock.updateDisturbance(category, disturbanceId, body)).thenReturn(Disturbance.create()
-			.withCategory(category)
+			.withCategory(category.toString())
 			.withId(disturbanceId));
 
 		// Act
@@ -162,13 +162,16 @@ class DisturbanceResourceTest {
 
 		// Arrange
 		final var body = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION)
+			.withCategory(Category.COMMUNICATION.toString())
 			.withId("123")
 			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
 			.withTitle("title")
 			.withDescription("description");
 
-		when(disturbanceServiceMock.createDisturbance(body)).thenReturn(Disturbance.create().withId(body.getId()).withCategory(body.getCategory()));
+		when(disturbanceServiceMock.createDisturbance(body))
+				.thenReturn(Disturbance.create()
+						.withId(body.getId())
+						.withCategory(body.getCategory()));
 
 		// Act
 		webTestClient.post().uri("/disturbances")

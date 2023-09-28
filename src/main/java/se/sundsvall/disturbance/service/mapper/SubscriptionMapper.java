@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toSet;
 import java.util.List;
 import java.util.Set;
 
+import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.OptOutSetting;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
@@ -58,7 +59,7 @@ public class SubscriptionMapper {
 
 		return optOutSettingsList.stream()
 			.map(optOutSetting -> OptOutSettingsEntity.create()
-				.withCategory(optOutSetting.getCategory())
+				.withCategory(Category.fromValue(optOutSetting.getCategory()))
 				.withOptOuts(optOutSetting.getValues()))
 			.collect(toSet());
 	}
@@ -70,7 +71,7 @@ public class SubscriptionMapper {
 
 		return optOutSettingsEntityList.stream()
 			.map(optOutSettingsEntity -> OptOutSetting.create()
-				.withCategory(optOutSettingsEntity.getCategory())
+				.withCategory(optOutSettingsEntity.getCategory().toString())
 				.withValues(optOutSettingsEntity.getOptOuts()))
 			.toList();
 	}

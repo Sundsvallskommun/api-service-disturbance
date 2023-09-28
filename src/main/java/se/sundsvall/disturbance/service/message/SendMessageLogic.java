@@ -174,7 +174,7 @@ public class SendMessageLogic {
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
 
-		final var headers = toHeaders(Category.valueOf(disturbanceEntity.getCategory()), affectedEntity.getFacilityId());
+		final var headers = toHeaders(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectUpdate());
 		final var message = propertyResolver.replace(messageConfig.getMessageUpdate());
 
@@ -202,7 +202,7 @@ public class SendMessageLogic {
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
 
-		final var headers = toHeaders(Category.valueOf(disturbanceEntity.getCategory()), affectedEntity.getFacilityId());
+		final var headers = toHeaders(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectNew());
 		final var message = propertyResolver.replace(messageConfig.getMessageNew());
 
@@ -229,7 +229,7 @@ public class SendMessageLogic {
 		final var sender = new MessageSender()
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
-		final var headers = toHeaders(Category.valueOf(disturbanceEntity.getCategory()), affectedEntity.getFacilityId());
+		final var headers = toHeaders(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectClose());
 		final var message = propertyResolver.replace(messageConfig.getMessageClose());
 		final var party = toParty(affectedEntity.getPartyId());
@@ -249,8 +249,8 @@ public class SendMessageLogic {
 		}
 	}
 
-	private Optional<CategoryConfig> getMessageConfigByCategory(final String category) {
-		return Optional.ofNullable(messageConfiguration.getCategoryConfig(Category.valueOf(category)));
+	private Optional<CategoryConfig> getMessageConfigByCategory(final Category category) {
+		return Optional.ofNullable(messageConfiguration.getCategoryConfig(category));
 	}
 
 	/**
@@ -265,6 +265,6 @@ public class SendMessageLogic {
 		final var partyId = affectedEntity.getPartyId();
 		final var facilityId = affectedEntity.getFacilityId();
 
-		return subscriptionService.hasApplicableSubscription(partyId, Category.valueOf(category), facilityId);
+		return subscriptionService.hasApplicableSubscription(partyId, category, facilityId);
 	}
 }
