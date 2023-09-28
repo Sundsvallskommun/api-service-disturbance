@@ -55,9 +55,8 @@ INSERT INTO subscription (id, party_id) VALUES
 INSERT INTO opt_out_settings (id, subscription_id, category) VALUES
 	(1, 1, 'ELECTRICITY');
 	
-INSERT opt_out_settings_key_values (opt_out_settings_id, opt_outs, opt_outs_key) VALUES
+INSERT INTO opt_out_settings_key_values (opt_out_settings_id, opt_outs, opt_outs_key) VALUES
 	(1, "facility-11", 'facilityId');
-
 	
 -- TODO: Remove when feedback-entity is removed
 INSERT INTO feedback(created, party_id)
