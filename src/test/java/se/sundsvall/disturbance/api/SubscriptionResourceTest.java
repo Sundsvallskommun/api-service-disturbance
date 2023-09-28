@@ -114,7 +114,7 @@ class SubscriptionResourceTest {
 				.withCategory(Category.ELECTRICITY)
 				.withValues(Map.of("key", "value"))));
 
-		when(subscriptionServiceMock.findByPartyId(any())).thenReturn(List.of(subscription));
+		when(subscriptionServiceMock.findByPartyId(any())).thenReturn(subscription);
 
 		// Act
 		final var response = webTestClient.get()

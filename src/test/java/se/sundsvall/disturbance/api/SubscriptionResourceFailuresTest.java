@@ -10,6 +10,7 @@ import static org.zalando.problem.Status.BAD_REQUEST;
 import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -145,6 +146,68 @@ class SubscriptionResourceFailuresTest {
 	}
 
 	@Test
+	void createSubscriptionBlankOptOutKey() {
+
+		// Arrange
+		final var request = SubscriptionCreateRequest.create()
+			.withPartyId(UUID.randomUUID().toString())
+			.withOptOutSettings(List.of(OptOutSetting.create()
+				.withCategory(ELECTRICITY)
+				.withValues(Map.of(" ", "123456")))); // Blank key
+
+		// Act
+		final var response = webTestClient.post().uri("/subscriptions")
+			.contentType(APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("optOutSettings[0].values[ ]", "must not be blank"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
+	void createSubscriptionBlankOptOutValue() {
+
+		// Arrange
+		final var request = SubscriptionCreateRequest.create()
+			.withPartyId(UUID.randomUUID().toString())
+			.withOptOutSettings(List.of(OptOutSetting.create()
+				.withCategory(ELECTRICITY)
+				.withValues(Map.of("facilityId", " ")))); // Blank value
+
+		// Act
+		final var response = webTestClient.post().uri("/subscriptions")
+			.contentType(APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("optOutSettings[0].values[facilityId]", "must not be blank"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
 	void getSubscriptionsByPartyIdMissingPartyId() {
 
 		// Act
@@ -207,12 +270,71 @@ class SubscriptionResourceFailuresTest {
 			.getResponseBody();
 
 		// Assert
-		// Assert
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("optOutSettings[0].category", "must not be null"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
+	void updateSubscriptionBlankOptOutKey() {
+
+		// Arrange
+		final var request = SubscriptionUpdateRequest.create()
+			.withOptOutSettings(List.of(OptOutSetting.create()
+				.withCategory(ELECTRICITY)
+				.withValues(Map.of(" ", "12345")))); // Blank key
+
+		// Act
+		final var response = webTestClient.put().uri("/subscriptions/{id}", "1234")
+			.contentType(APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("optOutSettings[0].values[ ]", "must not be blank"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
+	void updateSubscriptionBlankOptOutValue() {
+
+		// Arrange
+		final var request = SubscriptionUpdateRequest.create()
+			.withOptOutSettings(List.of(OptOutSetting.create()
+				.withCategory(ELECTRICITY)
+				.withValues(Map.of("facilityId", " ")))); // Blank value
+
+		// Act
+		final var response = webTestClient.put().uri("/subscriptions/{id}", "1234")
+			.contentType(APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("optOutSettings[0].values[facilityId]", "must not be blank"));
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}

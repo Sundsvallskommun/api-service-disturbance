@@ -69,9 +69,9 @@ public class DisturbanceMapper {
 	/**
 	 * Merge all new values from "newEntity" the the "oldEntity". Values are only used (copied) if they are not null.
 	 *
-	 * @param oldEntity the old entity.
-	 * @param newEntity the new (changed) entity.
-	 * @return the old entity with available (non-null) values from the new entity.
+	 * @param  oldEntity the old entity.
+	 * @param  newEntity the new (changed) entity.
+	 * @return           the old entity with available (non-null) values from the new entity.
 	 */
 	public static DisturbanceEntity toMergedDisturbanceEntity(final DisturbanceEntity oldEntity, final DisturbanceEntity newEntity) {
 

@@ -72,11 +72,11 @@ class DisturbanceRepositoryTest {
 			.containsExactly(tuple("partyId-1", "facility-1", "coordinates-1"));
 		assertThat(disturbance.getDisturbanceId()).isEqualTo("persistAndFetch-disturbanceId");
 		assertThat(disturbance.getCategory()).isEqualTo(COMMUNICATION.toString());
-		assertThat(disturbance.getCreated()).isCloseTo(OffsetDateTime.now(systemDefault()), within(2, SECONDS));
+		assertThat(disturbance.getCreated()).isCloseTo(now(systemDefault()), within(2, SECONDS));
 		assertThat(disturbance.getDeleted()).isFalse();
 		assertThat(disturbance.getDescription()).isEqualTo("description");
-		assertThat(disturbance.getPlannedStartDate()).isCloseTo(OffsetDateTime.now(systemDefault()), within(2, SECONDS));
-		assertThat(disturbance.getPlannedStopDate()).isCloseTo(OffsetDateTime.now(systemDefault()).plusDays(6), within(2, SECONDS));
+		assertThat(disturbance.getPlannedStartDate()).isCloseTo(now(systemDefault()), within(2, SECONDS));
+		assertThat(disturbance.getPlannedStopDate()).isCloseTo(now(systemDefault()).plusDays(6), within(2, SECONDS));
 		assertThat(disturbance.getStatus()).isEqualTo(OPEN.toString());
 	}
 
@@ -275,8 +275,8 @@ class DisturbanceRepositoryTest {
 		entity.setTitle("title");
 		entity.setDescription("description");
 		entity.setStatus(OPEN.toString());
-		entity.setPlannedStartDate(OffsetDateTime.now(systemDefault()));
-		entity.setPlannedStopDate(OffsetDateTime.now(systemDefault()).plusDays(6));
+		entity.setPlannedStartDate(now(systemDefault()));
+		entity.setPlannedStopDate(now(systemDefault()).plusDays(6));
 		entity.addAffectedEntities(Arrays.asList(affectedEntity));
 
 		return entity;

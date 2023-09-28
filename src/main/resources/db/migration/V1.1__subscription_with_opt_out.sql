@@ -18,6 +18,8 @@ create table subscription
 (
     id       bigint       not null auto_increment,
     party_id varchar(255) not null,
+    created datetime(6),
+    updated datetime(6),
     primary key (id)
 ) engine = InnoDB;
 
@@ -30,6 +32,6 @@ alter table if exists opt_out_settings
             references subscription (id);
 
 alter table if exists opt_out_settings_key_values
-    add constraint fk_opt_out_settings_opt_out_values
+    add constraint fk_opt_out_settings_key_values_opt_out_settings_id
         foreign key (opt_out_settings_id)
             references opt_out_settings (id);

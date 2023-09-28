@@ -14,6 +14,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.zalando.problem.Status.CONFLICT;
+import static org.zalando.problem.Status.NOT_FOUND;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceFeedbackMapper.toDisturbanceFeedbackEntity;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDisturbanceEntity;
 
@@ -31,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.Status;
 import org.zalando.problem.ThrowableProblem;
 
 import se.sundsvall.disturbance.api.model.Affected;
@@ -108,7 +109,7 @@ class DisturbanceServiceTest {
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.findByCategoryAndDisturbanceId(category, disturbanceId));
 
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'12345'!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.NOT_FOUND);
+		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -355,7 +356,7 @@ class DisturbanceServiceTest {
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.createDisturbance(disturbanceCreateRequest));
 
 		assertThat(throwableProblem.getMessage()).isEqualTo("Conflict: A disturbance with category:'COMMUNICATION' and id:'id' already exists!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.CONFLICT);
+		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -452,7 +453,7 @@ class DisturbanceServiceTest {
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.deleteDisturbance(category, disturbanceId));
 
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'disturbanceId'!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.NOT_FOUND);
+		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -716,7 +717,7 @@ class DisturbanceServiceTest {
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest));
 
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'12345'!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.NOT_FOUND);
+		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -743,7 +744,7 @@ class DisturbanceServiceTest {
 
 		assertThat(throwableProblem.getMessage())
 			.isEqualTo("Conflict: The disturbance with category:'COMMUNICATION' and id:'12345' is closed! No updates are allowed on closed disturbances!");
-		assertThat(throwableProblem.getStatus()).isEqualTo(Status.CONFLICT);
+		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);

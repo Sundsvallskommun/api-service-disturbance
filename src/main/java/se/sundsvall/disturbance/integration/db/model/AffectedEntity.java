@@ -16,9 +16,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "affected", indexes = {
-	@Index(name = "party_id_index", columnList = "party_id")
-})
+@Table(name = "affected",
+	indexes = {
+		@Index(name = "party_id_index", columnList = "party_id")
+	})
 public class AffectedEntity implements Serializable {
 
 	private static final long serialVersionUID = 8835799401886595749L;
@@ -108,15 +109,15 @@ public class AffectedEntity implements Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AffectedEntity other = (AffectedEntity) obj;
-		return Objects.equals(facilityId, other.facilityId) && Objects.equals(coordinates, other.coordinates) && id == other.id && Objects.equals(partyId, other.partyId)
+		final AffectedEntity other = (AffectedEntity) obj;
+		return Objects.equals(facilityId, other.facilityId) && Objects.equals(coordinates, other.coordinates) && (id == other.id) && Objects.equals(partyId, other.partyId)
 			&& Objects.equals(reference, other.reference);
 	}
 
 	@Override
 	public String toString() {
-		long disturbanceId = disturbanceEntity == null ? 0L : disturbanceEntity.getId();
-		StringBuilder builder = new StringBuilder();
+		final long disturbanceId = disturbanceEntity == null ? 0L : disturbanceEntity.getId();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("AffectedEntity [id=").append(id).append(", partyId=").append(partyId).append(", reference=").append(reference).append(", facilityId=").append(facilityId).append(", coordinates=").append(coordinates).append(
 			", disturbanceEntity.id=").append(disturbanceId).append("]");
 		return builder.toString();
