@@ -125,7 +125,7 @@ public class DisturbanceResource {
 	}
 
 	@DeleteMapping(path = "/{category}/{disturbanceId}", produces = { APPLICATION_PROBLEM_JSON_VALUE })
-	@Operation(summary = "Delete a disturbance. Should be used when the disturbance is resolved. Any affected persons/organizations (with ordered feedback) will be notified of the resolved disturbance.")
+	@Operation(summary = "Delete a disturbance. Should be used when the disturbance is resolved. Any affected persons/organizations (with notification subscriptions) will be notified of the resolved disturbance.")
 	@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))

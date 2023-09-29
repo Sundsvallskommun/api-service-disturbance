@@ -27,15 +27,11 @@ import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.service.DisturbanceFeedbackService;
 import se.sundsvall.disturbance.service.DisturbanceService;
 
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class DisturbanceResourceFailuresTest {
-
-	@MockBean
-	private DisturbanceFeedbackService disturbanceFeedbackServiceMock;
 
 	@MockBean
 	private DisturbanceService disturbanceServiceMock;
@@ -67,7 +63,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.DisturbanceResource.createDisturbance(org.springframework.web.util.UriComponentsBuilder,se.sundsvall.disturbance.api.model.DisturbanceCreateRequest)");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -96,7 +92,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("status", "must not be null"),
 				tuple("title", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -127,7 +123,7 @@ class DisturbanceResourceFailuresTest {
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("id", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -158,7 +154,7 @@ class DisturbanceResourceFailuresTest {
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("category", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -196,7 +192,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("affecteds[1].partyId", "not a valid UUID"),
 				tuple("affecteds[1].reference", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -235,7 +231,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("id", "size must be between 0 and 255"),
 				tuple("title", "size must be between 0 and 255"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	/**
@@ -261,7 +257,7 @@ class DisturbanceResourceFailuresTest {
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("getDisturbancesByPartyId.partyId", "not a valid UUID"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -282,7 +278,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Category] for value [not-a-category]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -303,7 +299,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Status] for value [not-a-status]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	/**
@@ -329,7 +325,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Required request body is missing: public org.springframework.http.ResponseEntity<se.sundsvall.disturbance.api.model.Disturbance> se.sundsvall.disturbance.api.DisturbanceResource.updateDisturbance(se.sundsvall.disturbance.api.model.Category,java.lang.String,se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest)");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -364,7 +360,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("affecteds[1].partyId", "not a valid UUID"),
 				tuple("affecteds[1].reference", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -398,7 +394,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("description", "size must be between 0 and 8192"),
 				tuple("title", "size must be between 0 and 255"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -419,7 +415,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Category] for value [not-a-category]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -440,6 +436,6 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Status] for value [not-a-status]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 }

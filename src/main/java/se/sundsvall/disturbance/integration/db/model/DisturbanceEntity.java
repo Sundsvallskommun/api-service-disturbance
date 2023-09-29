@@ -89,12 +89,21 @@ public class DisturbanceEntity implements Serializable {
 		updated = now(systemDefault()).truncatedTo(MILLIS);
 	}
 
+	public static DisturbanceEntity create() {
+		return new DisturbanceEntity();
+	}
+
 	public long getId() {
 		return id;
 	}
 
 	public void setId(final long id) {
 		this.id = id;
+	}
+
+	public DisturbanceEntity withId(final long id) {
+		this.id = id;
+		return this;
 	}
 
 	public String getDisturbanceId() {
@@ -105,12 +114,22 @@ public class DisturbanceEntity implements Serializable {
 		this.disturbanceId = disturbanceId;
 	}
 
+	public DisturbanceEntity withDisturbanceId(final String disturbanceId) {
+		this.disturbanceId = disturbanceId;
+		return this;
+	}
+
 	public String getCategory() {
 		return category;
 	}
 
 	public void setCategory(final String category) {
 		this.category = category;
+	}
+
+	public DisturbanceEntity withCategory(final String category) {
+		this.category = category;
+		return this;
 	}
 
 	public String getTitle() {
@@ -121,12 +140,22 @@ public class DisturbanceEntity implements Serializable {
 		this.title = title;
 	}
 
+	public DisturbanceEntity withTitle(final String title) {
+		this.title = title;
+		return this;
+	}
+
 	public String getDescription() {
 		return description;
 	}
 
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+
+	public DisturbanceEntity withDescription(final String description) {
+		this.description = description;
+		return this;
 	}
 
 	public String getStatus() {
@@ -137,12 +166,22 @@ public class DisturbanceEntity implements Serializable {
 		this.status = status;
 	}
 
+	public DisturbanceEntity withStatus(final String status) {
+		this.status = status;
+		return this;
+	}
+
 	public OffsetDateTime getPlannedStartDate() {
 		return plannedStartDate;
 	}
 
 	public void setPlannedStartDate(final OffsetDateTime plannedStartDate) {
 		this.plannedStartDate = plannedStartDate;
+	}
+
+	public DisturbanceEntity withPlannedStartDate(final OffsetDateTime plannedStartDate) {
+		this.plannedStartDate = plannedStartDate;
+		return this;
 	}
 
 	public OffsetDateTime getPlannedStopDate() {
@@ -153,12 +192,22 @@ public class DisturbanceEntity implements Serializable {
 		this.plannedStopDate = plannedStopDate;
 	}
 
+	public DisturbanceEntity withPlannedStopDate(final OffsetDateTime plannedStopDate) {
+		this.plannedStopDate = plannedStopDate;
+		return this;
+	}
+
 	public OffsetDateTime getCreated() {
 		return created;
 	}
 
 	public void setCreated(final OffsetDateTime created) {
 		this.created = created;
+	}
+
+	public DisturbanceEntity withCreated(final OffsetDateTime created) {
+		this.created = created;
+		return this;
 	}
 
 	public OffsetDateTime getUpdated() {
@@ -169,12 +218,22 @@ public class DisturbanceEntity implements Serializable {
 		this.updated = updated;
 	}
 
+	public DisturbanceEntity withUpdated(final OffsetDateTime updated) {
+		this.updated = updated;
+		return this;
+	}
+
 	public boolean getDeleted() {
 		return deleted;
 	}
 
 	public void setDeleted(final boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public DisturbanceEntity withDeleted(final boolean deleted) {
+		this.deleted = deleted;
+		return this;
 	}
 
 	public List<AffectedEntity> getAffectedEntities() {
@@ -185,7 +244,12 @@ public class DisturbanceEntity implements Serializable {
 		this.affectedEntities = affectedEntities;
 	}
 
-	public void addAffectedEntities(final List<AffectedEntity> affectedEntities) {
+	public DisturbanceEntity withAffectedEntities(final List<AffectedEntity> affectedEntities) {
+		this.affectedEntities = affectedEntities;
+		return this;
+	}
+
+	public DisturbanceEntity addAffectedEntities(final List<AffectedEntity> affectedEntities) {
 		ofNullable(affectedEntities).ifPresent(entities -> {
 			if (this.affectedEntities == null) {
 				this.affectedEntities = new ArrayList<>();
@@ -195,6 +259,8 @@ public class DisturbanceEntity implements Serializable {
 				this.affectedEntities.add(e);
 			});
 		});
+
+		return this;
 	}
 
 	@Override

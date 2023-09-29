@@ -43,7 +43,7 @@ public interface DisturbanceRepository extends JpaRepository<DisturbanceEntity, 
 	 * Delete all disturbances older than the provided date and with the provided statuses.
 	 *
 	 * @param expiryDate the expiryDate. All disturbances older than this date will be deleted.
-	 * @param statusList a List of statuses to delete by.
+	 * @param statuses   a List of statuses to delete by.
 	 */
 	void deleteByCreatedBeforeAndStatusIn(OffsetDateTime expiryDate, String... statuses);
 }

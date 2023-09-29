@@ -3,7 +3,6 @@ package se.sundsvall.disturbance.api;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -27,7 +26,6 @@ import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.service.DisturbanceFeedbackService;
 import se.sundsvall.disturbance.service.DisturbanceService;
 
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
@@ -36,9 +34,6 @@ class DisturbanceResourceTest {
 
 	@MockBean
 	private DisturbanceService disturbanceServiceMock;
-
-	@MockBean
-	private DisturbanceFeedbackService disturbanceFeedbackServiceMock;
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -61,7 +56,7 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).findByPartyIdAndCategoryAndStatus(partyId, null, null);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoMoreInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -84,7 +79,7 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).findByPartyIdAndCategoryAndStatus(partyId, categoryFilter, statusFilter);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoMoreInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -110,7 +105,6 @@ class DisturbanceResourceTest {
 		assertThat(response).isNotNull();
 
 		verify(disturbanceServiceMock).findByCategoryAndDisturbanceId(category, disturbanceId);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -141,7 +135,6 @@ class DisturbanceResourceTest {
 		assertThat(response).isNotNull();
 
 		verify(disturbanceServiceMock).updateDisturbance(category, disturbanceId, body);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -162,7 +155,6 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).deleteDisturbance(category, disturbanceId);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -190,7 +182,6 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).createDisturbance(body);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -212,6 +203,5 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).findByStatusAndCategory(statusFilter, categoryFilter);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
 	}
 }

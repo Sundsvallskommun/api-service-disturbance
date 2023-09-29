@@ -196,7 +196,7 @@ class SubscriptionServiceTest {
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(subscriptionRepository).existsById(id);
-		verify(subscriptionRepository, never()).deleteById(id);
+		verify(subscriptionRepository, never()).deleteById(any());
 	}
 
 	@Test
