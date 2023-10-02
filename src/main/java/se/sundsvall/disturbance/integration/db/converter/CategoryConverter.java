@@ -17,7 +17,7 @@ public class CategoryConverter implements AttributeConverter<Category, String> {
 		if(attribute == null) {
 			return null;
 		} else {
-			return attribute.name();
+			return attribute.toString();
 		}
 	}
 

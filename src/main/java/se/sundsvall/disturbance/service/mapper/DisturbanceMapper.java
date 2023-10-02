@@ -42,7 +42,7 @@ public class DisturbanceMapper {
 	public static DisturbanceEntity toDisturbanceEntity(final DisturbanceCreateRequest disturbanceCreateRequest) {
 		return DisturbanceEntity.create()
 			.addAffectedEntities(toAffectedEntities(disturbanceCreateRequest.getAffecteds()))
-			.withCategory(Category.fromValue(disturbanceCreateRequest.getCategory()))
+			.withCategory(Category.valueOf(disturbanceCreateRequest.getCategory()))
 			.withDescription(disturbanceCreateRequest.getDescription())
 			.withDisturbanceId(disturbanceCreateRequest.getId())
 			.withPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStartDate()))

@@ -25,7 +25,7 @@ class MessageConfigurationTest {
 		final var categoryConfig = messageConfiguration.getCategoryConfig(category);
 
 		assertThat(categoryConfig)
-			.describedAs("Missing one or more properties for config group: 'message.template.%s'", lowerCase(category.name()))
+			.describedAs("Missing one or more properties for config group: 'message.template.%s'", lowerCase(category.toString()))
 			.isNotNull()
 			.hasNoNullFieldsOrProperties();
 	}

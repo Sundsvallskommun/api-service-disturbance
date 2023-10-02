@@ -53,7 +53,7 @@ class DisturbanceMapperTest {
 
 		final var disturbance = DisturbanceMapper.toDisturbance(disturbanceEntity);
 
-		assertThat(disturbance.getCategory()).isEqualTo(Category.COMMUNICATION.getValue());
+		assertThat(disturbance.getCategory()).isEqualTo(Category.COMMUNICATION.toString());
 		assertThat(disturbance.getId()).isEqualTo("disturbanceId");
 		assertThat(disturbance.getDescription()).isEqualTo("description");
 		assertThat(disturbance.getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN);

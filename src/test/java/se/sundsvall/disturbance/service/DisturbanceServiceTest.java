@@ -136,7 +136,7 @@ class DisturbanceServiceTest {
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.fromValue(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verify(sendMessageLogicMock).sendCreateMessageToAllApplicableAffecteds(disturbanceEntity);
 
@@ -151,7 +151,7 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.fromValue(disturbanceCreateRequest.getCategory()));
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.valueOf(disturbanceCreateRequest.getCategory()));
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
@@ -187,7 +187,7 @@ class DisturbanceServiceTest {
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.fromValue(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock); // No interactions here if status is CLOSED.
@@ -201,7 +201,7 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.fromValue(disturbanceCreateRequest.getCategory()));
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.valueOf(disturbanceCreateRequest.getCategory()));
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
@@ -236,7 +236,7 @@ class DisturbanceServiceTest {
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.fromValue(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -252,7 +252,7 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.fromValue(disturbanceCreateRequest.getCategory()));
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.valueOf(disturbanceCreateRequest.getCategory()));
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
@@ -286,7 +286,7 @@ class DisturbanceServiceTest {
 		assertThat(throwableProblem.getMessage()).isEqualTo("Conflict: A disturbance with category:'COMMUNICATION' and id:'id' already exists!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.fromValue(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}

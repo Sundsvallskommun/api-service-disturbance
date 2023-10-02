@@ -6,8 +6,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import se.sundsvall.disturbance.api.validation.OneOf;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -15,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 import jakarta.validation.constraints.NotNull;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Disturbance model")
 public class Disturbance {
 

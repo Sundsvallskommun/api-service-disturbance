@@ -59,7 +59,7 @@ public class SubscriptionMapper {
 
 		return optOutSettingsList.stream()
 			.map(optOutSetting -> OptOutSettingsEntity.create()
-				.withCategory(Category.fromValue(optOutSetting.getCategory()))
+				.withCategory(Category.valueOf(optOutSetting.getCategory()))
 				.withOptOuts(optOutSetting.getValues()))
 			.collect(toSet());
 	}
