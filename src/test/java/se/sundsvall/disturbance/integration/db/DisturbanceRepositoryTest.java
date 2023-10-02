@@ -71,7 +71,7 @@ class DisturbanceRepositoryTest {
 		assertThat(disturbance.getAffectedEntities()).extracting(AffectedEntity::getPartyId, AffectedEntity::getFacilityId, AffectedEntity::getCoordinates)
 			.containsExactly(tuple("partyId-1", "facility-1", "coordinates-1"));
 		assertThat(disturbance.getDisturbanceId()).isEqualTo("persistAndFetch-disturbanceId");
-		assertThat(disturbance.getCategory()).isEqualTo(COMMUNICATION.toString());
+		assertThat(disturbance.getCategory()).isEqualTo(COMMUNICATION);
 		assertThat(disturbance.getCreated()).isCloseTo(now(systemDefault()), within(2, SECONDS));
 		assertThat(disturbance.getDeleted()).isFalse();
 		assertThat(disturbance.getDescription()).isEqualTo("description");
@@ -171,9 +171,9 @@ class DisturbanceRepositoryTest {
 			.hasSize(3)
 			.extracting(DisturbanceEntity::getId, DisturbanceEntity::getCategory)
 			.containsExactly(
-				tuple(2L, COMMUNICATION.toString()),
-				tuple(4L, COMMUNICATION.toString()),
-				tuple(11L, COMMUNICATION.toString()));
+				tuple(2L, COMMUNICATION),
+				tuple(4L, COMMUNICATION),
+				tuple(11L, COMMUNICATION));
 	}
 
 	@Test
@@ -199,9 +199,9 @@ class DisturbanceRepositoryTest {
 			.hasSize(3)
 			.extracting(DisturbanceEntity::getId, DisturbanceEntity::getCategory, DisturbanceEntity::getStatus)
 			.containsExactly(
-				tuple(4L, COMMUNICATION.toString(), CLOSED.toString()),
-				tuple(10L, ELECTRICITY.toString(), CLOSED.toString()),
-				tuple(12L, ELECTRICITY.toString(), PLANNED.toString()));
+				tuple(4L, COMMUNICATION, CLOSED.toString()),
+				tuple(10L, ELECTRICITY, CLOSED.toString()),
+				tuple(12L, ELECTRICITY, PLANNED.toString()));
 	}
 
 	@Test
@@ -228,7 +228,7 @@ class DisturbanceRepositoryTest {
 	private void assertAsDisturbanceEntity2(final DisturbanceEntity disturbanceEntity) {
 
 		assertThat(disturbanceEntity.getId()).isEqualTo(2);
-		assertThat(disturbanceEntity.getCategory()).isEqualTo(COMMUNICATION.toString());
+		assertThat(disturbanceEntity.getCategory()).isEqualTo(COMMUNICATION);
 		assertThat(disturbanceEntity.getCreated()).isEqualTo(getOffsetDateTime(2021, 9, 23, 9, 05, 48, 198000000));
 		assertThat(disturbanceEntity.getUpdated()).isEqualTo(getOffsetDateTime(2021, 9, 24, 9, 05, 48, 298000000));
 		assertThat(disturbanceEntity.getDescription()).isEqualTo("Description");
@@ -271,13 +271,13 @@ class DisturbanceRepositoryTest {
 
 		final var entity = new DisturbanceEntity();
 		entity.setDisturbanceId(disturbanceId);
-		entity.setCategory(COMMUNICATION.toString());
+		entity.setCategory(COMMUNICATION);
 		entity.setTitle("title");
 		entity.setDescription("description");
 		entity.setStatus(OPEN.toString());
 		entity.setPlannedStartDate(now(systemDefault()));
 		entity.setPlannedStopDate(now(systemDefault()).plusDays(6));
-		entity.addAffectedEntities(Arrays.asList(affectedEntity));
+		entity.addAffectedEntities(List.of(affectedEntity));
 
 		return entity;
 	}

@@ -26,7 +26,7 @@ public class DisturbanceMapper {
 
 	public static Disturbance toDisturbance(final DisturbanceEntity disturbanceEntity) {
 		return Disturbance.create()
-			.withCategory(isNull(disturbanceEntity.getCategory()) ? null : Category.valueOf(disturbanceEntity.getCategory()))
+			.withCategory(disturbanceEntity.getCategory().toString())
 			.withTitle(disturbanceEntity.getTitle())
 			.withDescription(disturbanceEntity.getDescription())
 			.withId(disturbanceEntity.getDisturbanceId())
@@ -42,7 +42,7 @@ public class DisturbanceMapper {
 	public static DisturbanceEntity toDisturbanceEntity(final DisturbanceCreateRequest disturbanceCreateRequest) {
 		return DisturbanceEntity.create()
 			.addAffectedEntities(toAffectedEntities(disturbanceCreateRequest.getAffecteds()))
-			.withCategory(String.valueOf(disturbanceCreateRequest.getCategory()))
+			.withCategory(Category.valueOf(disturbanceCreateRequest.getCategory()))
 			.withDescription(disturbanceCreateRequest.getDescription())
 			.withDisturbanceId(disturbanceCreateRequest.getId())
 			.withPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStartDate()))
@@ -54,7 +54,7 @@ public class DisturbanceMapper {
 	public static DisturbanceEntity toDisturbanceEntity(final Category category, final String disturbanceId, final DisturbanceUpdateRequest disturbanceUpdateRequest) {
 		return DisturbanceEntity.create()
 			.addAffectedEntities(toAffectedEntities(disturbanceUpdateRequest.getAffecteds()))
-			.withCategory(String.valueOf(category))
+			.withCategory(category)
 			.withDescription(disturbanceUpdateRequest.getDescription())
 			.withDisturbanceId(disturbanceId)
 			.withPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceUpdateRequest.getPlannedStartDate()))

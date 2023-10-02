@@ -52,7 +52,7 @@ class DisturbanceCreateRequestTest {
 		final var title = "Title";
 
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(category)
+			.withCategory(category.toString())
 			.withDescription(description)
 			.withId(id)
 			.withAffecteds(affecteds)
@@ -62,7 +62,7 @@ class DisturbanceCreateRequestTest {
 			.withTitle(title);
 
 		assertThat(disturbanceCreateRequest).isNotNull().hasNoNullFieldsOrProperties();
-		assertThat(disturbanceCreateRequest.getCategory()).isEqualTo(category);
+		assertThat(disturbanceCreateRequest.getCategory()).isEqualTo(category.toString());
 		assertThat(disturbanceCreateRequest.getDescription()).isEqualTo(description);
 		assertThat(disturbanceCreateRequest.getId()).isEqualTo(id);
 		assertThat(disturbanceCreateRequest.getAffecteds()).isEqualTo(affecteds);

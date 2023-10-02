@@ -42,7 +42,7 @@ class DisturbanceMapperTest {
 
 		final var disturbanceEntity = new DisturbanceEntity();
 		disturbanceEntity.setDisturbanceId("disturbanceId");
-		disturbanceEntity.setCategory("COMMUNICATION");
+		disturbanceEntity.setCategory(Category.COMMUNICATION);
 		disturbanceEntity.setDescription("description");
 		disturbanceEntity.setTitle("title");
 		disturbanceEntity.setStatus("OPEN");
@@ -53,7 +53,7 @@ class DisturbanceMapperTest {
 
 		final var disturbance = DisturbanceMapper.toDisturbance(disturbanceEntity);
 
-		assertThat(disturbance.getCategory()).isEqualTo(Category.COMMUNICATION);
+		assertThat(disturbance.getCategory()).isEqualTo(Category.COMMUNICATION.toString());
 		assertThat(disturbance.getId()).isEqualTo("disturbanceId");
 		assertThat(disturbance.getDescription()).isEqualTo("description");
 		assertThat(disturbance.getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN);
@@ -71,7 +71,7 @@ class DisturbanceMapperTest {
 	void toDisturbanceEntityFromDisturbanceCreateRequest() {
 
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION)
+			.withCategory(Category.COMMUNICATION.toString())
 			.withDescription("Description")
 			.withId("id")
 			.withAffecteds(List.of(
@@ -94,7 +94,7 @@ class DisturbanceMapperTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntity.getCategory()).isEqualTo(Category.COMMUNICATION.toString());
+		assertThat(disturbanceEntity.getCategory()).isEqualTo(Category.COMMUNICATION);
 		assertThat(disturbanceEntity.getDescription()).isEqualTo("Description");
 		assertThat(disturbanceEntity.getDisturbanceId()).isEqualTo("id");
 		assertThat(disturbanceEntity.getPlannedStartDate()).isCloseTo(now(systemDefault()), within(2, SECONDS));
@@ -129,7 +129,7 @@ class DisturbanceMapperTest {
 				tuple("reference-1", "partyId-1", "facility-1", "coordinate-1"),
 				tuple("reference-2", "partyId-2", "facility-2", "coordinate-2"),
 				tuple("reference-3", "partyId-3", "facility-3", "coordinate-3"));
-		assertThat(disturbanceEntity.getCategory()).isEqualTo(category.toString());
+		assertThat(disturbanceEntity.getCategory()).isEqualTo(category);
 		assertThat(disturbanceEntity.getDescription()).isEqualTo("Description");
 		assertThat(disturbanceEntity.getDisturbanceId()).isEqualTo(disturbanceId);
 		assertThat(disturbanceEntity.getPlannedStartDate()).isCloseTo(now(systemDefault()), within(2, SECONDS));
@@ -165,7 +165,7 @@ class DisturbanceMapperTest {
 		final var oldEntity = new DisturbanceEntity();
 		oldEntity.setId(1L);
 		oldEntity.setDisturbanceId("oldDisturbanceId");
-		oldEntity.setCategory("oldStatus");
+		oldEntity.setCategory(Category.ELECTRICITY);
 		oldEntity.setDescription("oldDescription");
 		oldEntity.setTitle("oldTitle");
 		oldEntity.setStatus("oldStatus");
@@ -193,7 +193,7 @@ class DisturbanceMapperTest {
 		final var newEntity = new DisturbanceEntity();
 		newEntity.setId(0L);
 		newEntity.setDisturbanceId("newDisturbanceId");
-		newEntity.setCategory("newStatus");
+		newEntity.setCategory(Category.WATER);
 		newEntity.setDescription("newDescription");
 		newEntity.setTitle("newTitle");
 		newEntity.setStatus("newStatus");
@@ -246,7 +246,7 @@ class DisturbanceMapperTest {
 		final var oldEntity = new DisturbanceEntity();
 		oldEntity.setId(1L);
 		oldEntity.setDisturbanceId("oldDisturbanceId");
-		oldEntity.setCategory("oldStatus");
+		oldEntity.setCategory(Category.ELECTRICITY);
 		oldEntity.setDescription("oldDescription");
 		oldEntity.setTitle("oldTitle");
 		oldEntity.setStatus("oldStatus");

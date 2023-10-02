@@ -690,7 +690,7 @@ class SendMessageLogicTest {
 	private DisturbanceEntity setupDisturbanceEntity(final int... idNumbersOnAffecteds) {
 
 		final var disturbanceEntity = new DisturbanceEntity();
-		disturbanceEntity.setCategory(CATEGORY.toString());
+		disturbanceEntity.setCategory(CATEGORY);
 		disturbanceEntity.setDisturbanceId(DISTURBANCE_ID);
 		disturbanceEntity.setDescription(DESCRIPTION);
 		disturbanceEntity.setPlannedStartDate(PLANNED_START_DATE);
@@ -728,7 +728,7 @@ class SendMessageLogicTest {
 		return categoryConfig;
 	}
 
-	private static final UUID uuidFromInt(final int integer) {
+	private static UUID uuidFromInt(final int integer) {
 
 		final var sb = new StringBuilder();
 		final String hex = Integer.toHexString(integer & 0x0000FFFF);

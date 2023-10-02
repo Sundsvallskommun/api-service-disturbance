@@ -6,12 +6,13 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import se.sundsvall.disturbance.api.validation.OneOf;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Schema(description = "Disturbance create request model")
 public class DisturbanceCreateRequest {
@@ -21,9 +22,9 @@ public class DisturbanceCreateRequest {
 	@Size(max = 255)
 	private String id;
 
-	@Schema(implementation = Category.class, requiredMode = REQUIRED)
-	@NotNull
-	private Category category;
+	@Schema(requiredMode = REQUIRED, description = "Category of the disturbance", example = "ELECTRICITY")
+	@OneOf({"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
+	private String category;
 
 	@Schema(description = "Title", example = "Disturbance", requiredMode = REQUIRED)
 	@NotNull
@@ -65,15 +66,15 @@ public class DisturbanceCreateRequest {
 		return this;
 	}
 
-	public Category getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory(final Category category) {
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
-	public DisturbanceCreateRequest withCategory(final Category category) {
+	public DisturbanceCreateRequest withCategory(final String category) {
 		this.category = category;
 		return this;
 	}
@@ -162,20 +163,13 @@ public class DisturbanceCreateRequest {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final var other = (DisturbanceCreateRequest) obj;
-		return category == other.category && Objects.equals(description, other.description) && Objects.equals(id, other.id) && Objects.equals(affecteds, other.affecteds)
-			&& Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && status == other.status
-			&& Objects.equals(title, other.title);
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final var that = (DisturbanceCreateRequest) o;
+		return Objects.equals(id, that.id) && Objects.equals(category, that.category) && Objects.equals(title, that.title) &&
+				Objects.equals(description, that.description) && status == that.status && Objects.equals(plannedStartDate, that.plannedStartDate)
+				&& Objects.equals(plannedStopDate, that.plannedStopDate) && Objects.equals(affecteds, that.affecteds);
 	}
 
 	@Override

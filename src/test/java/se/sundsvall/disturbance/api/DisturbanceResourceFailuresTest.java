@@ -86,7 +86,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(
-				tuple("category", "must not be null"),
+				tuple("category", "must be one of: [COMMUNICATION, DISTRICT_COOLING, DISTRICT_HEATING, ELECTRICITY, ELECTRICITY_TRADE, WASTE_MANAGEMENT, WATER]"),
 				tuple("description", "must not be null"),
 				tuple("id", "must not be null"),
 				tuple("status", "must not be null"),
@@ -100,7 +100,7 @@ class DisturbanceResourceFailuresTest {
 
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with missing id.
-			.withCategory(Category.COMMUNICATION)
+			.withCategory(Category.COMMUNICATION.toString())
 			.withTitle("Title")
 			.withDescription("Description")
 			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN);
@@ -152,7 +152,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("category", "must not be null"));
+			.containsExactly(tuple("category", "must be one of: [COMMUNICATION, DISTRICT_COOLING, DISTRICT_HEATING, ELECTRICITY, ELECTRICITY_TRADE, WASTE_MANAGEMENT, WATER]"));
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -163,7 +163,7 @@ class DisturbanceResourceFailuresTest {
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with invalid partyId
 			.withId("12345")
-			.withCategory(Category.ELECTRICITY)
+			.withCategory(Category.ELECTRICITY.toString())
 			.withTitle("Title")
 			.withDescription("Description")
 			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
@@ -202,7 +202,7 @@ class DisturbanceResourceFailuresTest {
 		final var body = DisturbanceCreateRequest.create() // Body with to long parameters.
 			.withId(repeat("*", 256))
 			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
-			.withCategory(Category.ELECTRICITY)
+			.withCategory(Category.ELECTRICITY.toString())
 			.withTitle(repeat("*", 256))
 			.withDescription(repeat("*", 8193))
 			.withAffecteds(List.of(Affected.create()

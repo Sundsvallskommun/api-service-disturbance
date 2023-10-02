@@ -15,7 +15,7 @@ class CategoryConverterTest {
 	@Test
 	void testConvertToDatabaseColumn() {
 		final var communication = categoryConverter.convertToDatabaseColumn(Category.COMMUNICATION);
-		assertThat(communication).isEqualTo(Category.COMMUNICATION.name());
+		assertThat(communication).isEqualTo(Category.COMMUNICATION.toString());
 	}
 
 	@Test
@@ -26,7 +26,7 @@ class CategoryConverterTest {
 
 	@Test
 	void testConvertToEntityAttribute() {
-		final var communication = categoryConverter.convertToEntityAttribute(Category.COMMUNICATION.name());
+		final var communication = categoryConverter.convertToEntityAttribute(Category.COMMUNICATION.toString());
 		assertThat(communication).isEqualTo(Category.COMMUNICATION);
 	}
 

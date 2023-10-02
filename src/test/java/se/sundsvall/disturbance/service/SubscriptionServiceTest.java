@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.zalando.problem.ThrowableProblem;
 
+import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
 import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
@@ -90,7 +91,7 @@ class SubscriptionServiceTest {
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(randomUUID().toString())
-			.withOptOuts(Set.of(OptOutSettingsEntity.create()));
+			.withOptOuts(Set.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
 
 		when(subscriptionRepository.findById(id)).thenReturn(Optional.of(subscriptionEntity));
 
@@ -131,7 +132,7 @@ class SubscriptionServiceTest {
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(OptOutSettingsEntity.create()));
+			.withOptOuts(Set.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
 
 		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
 

@@ -14,6 +14,8 @@ import java.util.Objects;
 
 import org.hibernate.annotations.TimeZoneStorage;
 
+import se.sundsvall.disturbance.api.model.Category;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +48,7 @@ public class DisturbanceEntity implements Serializable {
 	private String disturbanceId;
 
 	@Column(name = "category", nullable = false)
-	private String category;
+	private Category category;
 
 	@Column(name = "title")
 	private String title;
@@ -119,15 +121,15 @@ public class DisturbanceEntity implements Serializable {
 		return this;
 	}
 
-	public String getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(final String category) {
+	public void setCategory(final Category category) {
 		this.category = category;
 	}
 
-	public DisturbanceEntity withCategory(final String category) {
+	public DisturbanceEntity withCategory(final Category category) {
 		this.category = category;
 		return this;
 	}

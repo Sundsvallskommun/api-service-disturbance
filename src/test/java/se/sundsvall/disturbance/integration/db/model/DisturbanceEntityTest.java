@@ -43,7 +43,7 @@ class DisturbanceEntityTest {
 	void testBuilderMethods() {
 
 		final var affectedEntities = List.of(AffectedEntity.create());
-		final var category = Category.COMMUNICATION.toString();
+		final var category = Category.COMMUNICATION;
 		final var created = now(systemDefault());
 		final var deleted = true;
 		final var description = "description";

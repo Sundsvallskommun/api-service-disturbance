@@ -17,15 +17,14 @@ public class CategoryConverter implements AttributeConverter<Category, String> {
 		if(attribute == null) {
 			return null;
 		} else {
-			return attribute.name();
+			return attribute.toString();
 		}
 	}
 
 	@Override
 	public Category convertToEntityAttribute(String dbData) {
-		Category category;
 		try {
-			category = Category.valueOf(dbData);
+			return Category.valueOf(dbData);
 		} catch (IllegalArgumentException e) {
 			throw Problem.builder()
 					.withTitle("Invalid category")
@@ -33,6 +32,5 @@ public class CategoryConverter implements AttributeConverter<Category, String> {
 					.withDetail("Couldn't match: " + dbData + ", to a Category")
 					.build();
 		}
-		return category;
 	}
 }

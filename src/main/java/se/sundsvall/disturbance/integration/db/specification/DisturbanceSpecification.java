@@ -14,10 +14,16 @@ import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 
 public interface DisturbanceSpecification {
 
+	String CATEGORY = "category";
+	String STATUS = "status";
+	String AFFECTED_ENTITIES = "affectedEntities";
+	String PARTY_ID = "partyId";
+	String DISTURBANCE_ID = "disturbanceId";
+
 	static Specification<DisturbanceEntity> withCategoryFilter(List<Category> categoryList) {
 		return (disturbanceEntity, cq, cb) -> {
 			if (isNotEmpty(categoryList)) {
-				return disturbanceEntity.get("category").in(toStringList(categoryList));
+				return disturbanceEntity.get(CATEGORY).in(categoryList);
 			}
 			// always-true predicate, means that no filtering would be applied
 			return cb.and();
@@ -27,7 +33,7 @@ public interface DisturbanceSpecification {
 	static Specification<DisturbanceEntity> withStatusFilter(List<Status> statusList) {
 		return (disturbanceEntity, cq, cb) -> {
 			if (isNotEmpty(statusList)) {
-				return disturbanceEntity.get("status").in(toStringList(statusList));
+				return disturbanceEntity.get(STATUS).in(toStringList(statusList));
 			}
 			// always-true predicate, means that no filtering would be applied
 			return cb.and();
@@ -35,15 +41,15 @@ public interface DisturbanceSpecification {
 	}
 
 	static Specification<DisturbanceEntity> withPartyId(String partyId) {
-		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.join("affectedEntities").get("partyId"), partyId);
+		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.join(AFFECTED_ENTITIES).get(PARTY_ID), partyId);
 	}
 
 	static Specification<DisturbanceEntity> withDisturbanceId(String disturbanceId) {
-		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.get("disturbanceId"), disturbanceId);
+		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.get(DISTURBANCE_ID), disturbanceId);
 	}
 
 	static Specification<DisturbanceEntity> withCategory(Category category) {
-		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.get("category"), String.valueOf(category));
+		return (disturbanceEntity, cq, cb) -> cb.equal(disturbanceEntity.get(CATEGORY), category);
 	}
 
 	private static List<String> toStringList(List<? extends Enum<?>> enumList) {

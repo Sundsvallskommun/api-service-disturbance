@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zalando.problem.Problem;
 
-import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
@@ -35,6 +34,8 @@ import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
 import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.service.message.SendMessageLogic;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class DisturbanceService {
@@ -67,7 +68,7 @@ public class DisturbanceService {
 	public Disturbance createDisturbance(final DisturbanceCreateRequest disturbanceCreateRequest) {
 
 		// Check if disturbance already exists.
-		if (disturbanceRepository.findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()).isPresent()) {
+		if (disturbanceRepository.findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId()).isPresent()) {
 			throw Problem.valueOf(CONFLICT, format(ERROR_DISTURBANCE_ALREADY_EXISTS, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()));
 		}
 
