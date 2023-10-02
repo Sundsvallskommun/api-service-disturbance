@@ -65,8 +65,7 @@ class SubscriptionResourceTest {
 			.bodyValue(request)
 			.exchange()
 			.expectStatus().isCreated()
-			.expectHeader().location("http://localhost:".concat(String.valueOf(port)).concat(fromPath("/subscriptions/{id}").build(Map.of("id", id))
-								.toString()))
+			.expectHeader().location("http://localhost:".concat(String.valueOf(port)).concat(fromPath("/subscriptions/{id}").build(Map.of("id", id)).toString()))
 			.expectBody().isEmpty();
 
 		// Assert

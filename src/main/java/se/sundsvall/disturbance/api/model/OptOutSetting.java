@@ -63,7 +63,7 @@ public class OptOutSetting {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		OptOutSetting that = (OptOutSetting) o;
+		final var that = (OptOutSetting) o;
 		return Objects.equals(category, that.category) && Objects.equals(values, that.values);
 	}
 

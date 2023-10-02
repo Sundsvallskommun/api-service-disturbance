@@ -166,7 +166,7 @@ public class DisturbanceCreateRequest {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		DisturbanceCreateRequest that = (DisturbanceCreateRequest) o;
+		final var that = (DisturbanceCreateRequest) o;
 		return Objects.equals(id, that.id) && Objects.equals(category, that.category) && Objects.equals(title, that.title) &&
 				Objects.equals(description, that.description) && status == that.status && Objects.equals(plannedStartDate, that.plannedStartDate)
 				&& Objects.equals(plannedStopDate, that.plannedStopDate) && Objects.equals(affecteds, that.affecteds);
