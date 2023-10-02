@@ -102,6 +102,7 @@ public class SubscriptionService {
 			}
 		}
 
+		// Subscription is missing or has matching opt-outs.
 		return false;
 	}
 

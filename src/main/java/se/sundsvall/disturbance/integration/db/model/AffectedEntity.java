@@ -45,12 +45,21 @@ public class AffectedEntity implements Serializable {
 	@JoinColumn(name = "parent_id", nullable = false, foreignKey = @ForeignKey(name = "fk_affected_parent_id_disturbance_id"))
 	private DisturbanceEntity disturbanceEntity;
 
+	public static AffectedEntity create() {
+		return new AffectedEntity();
+	}
+
 	public long getId() {
 		return id;
 	}
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public AffectedEntity withId(long id) {
+		this.id = id;
+		return this;
 	}
 
 	public String getPartyId() {
@@ -61,12 +70,22 @@ public class AffectedEntity implements Serializable {
 		this.partyId = partyId;
 	}
 
+	public AffectedEntity withPartyId(String partyId) {
+		this.partyId = partyId;
+		return this;
+	}
+
 	public DisturbanceEntity getDisturbanceEntity() {
 		return disturbanceEntity;
 	}
 
 	public void setDisturbanceEntity(DisturbanceEntity disturbanceEntity) {
 		this.disturbanceEntity = disturbanceEntity;
+	}
+
+	public AffectedEntity withDisturbanceEntity(DisturbanceEntity disturbanceEntity) {
+		this.disturbanceEntity = disturbanceEntity;
+		return this;
 	}
 
 	public String getReference() {
@@ -77,6 +96,11 @@ public class AffectedEntity implements Serializable {
 		this.reference = reference;
 	}
 
+	public AffectedEntity withReference(String reference) {
+		this.reference = reference;
+		return this;
+	}
+
 	public String getFacilityId() {
 		return facilityId;
 	}
@@ -85,12 +109,22 @@ public class AffectedEntity implements Serializable {
 		this.facilityId = facilityId;
 	}
 
+	public AffectedEntity withFacilityId(String facilityId) {
+		this.facilityId = facilityId;
+		return this;
+	}
+
 	public String getCoordinates() {
 		return coordinates;
 	}
 
 	public void setCoordinates(String coordinates) {
 		this.coordinates = coordinates;
+	}
+
+	public AffectedEntity withCoordinates(String coordinates) {
+		this.coordinates = coordinates;
+		return this;
 	}
 
 	@Override

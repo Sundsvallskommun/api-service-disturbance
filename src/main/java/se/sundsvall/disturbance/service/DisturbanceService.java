@@ -1,7 +1,6 @@
 package se.sundsvall.disturbance.service;
 
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -13,7 +12,6 @@ import static se.sundsvall.disturbance.api.model.Status.PLANNED;
 import static se.sundsvall.disturbance.service.ServiceConstants.ERROR_DISTURBANCE_ALREADY_EXISTS;
 import static se.sundsvall.disturbance.service.ServiceConstants.ERROR_DISTURBANCE_CLOSED_NO_UPDATES_ALLOWED;
 import static se.sundsvall.disturbance.service.ServiceConstants.ERROR_DISTURBANCE_NOT_FOUND;
-import static se.sundsvall.disturbance.service.mapper.DisturbanceFeedbackMapper.toDisturbanceFeedbackEntity;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDisturbance;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDisturbanceEntity;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDisturbances;
@@ -22,7 +20,6 @@ import static se.sundsvall.disturbance.service.util.MappingUtils.getAddedAffecte
 import static se.sundsvall.disturbance.service.util.MappingUtils.getRemovedAffectedEntities;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +31,8 @@ import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackRepository;
 import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
-import se.sundsvall.disturbance.integration.db.FeedbackRepository;
-import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.service.message.SendMessageLogic;
 
@@ -50,12 +43,6 @@ public class DisturbanceService {
 
 	@Autowired
 	private DisturbanceRepository disturbanceRepository;
-
-	@Autowired
-	private FeedbackRepository feedbackRepository;
-
-	@Autowired
-	private DisturbanceFeedbackRepository disturbanceFeedbackRepository;
 
 	@Autowired
 	private SendMessageLogic sendMessageLogic;
@@ -87,15 +74,11 @@ public class DisturbanceService {
 		// Persist disturbance entity.
 		final var persistedDisturbanceEntity = disturbanceRepository.save(toDisturbanceEntity(disturbanceCreateRequest));
 
-		if (isNotEmpty(persistedDisturbanceEntity.getAffectedEntities()) && !hasStatusClosed(persistedDisturbanceEntity)) {
+		if (isNotEmpty(persistedDisturbanceEntity.getAffectedEntities()) &&
+			!hasStatusClosed(persistedDisturbanceEntity) && hasStatusOpen(persistedDisturbanceEntity)) {
 
-			// Add disturbance feedback, if not yet created.
-			addDisturbanceFeedbackForAffectedEntities(persistedDisturbanceEntity.getAffectedEntities());
-
-			// Send message to the created disturbance feedback recipients.
-			if (hasStatusOpen(persistedDisturbanceEntity)) {
-				sendMessageLogic.sendCreateMessageToAllApplicableAffecteds(persistedDisturbanceEntity);
-			}
+			// Send message to the created disturbance notification recipients.
+			sendMessageLogic.sendCreateMessageToAllApplicableAffecteds(persistedDisturbanceEntity);
 		}
 
 		return toDisturbance(persistedDisturbanceEntity);
@@ -119,9 +102,6 @@ public class DisturbanceService {
 		// Get added and removed affecteds.
 		final var removedAffecteds = getRemovedAffectedEntities(existingDisturbanceEntity, incomingDisturbanceEntity);
 		final var addedAffecteds = getAddedAffectedEntities(existingDisturbanceEntity, incomingDisturbanceEntity);
-
-		// Add disturbance feedback for new affecteds, if not yet created.
-		addDisturbanceFeedbackForAffectedEntities(addedAffecteds);
 
 		// Send "close" message if status is changed to CLOSED.
 		if (isChangedToStatusClosed(existingDisturbanceEntity, incomingDisturbanceEntity)) {
@@ -172,9 +152,6 @@ public class DisturbanceService {
 		final var disturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
 			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
 
-		// Delete all related disturbanceFeedback-entities.
-		disturbanceFeedbackRepository.deleteByCategoryAndDisturbanceId(category, disturbanceId);
-
 		// "Soft delete" disturbance entity.
 		disturbanceEntity.setDeleted(true);
 		disturbanceRepository.save(disturbanceEntity);
@@ -219,30 +196,5 @@ public class DisturbanceService {
 		}
 
 		return contentIsChanged;
-	}
-
-	/**
-	 * Adds a disturbanceFeedback for the provided affectedEntities if these conditions are met:
-	 *
-	 * <pre>
-	 * - The person/organization doesn't already have a disturbanceFeedback for this disturbance.
-	 * - A feedback (i.e. permanent subscription option) exists for this person/organization.
-	 * </pre>
-	 *
-	 * @param affectedEntities the affectedEntites to create disturbanceFeedback for.
-	 */
-	private void addDisturbanceFeedbackForAffectedEntities(final List<AffectedEntity> affectedEntities) {
-		Optional.ofNullable(affectedEntities).orElse(emptyList()).stream()
-			// Only process affectedEntities with no existing disturbanceFeedback-entry in DB.
-			.filter(affected -> disturbanceFeedbackRepository.findByCategoryAndDisturbanceIdAndPartyId(
-				Category.valueOf(affected.getDisturbanceEntity().getCategory()),
-				affected.getDisturbanceEntity().getDisturbanceId(),
-				affected.getPartyId()).isEmpty())
-			// Only process affectedEntities with an existing feedback-entry in DB.
-			.filter(affected -> feedbackRepository.findByPartyId(affected.getPartyId()).isPresent())
-			.forEach(affected -> disturbanceFeedbackRepository.save(toDisturbanceFeedbackEntity(
-				Category.valueOf(affected.getDisturbanceEntity().getCategory()),
-				affected.getDisturbanceEntity().getDisturbanceId(),
-				DisturbanceFeedbackCreateRequest.create().withPartyId(affected.getPartyId()))));
 	}
 }

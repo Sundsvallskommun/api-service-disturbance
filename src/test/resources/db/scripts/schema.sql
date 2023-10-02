@@ -24,32 +24,6 @@
         primary key (id)
     ) engine=InnoDB;
 
-    create table disturbance_feedback (
-        created datetime(6),
-        id bigint not null auto_increment,
-        category varchar(255) not null,
-        disturbance_id varchar(255) not null,
-        party_id varchar(255) not null,
-        primary key (id)
-    ) engine=InnoDB;
-
-    create table disturbance_feedback_history (
-        created datetime(6),
-        id bigint not null auto_increment,
-        category varchar(255) not null,
-        disturbance_id varchar(255) not null,
-        party_id varchar(255) not null,
-        status varchar(255) not null,
-        primary key (id)
-    ) engine=InnoDB;
-
-    create table feedback (
-        created datetime(6),
-        id bigint not null auto_increment,
-        party_id varchar(255) not null,
-        primary key (id)
-    ) engine=InnoDB;
-
     create table opt_out_settings (
         id bigint not null auto_increment,
         subscription_id bigint,
@@ -80,9 +54,6 @@
 
     create index category_index 
        on disturbance (category);
-
-    create index party_id_index 
-       on feedback (party_id);
 
     create index party_id_index 
        on subscription (party_id);

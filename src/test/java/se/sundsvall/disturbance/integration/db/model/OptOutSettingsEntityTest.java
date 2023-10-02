@@ -7,6 +7,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToString;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
+import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,11 +42,13 @@ class OptOutSettingsEntityTest {
 
 	@Test
 	void testBuilders() {
+		final var optOuts = new HashMap<String, String>();
+		final var category = ELECTRICITY;
 		final var opOutSettingsEntity = new OptOutSettingsEntity()
-			.withOptOuts(new HashMap<>())
-			.withCategory(Category.ELECTRICITY);
+			.withOptOuts(optOuts)
+			.withCategory(category);
 
-		assertThat(opOutSettingsEntity.getOptOuts()).isNotNull();
+		assertThat(opOutSettingsEntity.getOptOuts()).isEqualTo(optOuts);
 		assertThat(opOutSettingsEntity.getCategory()).isEqualByComparingTo(Category.ELECTRICITY);
 	}
 

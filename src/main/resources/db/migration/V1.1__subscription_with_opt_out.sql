@@ -35,3 +35,7 @@ alter table if exists opt_out_settings_key_values
     add constraint fk_opt_out_settings_key_values_opt_out_settings_id
         foreign key (opt_out_settings_id)
             references opt_out_settings (id);
+            
+drop table if exists feedback;
+drop table if exists disturbance_feedback;
+drop table if exists disturbance_feedback_history;

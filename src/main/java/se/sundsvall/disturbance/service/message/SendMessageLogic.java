@@ -7,8 +7,6 @@ import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMap
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toMessage;
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toParty;
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toSms;
-import static se.sundsvall.disturbance.service.mapper.DisturbanceFeedbackMapper.toDisturbanceFeedbackHistoryEntity;
-import static se.sundsvall.disturbance.service.message.util.SendMessageUtils.hasDisturbanceFeedBackEntity;
 import static se.sundsvall.disturbance.service.util.DateUtils.toMessageDateFormat;
 
 import java.util.List;
@@ -27,11 +25,10 @@ import generated.se.sundsvall.messaging.MessageRequest;
 import generated.se.sundsvall.messaging.MessageSender;
 import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackHistoryRepository;
-import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackRepository;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.integration.messaging.ApiMessagingClient;
+import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
 
@@ -49,10 +46,7 @@ public class SendMessageLogic {
 	private static final String MSG_AFFECTED_REFERENCE = "disturbance.affected.reference";
 
 	@Autowired
-	private DisturbanceFeedbackRepository disturbanceFeedBackRepository;
-
-	@Autowired
-	private DisturbanceFeedbackHistoryRepository disturbanceFeedBackHistoryRepository;
+	private SubscriptionService subscriptionService;
 
 	@Autowired
 	private MessageConfiguration messageConfiguration;
@@ -62,7 +56,7 @@ public class SendMessageLogic {
 
 	/**
 	 * Send a "closed disturbance" message to all affected persons/organizations in a disturbance with an existing
-	 * disturbanceFeedback. The affectedEntities will get a message if a disturbanceFeedback exists for this disturbance.
+	 * subscription. The affectedEntities will get a message if a subscription with no matching opt-outs exists.
 	 *
 	 * @param disturbanceEntity the DisturbanceEntity.
 	 */
@@ -72,13 +66,14 @@ public class SendMessageLogic {
 	}
 
 	/**
-	 * Send a "closed disturbance" message to all affected persons/organizations with an existing disturbanceFeedback, in
+	 * Send a "closed disturbance" message to all affected persons/organizations with an existing subscription, in
 	 * the provided affectedEntities list. This will override the existing affectedEntities in the DisturbanceEntity.
 	 *
-	 * The affectedEntities will get a message if a disturbanceFeedback exists for this disturbance.
+	 * The affectedEntities will get a message if a subscription exists for this disturbance.
 	 *
 	 * @param disturbanceEntity The entity that is closed.
-	 * @param affectedEntities  The affectedEntities that will get a message (if a disturbanceFeedback exists)
+	 * @param affectedEntities  The affectedEntities that will get a message (if a subscription with no matching opt-outs
+	 *                          exists).
 	 */
 	@Transactional
 	public void sendCloseMessageToProvidedApplicableAffecteds(final DisturbanceEntity disturbanceEntity, final List<AffectedEntity> affectedEntities) {
@@ -86,7 +81,8 @@ public class SendMessageLogic {
 	}
 
 	/**
-	 * Send a "new disturbance" message to all affected persons/organizations with an existing disturbanceFeedback in a
+	 * Send a "new disturbance" message to all affected persons/organizations with an existing subscription (without
+	 * matching opt-outs) in a
 	 * disturbance.
 	 *
 	 * @param disturbanceEntity the DisturbanceEntity.
@@ -97,13 +93,14 @@ public class SendMessageLogic {
 	}
 
 	/**
-	 * Send a "new disturbance" message to all affected persons/organizations with an existing disturbanceFeedback, in the
+	 * Send a "new disturbance" message to all affected persons/organizations with an existing subscription, in the
 	 * provided affectedEntities list. This will override the existing affectedEntities in the DisturbanceEntity.
 	 *
-	 * The affectedEntities will get a message if a disturbanceFeedback exists for this disturbance.
+	 * The affectedEntities will get a message if a subscription with no matching opt-outs exists.
 	 *
 	 * @param disturbanceEntity The entity.
-	 * @param affectedEntities  The affectedEntities that will get a message (if a disturbanceFeedback exists)
+	 * @param affectedEntities  The affectedEntities that will get a message (if a subscription with no matching opt-outs
+	 *                          exists).
 	 */
 	@Transactional
 	public void sendCreateMessageToProvidedApplicableAffecteds(final DisturbanceEntity disturbanceEntity, final List<AffectedEntity> affectedEntities) {
@@ -111,7 +108,7 @@ public class SendMessageLogic {
 	}
 
 	/**
-	 * Send a "updated disturbance" message to all affected persons/organizations with an existing disturbanceFeedback in a
+	 * Send a "updated disturbance" message to all affected persons/organizations with an existing subscription in a
 	 * disturbance.
 	 *
 	 * @param updatedDisturbanceEntity the updated DisturbanceEntity.
@@ -119,13 +116,9 @@ public class SendMessageLogic {
 	@Transactional
 	public void sendUpdateMessage(final DisturbanceEntity updatedDisturbanceEntity) {
 
-		// Fetch all feedbackEntities for this disturbance.
-		final var disturbanceFeedbackEntities = disturbanceFeedBackRepository.findByCategoryAndDisturbanceId(
-			Category.valueOf(updatedDisturbanceEntity.getCategory()), updatedDisturbanceEntity.getDisturbanceId());
-
 		// Create messages
 		final var messages = updatedDisturbanceEntity.getAffectedEntities().stream()
-			.filter(affectedEntity -> hasDisturbanceFeedBackEntity(affectedEntity, disturbanceFeedbackEntities))
+			.filter(this::hasApplicableSubscription)
 			.map(affectedEntity -> mapToUpdateMessage(updatedDisturbanceEntity, affectedEntity))
 			.filter(Objects::nonNull)
 			.toList();
@@ -136,13 +129,9 @@ public class SendMessageLogic {
 
 	private void sendCreateMessage(final DisturbanceEntity createdDisturbanceEntity, final List<AffectedEntity> affectedEntities) {
 
-		// Fetch all feedbackEntities for this disturbance.
-		final var disturbanceFeedbackEntities = disturbanceFeedBackRepository.findByCategoryAndDisturbanceId(
-			Category.valueOf(createdDisturbanceEntity.getCategory()), createdDisturbanceEntity.getDisturbanceId());
-
 		// Create messages
 		final var messages = affectedEntities.stream()
-			.filter(affectedEntity -> hasDisturbanceFeedBackEntity(affectedEntity, disturbanceFeedbackEntities))
+			.filter(this::hasApplicableSubscription)
 			.map(affectedEntity -> mapToNewMessage(createdDisturbanceEntity, affectedEntity))
 			.filter(Objects::nonNull)
 			.toList();
@@ -153,23 +142,15 @@ public class SendMessageLogic {
 
 	private void sendCloseMessage(final DisturbanceEntity disturbanceEntity, final List<AffectedEntity> affectedEntities) {
 
-		// Fetch all feedbackEntities for this disturbance.
-		final var disturbanceFeedbackEntities = disturbanceFeedBackRepository.findByCategoryAndDisturbanceId(
-			Category.valueOf(disturbanceEntity.getCategory()), disturbanceEntity.getDisturbanceId());
-
 		// Create messages
 		final var messages = affectedEntities.stream()
-			.filter(affectedEntity -> hasDisturbanceFeedBackEntity(affectedEntity, disturbanceFeedbackEntities))
+			.filter(this::hasApplicableSubscription)
 			.map(affectedEntity -> mapToCloseMessage(disturbanceEntity, affectedEntity))
 			.filter(Objects::nonNull)
 			.toList();
 
 		// Send messages.
 		sendMessages(messages);
-	}
-
-	private void persistFeedbackHistory(final AffectedEntity affectedEntity) {
-		disturbanceFeedBackHistoryRepository.save(toDisturbanceFeedbackHistoryEntity(affectedEntity));
 	}
 
 	private Message mapToUpdateMessage(final DisturbanceEntity disturbanceEntity, final AffectedEntity affectedEntity) {
@@ -196,9 +177,6 @@ public class SendMessageLogic {
 		final var headers = toHeaders(Category.valueOf(disturbanceEntity.getCategory()), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectUpdate());
 		final var message = propertyResolver.replace(messageConfig.getMessageUpdate());
-
-		// Store feedback history.
-		persistFeedbackHistory(affectedEntity);
 
 		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
 	}
@@ -228,9 +206,6 @@ public class SendMessageLogic {
 		final var subject = propertyResolver.replace(messageConfig.getSubjectNew());
 		final var message = propertyResolver.replace(messageConfig.getMessageNew());
 
-		// Store feedback history.
-		persistFeedbackHistory(affectedEntity);
-
 		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
 	}
 
@@ -259,9 +234,6 @@ public class SendMessageLogic {
 		final var message = propertyResolver.replace(messageConfig.getMessageClose());
 		final var party = toParty(affectedEntity.getPartyId());
 
-		// Store feedback history.
-		persistFeedbackHistory(affectedEntity);
-
 		return toMessage(headers, sender, party, subject, message);
 	}
 
@@ -279,5 +251,20 @@ public class SendMessageLogic {
 
 	private Optional<CategoryConfig> getMessageConfigByCategory(final String category) {
 		return Optional.ofNullable(messageConfiguration.getCategoryConfig(Category.valueOf(category)));
+	}
+
+	/**
+	 * Returns true if the person/organization that belongs to the affectedEntity has an applicable subscription without
+	 * matching opt-out.
+	 *
+	 * @param  affectedEntity the affectedEntity to check.
+	 * @return                true if there is a match, false otherwise.
+	 */
+	private boolean hasApplicableSubscription(final AffectedEntity affectedEntity) {
+		final var category = affectedEntity.getDisturbanceEntity().getCategory();
+		final var partyId = affectedEntity.getPartyId();
+		final var facilityId = affectedEntity.getFacilityId();
+
+		return subscriptionService.hasApplicableSubscription(partyId, Category.valueOf(category), facilityId);
 	}
 }

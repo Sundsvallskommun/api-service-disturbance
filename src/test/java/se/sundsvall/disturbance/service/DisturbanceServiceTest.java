@@ -16,7 +16,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.zalando.problem.Status.CONFLICT;
 import static org.zalando.problem.Status.NOT_FOUND;
-import static se.sundsvall.disturbance.service.mapper.DisturbanceFeedbackMapper.toDisturbanceFeedbackEntity;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDisturbanceEntity;
 
 import java.time.LocalDateTime;
@@ -39,14 +38,10 @@ import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.integration.db.DisturbanceFeedbackRepository;
 import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
-import se.sundsvall.disturbance.integration.db.FeedbackRepository;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
-import se.sundsvall.disturbance.integration.db.model.FeedbackEntity;
 import se.sundsvall.disturbance.service.mapper.DisturbanceMapper;
 import se.sundsvall.disturbance.service.message.SendMessageLogic;
 
@@ -55,12 +50,6 @@ class DisturbanceServiceTest {
 
 	@Mock
 	private DisturbanceRepository disturbanceRepositoryMock;
-
-	@Mock
-	private DisturbanceFeedbackRepository disturbanceFeedbackRepositoryMock;
-
-	@Mock
-	private FeedbackRepository feedbackRepositoryMock;
 
 	@Mock
 	private SendMessageLogic sendMessageLogicMock;
@@ -74,7 +63,7 @@ class DisturbanceServiceTest {
 	@Test
 	void findByDisturbanceIdAndCategorySuccess() {
 
-		// Parameters
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var status = se.sundsvall.disturbance.api.model.Status.OPEN;
@@ -86,40 +75,44 @@ class DisturbanceServiceTest {
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Optional.of(disturbanceEntity));
 
+		// Act
 		final var disturbance = disturbanceService.findByCategoryAndDisturbanceId(category, disturbanceId);
 
+		// Assert
 		assertThat(disturbance).isNotNull();
 		assertThat(disturbance.getCategory()).isEqualTo(Category.COMMUNICATION);
 		assertThat(disturbance.getId()).isEqualTo(disturbanceId);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void findByDisturbanceIdAndCategoryNotFound() {
 
-		// Parameters
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(empty());
 
+		// Act
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.findByCategoryAndDisturbanceId(category, disturbanceId));
 
+		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'12345'!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void createDisturbance() {
 
-		// Parameters
+		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
 			.withCategory(Category.COMMUNICATION)
 			.withId("id")
@@ -137,19 +130,17 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(disturbanceEntity);
 
+		// Act
 		final var disturbance = disturbanceService.createDisturbance(disturbanceCreateRequest);
+
+		// Assert
 		assertThat(disturbance).isNotNull();
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verify(sendMessageLogicMock).sendCreateMessageToAllApplicableAffecteds(disturbanceEntity);
-		verify(feedbackRepositoryMock).findByPartyId("partyId-1");
-		verify(feedbackRepositoryMock).findByPartyId("partyId-2");
-		verify(feedbackRepositoryMock).findByPartyId("partyId-3");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-1");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-2");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-3");
-		verifyNoMoreInteractions(disturbanceRepositoryMock, disturbanceFeedbackRepositoryMock, feedbackRepositoryMock, sendMessageLogicMock);
+
+		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
 
 		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
 		assertThat(disturbanceEntityCaptorValue).isNotNull();
@@ -170,68 +161,9 @@ class DisturbanceServiceTest {
 	}
 
 	@Test
-	void createDisturbanceWhenFeedbackExists() {
+	void createDisturbanceWhenStatusIsClosed() {
 
-		// Parameters
-		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION)
-			.withId("id")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
-			.withTitle("title")
-			.withDescription("description")
-			.withAffecteds(List.of(
-				Affected.create().withPartyId("partyId-1").withReference("reference-1"), // No existing feedback
-				Affected.create().withPartyId("partyId-2").withReference("reference-2"), // Will have existing feedback
-				Affected.create().withPartyId("partyId-2").withReference("reference-2"), // Will have existing feedback, but removed since duplicate
-				Affected.create().withPartyId("partyId-3").withReference("reference-3"))); // Will have existing feedback
-
-		final var disturbanceEntity = toDisturbanceEntity(disturbanceCreateRequest);
-
-		when(feedbackRepositoryMock.findByPartyId("partyId-1")).thenReturn(Optional.empty());
-		when(feedbackRepositoryMock.findByPartyId("partyId-2")).thenReturn(Optional.of(new FeedbackEntity()));
-		when(feedbackRepositoryMock.findByPartyId("partyId-3")).thenReturn(Optional.of(new FeedbackEntity()));
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(disturbanceEntity);
-
-		final var disturbance = disturbanceService.createDisturbance(disturbanceCreateRequest);
-		assertThat(disturbance).isNotNull();
-
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
-		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
-		verify(feedbackRepositoryMock).findByPartyId("partyId-1");
-		verify(feedbackRepositoryMock).findByPartyId("partyId-2");
-		verify(feedbackRepositoryMock).findByPartyId("partyId-3");
-
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-1");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-2");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-3");
-		verify(disturbanceFeedbackRepositoryMock).save(toDisturbanceFeedbackEntity(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), DisturbanceFeedbackCreateRequest.create().withPartyId("partyId-2")));
-		verify(disturbanceFeedbackRepositoryMock).save(toDisturbanceFeedbackEntity(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), DisturbanceFeedbackCreateRequest.create().withPartyId("partyId-3")));
-		verify(sendMessageLogicMock).sendCreateMessageToAllApplicableAffecteds(disturbanceEntity);
-		verifyNoMoreInteractions(disturbanceRepositoryMock, disturbanceFeedbackRepositoryMock, feedbackRepositoryMock, sendMessageLogicMock);
-
-		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
-		assertThat(disturbanceEntityCaptorValue).isNotNull();
-		assertThat(disturbanceEntityCaptorValue.getAffectedEntities())
-			.hasSize(3) // Duplicates removed.
-			.extracting(AffectedEntity::getPartyId, AffectedEntity::getReference)
-			.containsExactly(
-				tuple("partyId-1", "reference-1"),
-				tuple("partyId-2", "reference-2"),
-				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(disturbanceCreateRequest.getCategory().toString());
-		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
-		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
-		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
-		assertThat(disturbanceEntityCaptorValue.getPlannedStopDate()).isEqualTo(disturbanceCreateRequest.getPlannedStopDate());
-		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(disturbanceCreateRequest.getStatus().toString());
-		assertThat(disturbanceEntityCaptorValue.getTitle()).isEqualTo(disturbanceCreateRequest.getTitle());
-	}
-
-	@Test
-	void createDisturbanceWhenFeedbackExistsButStatusIsClosed() {
-
-		// Parameters
+		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
 			.withCategory(Category.COMMUNICATION)
 			.withId("id")
@@ -249,13 +181,16 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(disturbanceEntity);
 
+		// Act
 		final var disturbance = disturbanceService.createDisturbance(disturbanceCreateRequest);
+
+		// Assert
 		assertThat(disturbance).isNotNull();
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(disturbanceFeedbackRepositoryMock, feedbackRepositoryMock, sendMessageLogicMock); // No interactions here if status is CLOSED.
+		verifyNoInteractions(sendMessageLogicMock); // No interactions here if status is CLOSED.
 
 		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
 		assertThat(disturbanceEntityCaptorValue).isNotNull();
@@ -276,9 +211,9 @@ class DisturbanceServiceTest {
 	}
 
 	@Test
-	void createDisturbanceWhenFeedbackExistsButStatusIsPlanned() {
+	void createDisturbanceWhenStatusIsPlanned() {
 
-		// Parameters
+		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
 			.withCategory(Category.COMMUNICATION)
 			.withId("id")
@@ -286,34 +221,25 @@ class DisturbanceServiceTest {
 			.withTitle("title")
 			.withDescription("description")
 			.withAffecteds(List.of(
-				Affected.create().withPartyId("partyId-1").withReference("reference-1"), // No existing feedback
-				Affected.create().withPartyId("partyId-2").withReference("reference-2"), // Will have existing feedback
-				Affected.create().withPartyId("partyId-3").withReference("reference-3"))); // Will have existing feedback
+				Affected.create().withPartyId("partyId-1").withReference("reference-1"),
+				Affected.create().withPartyId("partyId-2").withReference("reference-2"),
+				Affected.create().withPartyId("partyId-3").withReference("reference-3")));
 
 		final var disturbanceEntity = toDisturbanceEntity(disturbanceCreateRequest);
 
-		when(feedbackRepositoryMock.findByPartyId("partyId-1")).thenReturn(empty());
-		when(feedbackRepositoryMock.findByPartyId("partyId-2")).thenReturn(Optional.of(new FeedbackEntity()));
-		when(feedbackRepositoryMock.findByPartyId("partyId-3")).thenReturn(Optional.of(new FeedbackEntity()));
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(disturbanceEntity);
 
+		// Act
 		final var disturbance = disturbanceService.createDisturbance(disturbanceCreateRequest);
+
+		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(feedbackRepositoryMock).findByPartyId("partyId-1");
-		verify(feedbackRepositoryMock).findByPartyId("partyId-2");
-		verify(feedbackRepositoryMock).findByPartyId("partyId-3");
-
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-1");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-2");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), "partyId-3");
-		verify(disturbanceFeedbackRepositoryMock).save(toDisturbanceFeedbackEntity(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), DisturbanceFeedbackCreateRequest.create().withPartyId("partyId-2")));
-		verify(disturbanceFeedbackRepositoryMock).save(toDisturbanceFeedbackEntity(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId(), DisturbanceFeedbackCreateRequest.create().withPartyId("partyId-3")));
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 
-		verifyNoMoreInteractions(disturbanceRepositoryMock, disturbanceFeedbackRepositoryMock, feedbackRepositoryMock);
+		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock); // No interactions here if status is PLANNED.
 
 		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
@@ -338,7 +264,7 @@ class DisturbanceServiceTest {
 	@Test
 	void createDisturbanceWhenAlreadyCreated() {
 
-		// Parameters
+		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
 			.withCategory(Category.COMMUNICATION)
 			.withId("id")
@@ -353,28 +279,32 @@ class DisturbanceServiceTest {
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(new DisturbanceEntity()));
 
+		// Act
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.createDisturbance(disturbanceCreateRequest));
 
+		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Conflict: A disturbance with category:'COMMUNICATION' and id:'id' already exists!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void findByPartyIdAndCategorySuccess() {
 
-		// Parameters
+		// Arrange
 		final var categoryFilter = List.of(Category.COMMUNICATION);
 		final var partyId = "partyId";
 		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.OPEN);
 
 		when(disturbanceRepositoryMock.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter)).thenReturn(createDisturbanceEntities());
 
+		// Act
 		final var disturbances = disturbanceService.findByPartyIdAndCategoryAndStatus(partyId, categoryFilter, statusFilter);
 
+		// Assert
 		assertThat(disturbances).isNotNull();
 		assertThat(disturbances.get(0).getCategory()).isEqualTo(Category.COMMUNICATION);
 		assertThat(disturbances.get(0).getId()).isEqualTo("disturbanceId1");
@@ -385,32 +315,34 @@ class DisturbanceServiceTest {
 
 		verify(disturbanceRepositoryMock).findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void findByPartyIdAndCategoryNotFound() {
 
-		// Parameters
+		// Arrange
 		final var categoryFilter = List.of(Category.COMMUNICATION);
 		final var partyId = "partyId";
 		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.OPEN);
 
 		when(disturbanceRepositoryMock.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter)).thenReturn(emptyList());
 
+		// Act
 		final var disturbances = disturbanceService.findByPartyIdAndCategoryAndStatus(partyId, categoryFilter, statusFilter);
 
+		// Assert
 		assertThat(disturbances).isNotNull().isEmpty();
 
 		verify(disturbanceRepositoryMock).findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void deleteByDisturbanceByIdAndCategory() {
 
-		// Parameters
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var status = se.sundsvall.disturbance.api.model.Status.OPEN;
@@ -422,16 +354,17 @@ class DisturbanceServiceTest {
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Optional.of(disturbanceEntity));
 
+		// Act
 		disturbanceService.deleteDisturbance(category, disturbanceId);
 
 		final var updatedDisturbanceEntity = disturbanceEntity;
 		updatedDisturbanceEntity.setDeleted(true);
 
+		// Assert
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
-		verify(disturbanceFeedbackRepositoryMock).deleteByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 
 		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
 		assertThat(disturbanceEntityCaptorValue).isNotNull();
@@ -444,25 +377,28 @@ class DisturbanceServiceTest {
 	@Test
 	void deleteByDisturbanceByIdAndCategoryNotFound() {
 
-		// Parameters
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "disturbanceId";
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(empty());
 
+		// Act
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.deleteDisturbance(category, disturbanceId));
 
+		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'disturbanceId'!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void updateDisturbanceChangeStatusToClosed() {
 
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var title = "title";
@@ -470,7 +406,6 @@ class DisturbanceServiceTest {
 		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 6).atOffset(now(systemDefault()).getOffset());
 		final var plannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 6).atOffset(now(systemDefault()).getOffset());
 
-		// Parameters
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withStatus(se.sundsvall.disturbance.api.model.Status.CLOSED);
 
@@ -505,15 +440,16 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
 
+		// Act
 		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
 
+		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendCloseMessageToAllApplicableAffecteds(existingDisturbanceEntity);
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
-		verifyNoInteractions(feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
 
 		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
 		assertThat(disturbanceEntityCaptorValue).isNotNull();
@@ -535,6 +471,7 @@ class DisturbanceServiceTest {
 	@Test
 	void updateDisturbanceRemoveAffectedsFromDisturbance() {
 
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var status = se.sundsvall.disturbance.api.model.Status.OPEN;
 		final var disturbanceId = "12345";
@@ -543,7 +480,6 @@ class DisturbanceServiceTest {
 		final var plannedStartDate = LocalDateTime.of(2021, 10, 12, 18, 30, 6).atOffset(now(systemDefault()).getOffset());
 		final var plannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 6).atOffset(now(systemDefault()).getOffset());
 
-		// Parameters
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withAffecteds(List.of(
 				// partyId-1 removed (compared to existing entity)
@@ -582,15 +518,16 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
 
+		// Act
 		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
 
+		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendCloseMessageToProvidedApplicableAffecteds(existingDisturbanceEntity, List.of(e1));
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
-		verifyNoInteractions(feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
 
 		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
 		assertThat(disturbanceEntityCaptorValue).isNotNull();
@@ -611,6 +548,7 @@ class DisturbanceServiceTest {
 	@Test
 	void updateDisturbanceChangeContent() {
 
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var existingTitle = "title";
@@ -622,7 +560,6 @@ class DisturbanceServiceTest {
 		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
 		final var status = se.sundsvall.disturbance.api.model.Status.OPEN;
 
-		// Parameters
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withTitle(newTitle)
 			.withDescription(newDescription)
@@ -671,17 +608,16 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
 
+		// Act
 		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
 
+		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendUpdateMessage(disturbanceEntityCaptor.capture());
 		verify(sendMessageLogicMock).sendCreateMessageToProvidedApplicableAffecteds(disturbanceEntityCaptor.capture(), eq(List.of(e4)));
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
-		verify(feedbackRepositoryMock).findByPartyId("partyId-4");
-		verify(disturbanceFeedbackRepositoryMock).findByCategoryAndDisturbanceIdAndPartyId(category, disturbanceId, "partyId-4");
-		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
 
 		// Loop through the captor values (for sendMessageLogicMock and disturbanceRepositoryMock).
 		disturbanceEntityCaptor.getAllValues().stream().forEach(updatedEntity -> {
@@ -706,7 +642,7 @@ class DisturbanceServiceTest {
 	@Test
 	void updateDisturbanceWhenDisturbanceDoesntExist() {
 
-		// Parameters
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
@@ -714,20 +650,22 @@ class DisturbanceServiceTest {
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
 
+		// Act
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest));
 
+		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'12345'!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void updateDisturbanceWhenStatusIsClosed() {
 
-		// Parameters
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
@@ -740,20 +678,23 @@ class DisturbanceServiceTest {
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
 
+		// Act
 		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest));
 
+		// Assert
 		assertThat(throwableProblem.getMessage())
 			.isEqualTo("Conflict: The disturbance with category:'COMMUNICATION' and id:'12345' is closed! No updates are allowed on closed disturbances!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
 	void updateDisturbanceWhenStatusIsPlanned() {
 
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var existingTitle = "title";
@@ -765,7 +706,6 @@ class DisturbanceServiceTest {
 		final var newPlannedStopDate = LocalDateTime.of(2021, 11, 10, 12, 0, 0).atOffset(now(systemDefault()).getOffset());
 		final var status = se.sundsvall.disturbance.api.model.Status.PLANNED;
 
-		// Parameters
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withTitle(newTitle)
 			.withDescription(newDescription)
@@ -802,14 +742,16 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
 
+		// Act
 		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
 
+		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
-		verifyNoInteractions(sendMessageLogicMock, feedbackRepositoryMock, disturbanceFeedbackRepositoryMock); // No messages sent if status is PLANNED.
+		verifyNoInteractions(sendMessageLogicMock); // No messages sent if status is PLANNED.
 
 		// Loop through the captor values (for sendMessageLogicMock and disturbanceRepositoryMock).
 		disturbanceEntityCaptor.getAllValues().stream().forEach(updatedEntity -> {
@@ -833,6 +775,7 @@ class DisturbanceServiceTest {
 	@Test
 	void updateDisturbanceWhenStatusIsChangedFromPlannedToOpen() {
 
+		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var existingTitle = "title";
@@ -843,7 +786,6 @@ class DisturbanceServiceTest {
 		final var existingStatus = se.sundsvall.disturbance.api.model.Status.PLANNED;
 		final var newStatus = se.sundsvall.disturbance.api.model.Status.OPEN;
 
-		// Parameters
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withStatus(newStatus);
 
@@ -878,15 +820,16 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
 		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
 
+		// Act
 		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
 
+		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendCreateMessageToAllApplicableAffecteds(disturbanceEntityCaptor.capture()); // New message is sent when status goes from PLANNED -> OPEN.
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
-		verifyNoInteractions(feedbackRepositoryMock, disturbanceFeedbackRepositoryMock);
 
 		// Loop through the captor values (for sendMessageLogicMock and disturbanceRepositoryMock).
 		disturbanceEntityCaptor.getAllValues().stream().forEach(updatedEntity -> {

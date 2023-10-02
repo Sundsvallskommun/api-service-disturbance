@@ -109,7 +109,7 @@ public class SubscriptionResource {
 	@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> deleteFeedback(@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id) {
+	public ResponseEntity<Void> deleteSubscription(@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id) {
 
 		subscriptionService.delete(id);
 		return noContent().build();

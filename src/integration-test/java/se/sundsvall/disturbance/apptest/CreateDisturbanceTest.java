@@ -55,10 +55,10 @@ class CreateDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test2_createDisturbanceWhenFeedbackExists() throws Exception {
+	void test2_createDisturbanceWhenSubscriptionExists() throws Exception {
 
 		final var category = Category.COMMUNICATION;
-		final var disturbanceId = "disturbance-with-feedback-1";
+		final var disturbanceId = "disturbance-with-subscription-1";
 
 		assertThat(disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)))).isNotPresent();
 

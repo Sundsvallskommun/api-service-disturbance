@@ -8,6 +8,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static com.google.code.beanmatchers.BeanMatchers.registerValueGenerator;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
@@ -51,19 +52,21 @@ class SubscriptionEntityTest {
 
 	@Test
 	void testBuilders() {
+		final var optOuts = new HashSet<OptOutSettingsEntity>();
 		final var created = now(systemDefault());
 		final var updated = now(systemDefault()).plusDays(2);
+		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withCreated(created)
 			.withId(1L)
-			.withOptOuts(new HashSet<>())
-			.withPartyId("partyId")
+			.withOptOuts(optOuts)
+			.withPartyId(partyId)
 			.withUpdated(updated);
 
 		assertThat(subscriptionEntity.getCreated()).isEqualTo(created);
 		assertThat(subscriptionEntity.getId()).isEqualTo(1L);
-		assertThat(subscriptionEntity.getOptOuts()).isNotNull();
-		assertThat(subscriptionEntity.getPartyId()).isEqualTo("partyId");
+		assertThat(subscriptionEntity.getOptOuts()).isEqualTo(optOuts);
+		assertThat(subscriptionEntity.getPartyId()).isEqualTo(partyId);
 		assertThat(subscriptionEntity.getUpdated()).isEqualTo(updated);
 	}
 
