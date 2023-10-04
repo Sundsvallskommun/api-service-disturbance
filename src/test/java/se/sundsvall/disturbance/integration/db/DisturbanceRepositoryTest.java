@@ -77,7 +77,7 @@ class DisturbanceRepositoryTest {
 		assertThat(disturbance.getDescription()).isEqualTo("description");
 		assertThat(disturbance.getPlannedStartDate()).isCloseTo(now(systemDefault()), within(2, SECONDS));
 		assertThat(disturbance.getPlannedStopDate()).isCloseTo(now(systemDefault()).plusDays(6), within(2, SECONDS));
-		assertThat(disturbance.getStatus()).isEqualTo(OPEN.toString());
+		assertThat(disturbance.getStatus()).isEqualByComparingTo(OPEN);
 	}
 
 	@Test
@@ -185,9 +185,9 @@ class DisturbanceRepositoryTest {
 			.hasSize(3)
 			.extracting(DisturbanceEntity::getId, DisturbanceEntity::getStatus)
 			.containsExactly(
-				tuple(4L, CLOSED.toString()),
-				tuple(10L, CLOSED.toString()),
-				tuple(15L, CLOSED.toString()));
+				tuple(4L, CLOSED),
+				tuple(10L, CLOSED),
+				tuple(15L, CLOSED));
 	}
 
 	@Test
@@ -199,9 +199,9 @@ class DisturbanceRepositoryTest {
 			.hasSize(3)
 			.extracting(DisturbanceEntity::getId, DisturbanceEntity::getCategory, DisturbanceEntity::getStatus)
 			.containsExactly(
-				tuple(4L, COMMUNICATION, CLOSED.toString()),
-				tuple(10L, ELECTRICITY, CLOSED.toString()),
-				tuple(12L, ELECTRICITY, PLANNED.toString()));
+				tuple(4L, COMMUNICATION, CLOSED),
+				tuple(10L, ELECTRICITY, CLOSED),
+				tuple(12L, ELECTRICITY, PLANNED));
 	}
 
 	@Test
@@ -218,7 +218,7 @@ class DisturbanceRepositoryTest {
 		assertThat(disturbanceNotEligibleForDelete.getCreated()).isBefore(expiryDate);
 
 		// Act
-		disturbanceRepository.deleteByCreatedBeforeAndStatusIn(expiryDate, CLOSED.toString());
+		disturbanceRepository.deleteByCreatedBeforeAndStatusIn(expiryDate, CLOSED);
 
 		// Assert
 		assertThat(disturbanceRepository.findById(disturbanceEligibleForDelete.getId())).isNotPresent();
@@ -229,14 +229,14 @@ class DisturbanceRepositoryTest {
 
 		assertThat(disturbanceEntity.getId()).isEqualTo(2);
 		assertThat(disturbanceEntity.getCategory()).isEqualTo(COMMUNICATION);
-		assertThat(disturbanceEntity.getCreated()).isEqualTo(getOffsetDateTime(2021, 9, 23, 9, 05, 48, 198000000));
-		assertThat(disturbanceEntity.getUpdated()).isEqualTo(getOffsetDateTime(2021, 9, 24, 9, 05, 48, 298000000));
+		assertThat(disturbanceEntity.getCreated()).isEqualTo(getOffsetDateTime(2021, 9, 23, 9, 5, 48, 198000000));
+		assertThat(disturbanceEntity.getUpdated()).isEqualTo(getOffsetDateTime(2021, 9, 24, 9, 5, 48, 298000000));
 		assertThat(disturbanceEntity.getDescription()).isEqualTo("Description");
 		assertThat(disturbanceEntity.getDisturbanceId()).isEqualTo("disturbance-2");
 		assertThat(disturbanceEntity.getPlannedStartDate()).isEqualTo(getOffsetDateTime(2021, 12, 31, 11, 30, 45, 0));
-		assertThat(disturbanceEntity.getPlannedStopDate()).isEqualTo(getOffsetDateTime(2022, 01, 11, 11, 30, 45, 0));
+		assertThat(disturbanceEntity.getPlannedStopDate()).isEqualTo(getOffsetDateTime(2022, 1, 11, 11, 30, 45, 0));
 
-		assertThat(disturbanceEntity.getStatus()).isEqualTo(OPEN.toString());
+		assertThat(disturbanceEntity.getStatus()).isEqualByComparingTo(OPEN);
 		assertThat(disturbanceEntity.getTitle()).isEqualTo("Title");
 		assertThat(disturbanceEntity.getAffectedEntities()).hasSize(3);
 		// Affected 1
@@ -274,7 +274,7 @@ class DisturbanceRepositoryTest {
 		entity.setCategory(COMMUNICATION);
 		entity.setTitle("title");
 		entity.setDescription("description");
-		entity.setStatus(OPEN.toString());
+		entity.setStatus(OPEN);
 		entity.setPlannedStartDate(now(systemDefault()));
 		entity.setPlannedStopDate(now(systemDefault()).plusDays(6));
 		entity.addAffectedEntities(List.of(affectedEntity));

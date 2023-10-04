@@ -19,6 +19,7 @@ import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
+import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 
@@ -45,7 +46,7 @@ class DisturbanceMapperTest {
 		disturbanceEntity.setCategory(Category.COMMUNICATION);
 		disturbanceEntity.setDescription("description");
 		disturbanceEntity.setTitle("title");
-		disturbanceEntity.setStatus("OPEN");
+		disturbanceEntity.setStatus(Status.OPEN);
 		disturbanceEntity.setPlannedStartDate(now(systemDefault()).plusDays(1));
 		disturbanceEntity.setPlannedStopDate(now(systemDefault()).plusDays(2));
 		disturbanceEntity.setCreated(now(systemDefault()));
@@ -53,10 +54,10 @@ class DisturbanceMapperTest {
 
 		final var disturbance = DisturbanceMapper.toDisturbance(disturbanceEntity);
 
-		assertThat(disturbance.getCategory()).isEqualTo(Category.COMMUNICATION.toString());
+		assertThat(disturbance.getCategory()).isEqualByComparingTo(Category.COMMUNICATION);
 		assertThat(disturbance.getId()).isEqualTo("disturbanceId");
 		assertThat(disturbance.getDescription()).isEqualTo("description");
-		assertThat(disturbance.getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN);
+		assertThat(disturbance.getStatus()).isEqualByComparingTo(Status.OPEN);
 		assertThat(disturbance.getPlannedStartDate()).isCloseTo(now(systemDefault()).plusDays(1), within(2, SECONDS));
 		assertThat(disturbance.getPlannedStopDate()).isCloseTo(now(systemDefault()).plusDays(2), within(2, SECONDS));
 		assertThat(disturbance.getCreated()).isCloseTo(now(systemDefault()), within(2, SECONDS));
@@ -71,7 +72,7 @@ class DisturbanceMapperTest {
 	void toDisturbanceEntityFromDisturbanceCreateRequest() {
 
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION.toString())
+			.withCategory(Category.COMMUNICATION)
 			.withDescription("Description")
 			.withId("id")
 			.withAffecteds(List.of(
@@ -82,7 +83,7 @@ class DisturbanceMapperTest {
 				Affected.create().withPartyId("partyId-3").withReference("reference-3")))
 			.withPlannedStartDate(now(systemDefault()))
 			.withPlannedStopDate(now(systemDefault()).plusDays(1))
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withTitle("Title");
 
 		final var disturbanceEntity = DisturbanceMapper.toDisturbanceEntity(disturbanceCreateRequest);
@@ -94,12 +95,12 @@ class DisturbanceMapperTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntity.getCategory()).isEqualTo(Category.COMMUNICATION);
+		assertThat(disturbanceEntity.getCategory()).isEqualByComparingTo(Category.COMMUNICATION);
 		assertThat(disturbanceEntity.getDescription()).isEqualTo("Description");
 		assertThat(disturbanceEntity.getDisturbanceId()).isEqualTo("id");
 		assertThat(disturbanceEntity.getPlannedStartDate()).isCloseTo(now(systemDefault()), within(2, SECONDS));
 		assertThat(disturbanceEntity.getPlannedStopDate()).isCloseTo(now(systemDefault()).plusDays(1), within(2, SECONDS));
-		assertThat(disturbanceEntity.getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN.toString());
+		assertThat(disturbanceEntity.getStatus()).isEqualByComparingTo(Status.OPEN);
 		assertThat(disturbanceEntity.getTitle()).isEqualTo("Title");
 	}
 
@@ -118,7 +119,7 @@ class DisturbanceMapperTest {
 				Affected.create().withPartyId("partyId-3").withReference("reference-3").withFacilityId("facility-3").withCoordinates("coordinate-3")))
 			.withPlannedStartDate(now(systemDefault()))
 			.withPlannedStopDate(now(systemDefault()).plusDays(1))
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN);
+			.withStatus(Status.OPEN);
 
 		final var disturbanceEntity = DisturbanceMapper.toDisturbanceEntity(category, disturbanceId, disturbanceUpdateRequest);
 
@@ -129,12 +130,12 @@ class DisturbanceMapperTest {
 				tuple("reference-1", "partyId-1", "facility-1", "coordinate-1"),
 				tuple("reference-2", "partyId-2", "facility-2", "coordinate-2"),
 				tuple("reference-3", "partyId-3", "facility-3", "coordinate-3"));
-		assertThat(disturbanceEntity.getCategory()).isEqualTo(category);
+		assertThat(disturbanceEntity.getCategory()).isEqualByComparingTo(category);
 		assertThat(disturbanceEntity.getDescription()).isEqualTo("Description");
 		assertThat(disturbanceEntity.getDisturbanceId()).isEqualTo(disturbanceId);
 		assertThat(disturbanceEntity.getPlannedStartDate()).isCloseTo(now(systemDefault()), within(2, SECONDS));
 		assertThat(disturbanceEntity.getPlannedStopDate()).isCloseTo(now(systemDefault()).plusDays(1), within(2, SECONDS));
-		assertThat(disturbanceEntity.getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN.toString());
+		assertThat(disturbanceEntity.getStatus()).isEqualByComparingTo(Status.OPEN);
 		assertThat(disturbanceEntity.getTitle()).isNull();
 	}
 
@@ -168,7 +169,7 @@ class DisturbanceMapperTest {
 		oldEntity.setCategory(Category.ELECTRICITY);
 		oldEntity.setDescription("oldDescription");
 		oldEntity.setTitle("oldTitle");
-		oldEntity.setStatus("oldStatus");
+		oldEntity.setStatus(Status.CLOSED);
 		oldEntity.setPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
 		oldEntity.setPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)));
 		oldEntity.setCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
@@ -196,7 +197,7 @@ class DisturbanceMapperTest {
 		newEntity.setCategory(Category.WATER);
 		newEntity.setDescription("newDescription");
 		newEntity.setTitle("newTitle");
-		newEntity.setStatus("newStatus");
+		newEntity.setStatus(Status.OPEN);
 		newEntity.setPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
 		newEntity.setPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)));
 		newEntity.setCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
@@ -249,7 +250,7 @@ class DisturbanceMapperTest {
 		oldEntity.setCategory(Category.ELECTRICITY);
 		oldEntity.setDescription("oldDescription");
 		oldEntity.setTitle("oldTitle");
-		oldEntity.setStatus("oldStatus");
+		oldEntity.setStatus(Status.CLOSED);
 		oldEntity.setPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
 		oldEntity.setPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)));
 		oldEntity.setCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));

@@ -26,6 +26,7 @@ import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
+import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.service.DisturbanceService;
 
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
@@ -65,7 +66,7 @@ class DisturbanceResourceTest {
 		// Arrange
 		final var partyId = UUID.randomUUID().toString();
 		final var categoryFilter = List.of(Category.COMMUNICATION, Category.ELECTRICITY);
-		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.PLANNED, se.sundsvall.disturbance.api.model.Status.OPEN);
+		final var statusFilter = List.of(Status.PLANNED, Status.OPEN);
 
 		// Act
 		webTestClient.get().uri(uriBuilder -> uriBuilder.path("/disturbances/affecteds/{partyId}")
@@ -90,7 +91,7 @@ class DisturbanceResourceTest {
 		final var disturbanceId = "12345";
 
 		when(disturbanceServiceMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Disturbance.create()
-			.withCategory(category.toString())
+			.withCategory(category)
 			.withId(disturbanceId));
 
 		// Act
@@ -118,7 +119,7 @@ class DisturbanceResourceTest {
 			.withDescription(description);
 
 		when(disturbanceServiceMock.updateDisturbance(category, disturbanceId, body)).thenReturn(Disturbance.create()
-			.withCategory(category.toString())
+			.withCategory(category)
 			.withId(disturbanceId));
 
 		// Act
@@ -162,9 +163,9 @@ class DisturbanceResourceTest {
 
 		// Arrange
 		final var body = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION.toString())
+			.withCategory(Category.COMMUNICATION)
 			.withId("123")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withTitle("title")
 			.withDescription("description");
 
@@ -192,7 +193,7 @@ class DisturbanceResourceTest {
 
 		// Arrange
 		final var categoryFilter = List.of(Category.COMMUNICATION, Category.ELECTRICITY);
-		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.PLANNED, se.sundsvall.disturbance.api.model.Status.OPEN);
+		final var statusFilter = List.of(Status.PLANNED, Status.OPEN);
 
 		// Act
 		webTestClient.get().uri(uriBuilder -> uriBuilder.path("/disturbances")

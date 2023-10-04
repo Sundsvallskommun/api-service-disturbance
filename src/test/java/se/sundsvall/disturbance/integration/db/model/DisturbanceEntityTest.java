@@ -51,7 +51,7 @@ class DisturbanceEntityTest {
 		final var id = 1L;
 		final var plannedStartDate = now(systemDefault());
 		final var plannedStopDate = now(systemDefault());
-		final var status = Status.CLOSED.toString();
+		final var status = Status.CLOSED;
 		final var title = "title";
 		final var updated = now(systemDefault());
 
@@ -71,7 +71,7 @@ class DisturbanceEntityTest {
 
 		assertThat(bean).isNotNull().hasNoNullFieldsOrProperties();
 		assertThat(bean.getAffectedEntities()).isEqualTo(affectedEntities);
-		assertThat(bean.getCategory()).isEqualTo(category);
+		assertThat(bean.getCategory()).isEqualByComparingTo(category);
 		assertThat(bean.getCreated()).isEqualTo(created);
 		assertThat(bean.getDeleted()).isEqualTo(deleted);
 		assertThat(bean.getDescription()).isEqualTo(description);
@@ -79,7 +79,7 @@ class DisturbanceEntityTest {
 		assertThat(bean.getId()).isEqualTo(id);
 		assertThat(bean.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(bean.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(bean.getStatus()).isEqualTo(status);
+		assertThat(bean.getStatus()).isEqualByComparingTo(status);
 		assertThat(bean.getTitle()).isEqualTo(title);
 		assertThat(bean.getUpdated()).isEqualTo(updated);
 	}

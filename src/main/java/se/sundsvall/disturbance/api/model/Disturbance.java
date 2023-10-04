@@ -1,12 +1,8 @@
 package se.sundsvall.disturbance.api.model;
 
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
-
-import se.sundsvall.disturbance.api.validation.OneOf;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,12 +15,12 @@ public class Disturbance {
 	@Schema(description = "Disturbance ID", example = "435553")
 	private String id;
 
-	@Schema(requiredMode = REQUIRED, description = "Category of the disturbance", example = "ELECTRICITY")
+	@Schema(implementation = Category.class)
 	@NotNull
-	@OneOf({"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
-	private String category;
+	private Category category;
 
 	@Schema(implementation = Status.class)
+	@NotNull
 	private Status status;
 
 	@Schema(description = "Title", example = "Disturbance")
@@ -65,15 +61,15 @@ public class Disturbance {
 		return this;
 	}
 
-	public String getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 
-	public Disturbance withCategory(String category) {
+	public Disturbance withCategory(Category category) {
 		this.category = category;
 		return this;
 	}
