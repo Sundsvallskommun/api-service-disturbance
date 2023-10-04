@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.zalando.problem.ThrowableProblem;
 
 import se.sundsvall.disturbance.api.model.Status;
 
@@ -37,8 +36,8 @@ class StatusConverterTest {
 
 	@Test
 	void testConvertToEntityAttribute_whenMissingValue_should() {
-		assertThatExceptionOfType(ThrowableProblem.class)
+		assertThatExceptionOfType(IllegalArgumentException.class)
 			.isThrownBy(() -> statusConverter.convertToEntityAttribute("noMatch"))
-			.withMessage("Invalid status: Couldn't match: noMatch, to a Status");
+			.withMessage("No enum constant se.sundsvall.disturbance.api.model.Status.noMatch");
 	}
 }

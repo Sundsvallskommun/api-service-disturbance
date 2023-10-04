@@ -3,13 +3,10 @@ package se.sundsvall.disturbance.integration.db.converter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.zalando.problem.ThrowableProblem;
 
 import se.sundsvall.disturbance.api.model.Category;
 
@@ -39,8 +36,8 @@ class CategoryConverterTest {
 
 	@Test
 	void testConvertToEntityAttribute_whenMissingValue_should() {
-		assertThatExceptionOfType(ThrowableProblem.class)
+		assertThatExceptionOfType(IllegalArgumentException.class)
 			.isThrownBy(() -> categoryConverter.convertToEntityAttribute("noMatch"))
-			.withMessage("Invalid category: Couldn't match: noMatch, to a Category");
+			.withMessage("No enum constant se.sundsvall.disturbance.api.model.Category.noMatch");
 	}
 }
