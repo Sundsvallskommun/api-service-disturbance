@@ -48,7 +48,7 @@ class DatabaseCleanerSchedulerServiceTest {
 		databaseCleanerSchedulerService.execute();
 
 		// Assert
-		verify(disturbanceRepository).deleteByCreatedBeforeAndStatusIn(expiryDateCaptor.capture(), eq(CLOSED.toString()));
+		verify(disturbanceRepository).deleteByCreatedBeforeAndStatusIn(expiryDateCaptor.capture(), eq(CLOSED));
 
 		final var expiryDate = expiryDateCaptor.getValue();
 		assertThat(expiryDate).isCloseTo(now(systemDefault()).minusMonths(deleteDisturbancesOlderThanMonths), within(2, SECONDS));

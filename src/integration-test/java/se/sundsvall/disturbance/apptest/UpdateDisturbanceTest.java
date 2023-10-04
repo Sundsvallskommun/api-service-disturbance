@@ -41,7 +41,7 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 	private DisturbanceRepository disturbanceRepository;
 
 	@Test
-	void test1_updateDisturbanceContent() throws Exception {
+	void test1_updateDisturbanceContent() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-5";
@@ -58,12 +58,12 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 		assertThat(updatedDisturbance).isPresent();
 		assertThat(updatedDisturbance.get().getTitle()).isEqualTo("Planerat avbrott i eget nät");
 		assertThat(updatedDisturbance.get().getDescription()).isEqualTo("Vi felsöker strömavbrottet.");
-		assertThat(updatedDisturbance.get().getPlannedStopDate()).isEqualTo(LocalDateTime.of(2022, 01, 04, 18, 00, 20, 0).atZone(ZoneId.systemDefault()).toOffsetDateTime());
+		assertThat(updatedDisturbance.get().getPlannedStopDate()).isEqualTo(LocalDateTime.of(2022, 1, 4, 18, 0, 20, 0).atZone(ZoneId.systemDefault()).toOffsetDateTime());
 		assertThat(updatedDisturbance.get().getAffectedEntities()).hasSize(3);
 	}
 
 	@Test
-	void test2_updateDisturbanceRemoveAffecteds() throws Exception {
+	void test2_updateDisturbanceRemoveAffecteds() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-6";
@@ -82,7 +82,7 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test3_updateDisturbanceAddAffecteds() throws Exception {
+	void test3_updateDisturbanceAddAffecteds() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-7";
@@ -101,7 +101,7 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test4_updateDisturbanceChangeStatusToClosed() throws Exception {
+	void test4_updateDisturbanceChangeStatusToClosed() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-8";
@@ -116,12 +116,12 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 
 		final var updatedDisturbance = disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)));
 		assertThat(updatedDisturbance).isPresent();
-		assertThat(updatedDisturbance.get().getStatus()).isEqualTo(CLOSED.toString());
+		assertThat(updatedDisturbance.get().getStatus()).isEqualByComparingTo(CLOSED);
 		assertThat(updatedDisturbance.get().getAffectedEntities()).hasSize(3);
 	}
 
 	@Test
-	void test5_updateDisturbanceChangeStatusFromPlannedToOpen() throws Exception {
+	void test5_updateDisturbanceChangeStatusFromPlannedToOpen() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-12";
@@ -136,12 +136,12 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 
 		final var updatedDisturbance = disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)));
 		assertThat(updatedDisturbance).isPresent();
-		assertThat(updatedDisturbance.get().getStatus()).isEqualTo(OPEN.toString());
+		assertThat(updatedDisturbance.get().getStatus()).isEqualByComparingTo(OPEN);
 		assertThat(updatedDisturbance.get().getAffectedEntities()).hasSize(3);
 	}
 
 	@Test
-	void test6_updateDisturbanceContentChangedAndNewAffectedAdded() throws Exception {
+	void test6_updateDisturbanceContentChangedAndNewAffectedAdded() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-13";
@@ -160,7 +160,7 @@ class UpdateDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test7_updateDisturbanceChangeAffectedProperties() throws Exception {
+	void test7_updateDisturbanceChangeAffectedProperties() {
 
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "disturbance-2";

@@ -51,7 +51,7 @@ class DisturbanceTest {
 		final var plannedStopDate = now(systemDefault());
 
 		final var disturbance = Disturbance.create()
-			.withCategory(category.toString())
+			.withCategory(category)
 			.withCreated(created)
 			.withDescription(description)
 			.withId(id)
@@ -64,13 +64,13 @@ class DisturbanceTest {
 
 		assertThat(disturbance).isNotNull().hasNoNullFieldsOrProperties();
 		assertThat(disturbance.getAffecteds()).isEqualTo(affecteds);
-		assertThat(disturbance.getCategory()).isEqualTo(category.toString());
+		assertThat(disturbance.getCategory()).isEqualByComparingTo(category);
 		assertThat(disturbance.getCreated()).isEqualTo(created);
 		assertThat(disturbance.getDescription()).isEqualTo(description);
 		assertThat(disturbance.getId()).isEqualTo(id);
 		assertThat(disturbance.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(disturbance.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(disturbance.getStatus()).isEqualTo(status);
+		assertThat(disturbance.getStatus()).isEqualByComparingTo(status);
 		assertThat(disturbance.getTitle()).isEqualTo(title);
 		assertThat(disturbance.getUpdated()).isEqualTo(updated);
 	}

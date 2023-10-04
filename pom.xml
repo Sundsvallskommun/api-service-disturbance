@@ -24,6 +24,7 @@
 		<commons-text.version>1.10.0</commons-text.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
+		<hibernate-jpamodelgen.version>6.3.1.Final</hibernate-jpamodelgen.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -70,6 +71,11 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>${hibernate-jpamodelgen.version}</version>
+		</dependency>
 		
 		<!-- Test -->
 		<dependency>
@@ -86,12 +92,21 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<reuseForks>true</reuseForks>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
 						<exclude>**/se/sundsvall/disturbance/Application*</exclude>
 						<exclude>**/generated/se/sundsvall/**/*</exclude>
+						<exclude>**/se/sundsvall/disturbance/integration/db/model/*Entity_**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

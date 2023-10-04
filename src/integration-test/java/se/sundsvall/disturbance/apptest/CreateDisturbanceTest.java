@@ -35,7 +35,7 @@ class CreateDisturbanceTest extends AbstractAppTest {
 	private DisturbanceRepository disturbanceRepository;
 
 	@Test
-	void test1_createDisturbance() throws Exception {
+	void test1_createDisturbance() {
 
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "disturbance-1";
@@ -55,7 +55,7 @@ class CreateDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test2_createDisturbanceWhenSubscriptionExists() throws Exception {
+	void test2_createDisturbanceWhenSubscriptionExists() {
 
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "disturbance-with-subscription-1";

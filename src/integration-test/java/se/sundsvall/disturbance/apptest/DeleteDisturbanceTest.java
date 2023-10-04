@@ -24,7 +24,7 @@ import se.sundsvall.disturbance.api.model.Category;
 class DeleteDisturbanceTest extends AbstractAppTest {
 
 	@Test
-	void test1_deleteDisturbanceWithStatusOpen() throws Exception {
+	void test1_deleteDisturbanceWithStatusOpen() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-9";
@@ -37,7 +37,7 @@ class DeleteDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test2_deleteDisturbanceWithStatusClosed() throws Exception {
+	void test2_deleteDisturbanceWithStatusClosed() {
 
 		final var category = Category.ELECTRICITY;
 		final var disturbanceId = "disturbance-10";

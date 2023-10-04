@@ -1,15 +1,15 @@
 package se.sundsvall.disturbance.integration.db.converter;
 
-import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Status;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class CategoryConverter implements AttributeConverter<Category, String> {
+public class StatusConverter implements AttributeConverter<Status, String> {
 
 	@Override
-	public String convertToDatabaseColumn(Category attribute) {
+	public String convertToDatabaseColumn(Status attribute) {
 		if(attribute == null) {
 			return null;
 		} else {
@@ -18,7 +18,7 @@ public class CategoryConverter implements AttributeConverter<Category, String> {
 	}
 
 	@Override
-	public Category convertToEntityAttribute(String dbData) {
-		return Category.valueOf(dbData);
+	public Status convertToEntityAttribute(String dbData) {
+		return Status.valueOf(dbData);
 	}
 }

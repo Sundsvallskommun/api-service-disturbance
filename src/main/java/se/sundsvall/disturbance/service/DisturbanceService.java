@@ -68,7 +68,7 @@ public class DisturbanceService {
 	public Disturbance createDisturbance(final DisturbanceCreateRequest disturbanceCreateRequest) {
 
 		// Check if disturbance already exists.
-		if (disturbanceRepository.findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId()).isPresent()) {
+		if (disturbanceRepository.findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()).isPresent()) {
 			throw Problem.valueOf(CONFLICT, format(ERROR_DISTURBANCE_ALREADY_EXISTS, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()));
 		}
 
@@ -144,7 +144,8 @@ public class DisturbanceService {
 			sendMessageLogic.sendUpdateMessage(mergedDisturbanceEntity);
 		}
 
-		return toDisturbance(disturbanceRepository.save(mergedDisturbanceEntity));
+		var save = disturbanceRepository.save(mergedDisturbanceEntity);
+		return toDisturbance(save);
 	}
 
 	@Transactional
@@ -163,15 +164,15 @@ public class DisturbanceService {
 	}
 
 	protected static boolean hasStatusClosed(final DisturbanceEntity disturbanceEntity) {
-		return CLOSED.toString().equals(disturbanceEntity.getStatus());
+		return CLOSED.equals(disturbanceEntity.getStatus());
 	}
 
 	protected static boolean hasStatusOpen(final DisturbanceEntity disturbanceEntity) {
-		return OPEN.toString().equals(disturbanceEntity.getStatus());
+		return OPEN.equals(disturbanceEntity.getStatus());
 	}
 
 	protected static boolean hasStatusPlanned(final DisturbanceEntity disturbanceEntity) {
-		return PLANNED.toString().equals(disturbanceEntity.getStatus());
+		return PLANNED.equals(disturbanceEntity.getStatus());
 	}
 
 	/**
