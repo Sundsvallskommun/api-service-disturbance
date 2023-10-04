@@ -13,11 +13,12 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.transaction.Transactional;
 
 @Transactional
 @CircuitBreaker(name = "disturbanceRepository")
@@ -45,5 +46,5 @@ public interface DisturbanceRepository extends JpaRepository<DisturbanceEntity, 
 	 * @param expiryDate the expiryDate. All disturbances older than this date will be deleted.
 	 * @param statuses   a List of statuses to delete by.
 	 */
-	void deleteByCreatedBeforeAndStatusIn(OffsetDateTime expiryDate, String... statuses);
+	void deleteByCreatedBeforeAndStatusIn(OffsetDateTime expiryDate, Status... statuses);
 }

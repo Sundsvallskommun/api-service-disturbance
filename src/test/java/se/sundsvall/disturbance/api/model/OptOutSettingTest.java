@@ -32,11 +32,11 @@ class OptOutSettingTest {
 		final var values = Map.of("key", "value");
 
 		final var bean = OptOutSetting.create()
-			.withCategory(category.toString())
+			.withCategory(category)
 			.withValues(values);
 
 		assertThat(bean).isNotNull().hasNoNullFieldsOrProperties();
-		assertThat(bean.getCategory()).isEqualTo(category.toString());
+		assertThat(bean.getCategory()).isEqualByComparingTo(category);
 		assertThat(bean.getValues()).isEqualTo(values);
 	}
 

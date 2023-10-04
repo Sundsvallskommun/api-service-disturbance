@@ -27,6 +27,7 @@ import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
+import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.service.DisturbanceService;
 
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
@@ -86,7 +87,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(
-				tuple("category", "must be one of: [COMMUNICATION, DISTRICT_COOLING, DISTRICT_HEATING, ELECTRICITY, ELECTRICITY_TRADE, WASTE_MANAGEMENT, WATER]"),
+				tuple("category", "must not be null"),
 				tuple("description", "must not be null"),
 				tuple("id", "must not be null"),
 				tuple("status", "must not be null"),
@@ -100,10 +101,10 @@ class DisturbanceResourceFailuresTest {
 
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with missing id.
-			.withCategory(Category.COMMUNICATION.toString())
+			.withCategory(Category.COMMUNICATION)
 			.withTitle("Title")
 			.withDescription("Description")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN);
+			.withStatus(Status.OPEN);
 
 		// Act
 		final var response = webTestClient.post().uri("/disturbances")
@@ -132,7 +133,7 @@ class DisturbanceResourceFailuresTest {
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with missing category.
 			.withId("id")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withTitle("Title")
 			.withDescription("Description");
 
@@ -152,7 +153,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("category", "must be one of: [COMMUNICATION, DISTRICT_COOLING, DISTRICT_HEATING, ELECTRICITY, ELECTRICITY_TRADE, WASTE_MANAGEMENT, WATER]"));
+			.containsExactly(tuple("category", "must not be null"));
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -163,10 +164,10 @@ class DisturbanceResourceFailuresTest {
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with invalid partyId
 			.withId("12345")
-			.withCategory(Category.ELECTRICITY.toString())
+			.withCategory(Category.ELECTRICITY)
 			.withTitle("Title")
 			.withDescription("Description")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withAffecteds(List.of(
 				Affected.create().withPartyId("11e9e570-2ce4-11ec-8d3d-0242ac130003").withReference("test1"),
 				Affected.create().withPartyId("invalid-party-id"), // Invalid UUID and missing reference.
@@ -201,8 +202,8 @@ class DisturbanceResourceFailuresTest {
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with to long parameters.
 			.withId(repeat("*", 256))
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
-			.withCategory(Category.ELECTRICITY.toString())
+			.withStatus(Status.OPEN)
+			.withCategory(Category.ELECTRICITY)
 			.withTitle(repeat("*", 256))
 			.withDescription(repeat("*", 8193))
 			.withAffecteds(List.of(Affected.create()

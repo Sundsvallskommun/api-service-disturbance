@@ -23,7 +23,7 @@ import se.sundsvall.disturbance.Application;
 class ReadDisturbanceTest extends AbstractAppTest {
 
 	@Test
-	void test1_readDisturbanceById() throws Exception {
+	void test1_readDisturbanceById() {
 
 		final var disturbanceId = "disturbance-2";
 
@@ -36,7 +36,7 @@ class ReadDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test2_readDisturbanceByPartyId() throws Exception {
+	void test2_readDisturbanceByPartyId() {
 
 		final var partyId = "c76ae496-3aed-11ec-8d3d-0242ac130003";
 
@@ -49,7 +49,7 @@ class ReadDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test3_readDisturbanceByPartyIdAndCategoryFilter() throws Exception {
+	void test3_readDisturbanceByPartyIdAndCategoryFilter() {
 
 		final var partyId = "c76ae496-3aed-11ec-8d3d-0242ac130003";
 
@@ -62,7 +62,7 @@ class ReadDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test4_readDisturbanceByPartyIdAndStatusFilter() throws Exception {
+	void test4_readDisturbanceByPartyIdAndStatusFilter() {
 
 		final var partyId = "c76ae496-3aed-11ec-8d3d-0242ac130003";
 
@@ -75,7 +75,7 @@ class ReadDisturbanceTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test5_readDisturbanceByPartyIdWithNoResults() throws Exception {
+	void test5_readDisturbanceByPartyIdWithNoResults() {
 
 		final var partyId = "887a45da-dbd4-4d58-98bc-4afe3c2ecc18"; // Doesn't exist in DB.
 

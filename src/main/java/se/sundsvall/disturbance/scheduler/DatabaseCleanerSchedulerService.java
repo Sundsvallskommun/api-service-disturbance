@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 
 @Component
@@ -20,7 +21,7 @@ public class DatabaseCleanerSchedulerService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseCleanerSchedulerService.class);
 
-	private static final List<String> STATUSES_ELIGIBLE_FOR_REMOVAL = List.of(CLOSED.toString());
+	private static final List<Status> STATUSES_ELIGIBLE_FOR_REMOVAL = List.of(CLOSED);
 
 	private static final String LOG_CLEANING_STARTED = "Beginning removal of obsolete entities in the database";
 	private static final String LOG_CLEANING_DELETE_RANGE = "Removing all disturbances older than '{}' and with status matching '{}'";
@@ -37,7 +38,7 @@ public class DatabaseCleanerSchedulerService {
 
 		LOGGER.info(LOG_CLEANING_STARTED);
 
-		final var statusesEligibleForRemoval = STATUSES_ELIGIBLE_FOR_REMOVAL.stream().toArray(String[]::new);
+		final var statusesEligibleForRemoval = STATUSES_ELIGIBLE_FOR_REMOVAL.toArray(Status[]::new);
 		final var expiryDate = calculateExpiryDate();
 
 		LOGGER.info(LOG_CLEANING_DELETE_RANGE, expiryDate, statusesEligibleForRemoval);

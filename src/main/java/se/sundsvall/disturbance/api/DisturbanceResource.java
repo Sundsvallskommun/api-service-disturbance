@@ -27,6 +27,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.problem.Problem;
 import org.zalando.problem.violations.ConstraintViolationProblem;
 
+import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
+import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Disturbance;
+import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
+import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
+import se.sundsvall.disturbance.api.model.Status;
+import se.sundsvall.disturbance.service.DisturbanceService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -35,13 +43,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
-import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.api.model.Disturbance;
-import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.api.model.Status;
-import se.sundsvall.disturbance.service.DisturbanceService;
 
 @RestController
 @Validated
@@ -74,8 +75,8 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<List<Disturbance>> getDisturbances(
-		@Parameter(name = "status", description = "Status filter parameter", required = false) @RequestParam(value = "status", required = false) final List<Status> status,
-		@Parameter(name = "category", description = "Category filter parameter", required = false) @RequestParam(value = "category", required = false) final List<Category> category) {
+		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
+		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(value = "category", required = false) final List<Category> category) {
 		return ok(disturbanceService.findByStatusAndCategory(status, category));
 	}
 
@@ -102,8 +103,8 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<List<Disturbance>> getDisturbancesByPartyId(
 		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @PathVariable(name = "partyId") final String partyId,
-		@Parameter(name = "status", description = "Status filter parameter", required = false) @RequestParam(value = "status", required = false) final List<Status> status,
-		@Parameter(name = "category", description = "Category filter parameter", required = false) @RequestParam(value = "category", required = false) final List<Category> category) {
+		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
+		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(value = "category", required = false) final List<Category> category) {
 
 		return ok(disturbanceService.findByPartyIdAndCategoryAndStatus(partyId, category, status));
 	}

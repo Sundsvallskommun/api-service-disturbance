@@ -39,6 +39,7 @@ import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
+import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
@@ -66,12 +67,12 @@ class DisturbanceServiceTest {
 		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
-		final var status = se.sundsvall.disturbance.api.model.Status.OPEN;
+		final var status = Status.OPEN;
 
 		final var disturbanceEntity = new DisturbanceEntity();
 		disturbanceEntity.setDisturbanceId(disturbanceId);
 		disturbanceEntity.setCategory(category);
-		disturbanceEntity.setStatus(status.toString());
+		disturbanceEntity.setStatus(status);
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Optional.of(disturbanceEntity));
 
@@ -80,7 +81,7 @@ class DisturbanceServiceTest {
 
 		// Assert
 		assertThat(disturbance).isNotNull();
-		assertThat(disturbance.getCategory()).isEqualTo(Category.COMMUNICATION.toString());
+		assertThat(disturbance.getCategory()).isEqualByComparingTo(Category.COMMUNICATION);
 		assertThat(disturbance.getId()).isEqualTo(disturbanceId);
 
 		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
@@ -114,9 +115,9 @@ class DisturbanceServiceTest {
 
 		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION.toString())
+			.withCategory(Category.COMMUNICATION)
 			.withId("id")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withTitle("title")
 			.withDescription("description")
 			.withAffecteds(List.of(
@@ -136,7 +137,7 @@ class DisturbanceServiceTest {
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verify(sendMessageLogicMock).sendCreateMessageToAllApplicableAffecteds(disturbanceEntity);
 
@@ -151,12 +152,12 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.valueOf(disturbanceCreateRequest.getCategory()));
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(disturbanceCreateRequest.getCategory());
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStopDate()).isEqualTo(disturbanceCreateRequest.getPlannedStopDate());
-		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(disturbanceCreateRequest.getStatus().toString());
+		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(disturbanceCreateRequest.getStatus());
 		assertThat(disturbanceEntityCaptorValue.getTitle()).isEqualTo(disturbanceCreateRequest.getTitle());
 	}
 
@@ -165,9 +166,9 @@ class DisturbanceServiceTest {
 
 		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION.toString())
+			.withCategory(Category.COMMUNICATION)
 			.withId("id")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.CLOSED)
+			.withStatus(Status.CLOSED)
 			.withTitle("title")
 			.withDescription("description")
 			.withAffecteds(List.of(
@@ -187,7 +188,7 @@ class DisturbanceServiceTest {
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock); // No interactions here if status is CLOSED.
@@ -201,12 +202,12 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.valueOf(disturbanceCreateRequest.getCategory()));
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(disturbanceCreateRequest.getCategory());
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStopDate()).isEqualTo(disturbanceCreateRequest.getPlannedStopDate());
-		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(disturbanceCreateRequest.getStatus().toString());
+		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualByComparingTo(disturbanceCreateRequest.getStatus());
 		assertThat(disturbanceEntityCaptorValue.getTitle()).isEqualTo(disturbanceCreateRequest.getTitle());
 	}
 
@@ -215,9 +216,9 @@ class DisturbanceServiceTest {
 
 		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION.toString())
+			.withCategory(Category.COMMUNICATION)
 			.withId("id")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.PLANNED)
+			.withStatus(Status.PLANNED)
 			.withTitle("title")
 			.withDescription("description")
 			.withAffecteds(List.of(
@@ -236,7 +237,7 @@ class DisturbanceServiceTest {
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -252,12 +253,12 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(Category.valueOf(disturbanceCreateRequest.getCategory()));
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(disturbanceCreateRequest.getCategory());
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStopDate()).isEqualTo(disturbanceCreateRequest.getPlannedStopDate());
-		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(disturbanceCreateRequest.getStatus().toString());
+		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualByComparingTo(disturbanceCreateRequest.getStatus());
 		assertThat(disturbanceEntityCaptorValue.getTitle()).isEqualTo(disturbanceCreateRequest.getTitle());
 	}
 
@@ -266,9 +267,9 @@ class DisturbanceServiceTest {
 
 		// Arrange
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(Category.COMMUNICATION.toString())
+			.withCategory(Category.COMMUNICATION)
 			.withId("id")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withTitle("title")
 			.withDescription("description")
 			.withAffecteds(List.of(
@@ -286,7 +287,7 @@ class DisturbanceServiceTest {
 		assertThat(throwableProblem.getMessage()).isEqualTo("Conflict: A disturbance with category:'COMMUNICATION' and id:'id' already exists!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(Category.valueOf(disturbanceCreateRequest.getCategory()), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -297,7 +298,7 @@ class DisturbanceServiceTest {
 		// Arrange
 		final var categoryFilter = List.of(Category.COMMUNICATION);
 		final var partyId = "partyId";
-		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.OPEN);
+		final var statusFilter = List.of(Status.OPEN);
 
 		when(disturbanceRepositoryMock.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter)).thenReturn(createDisturbanceEntities());
 
@@ -306,12 +307,12 @@ class DisturbanceServiceTest {
 
 		// Assert
 		assertThat(disturbances).isNotNull();
-		assertThat(disturbances.get(0).getCategory()).isEqualTo(Category.COMMUNICATION.toString());
+		assertThat(disturbances.get(0).getCategory()).isEqualByComparingTo(Category.COMMUNICATION);
 		assertThat(disturbances.get(0).getId()).isEqualTo("disturbanceId1");
-		assertThat(disturbances.get(0).getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN);
-		assertThat(disturbances.get(1).getCategory()).isEqualTo(Category.COMMUNICATION.toString());
+		assertThat(disturbances.get(0).getStatus()).isEqualByComparingTo(Status.OPEN);
+		assertThat(disturbances.get(1).getCategory()).isEqualByComparingTo(Category.COMMUNICATION);
 		assertThat(disturbances.get(1).getId()).isEqualTo("disturbanceId2");
-		assertThat(disturbances.get(1).getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN);
+		assertThat(disturbances.get(1).getStatus()).isEqualByComparingTo(Status.OPEN);
 
 		verify(disturbanceRepositoryMock).findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -324,7 +325,7 @@ class DisturbanceServiceTest {
 		// Arrange
 		final var categoryFilter = List.of(Category.COMMUNICATION);
 		final var partyId = "partyId";
-		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.OPEN);
+		final var statusFilter = List.of(Status.OPEN);
 
 		when(disturbanceRepositoryMock.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter)).thenReturn(emptyList());
 
@@ -345,12 +346,12 @@ class DisturbanceServiceTest {
 		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
-		final var status = se.sundsvall.disturbance.api.model.Status.OPEN;
+		final var status = Status.OPEN;
 
 		final var disturbanceEntity = new DisturbanceEntity();
 		disturbanceEntity.setDisturbanceId(disturbanceId);
 		disturbanceEntity.setCategory(category);
-		disturbanceEntity.setStatus(status.toString());
+		disturbanceEntity.setStatus(status);
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Optional.of(disturbanceEntity));
 
@@ -369,9 +370,9 @@ class DisturbanceServiceTest {
 		final var disturbanceEntityCaptorValue = disturbanceEntityCaptor.getValue();
 		assertThat(disturbanceEntityCaptorValue).isNotNull();
 		assertThat(disturbanceEntityCaptorValue.getDeleted()).isTrue();
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(category);
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualByComparingTo(category);
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceId);
-		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(status.toString());
+		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualByComparingTo(status);
 	}
 
 	@Test
@@ -430,7 +431,7 @@ class DisturbanceServiceTest {
 		final var existingDisturbanceEntity = new DisturbanceEntity();
 		existingDisturbanceEntity.setCategory(category);
 		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(se.sundsvall.disturbance.api.model.Status.OPEN.toString());
+		existingDisturbanceEntity.setStatus(Status.OPEN);
 		existingDisturbanceEntity.setTitle(title);
 		existingDisturbanceEntity.setDescription(description);
 		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
@@ -459,13 +460,13 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1", "facilityId-1", "coordinate-1"),
 				tuple("partyId-2", "reference-2", "facilityId-2", "coordinate-2"),
 				tuple("partyId-3", "reference-3", "facilityId-3", "coordinate-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(category);
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualByComparingTo(category);
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceId);
 		assertThat(disturbanceEntityCaptorValue.getTitle()).isEqualTo(title);
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(description);
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(disturbanceEntityCaptorValue.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.CLOSED.toString());
+		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualByComparingTo(Status.CLOSED);
 	}
 
 	@Test
@@ -508,7 +509,7 @@ class DisturbanceServiceTest {
 		final var existingDisturbanceEntity = new DisturbanceEntity();
 		existingDisturbanceEntity.setCategory(category);
 		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(status.toString());
+		existingDisturbanceEntity.setStatus(status);
 		existingDisturbanceEntity.setTitle(title);
 		existingDisturbanceEntity.setDescription(description);
 		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
@@ -536,13 +537,13 @@ class DisturbanceServiceTest {
 			.containsExactly(
 				tuple("partyId-2", "reference-2", "facilityId-2", "coordinate-2"),
 				tuple("partyId-3", "reference-3", "facilityId-3", "coordinate-3"));
-		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(category);
+		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualByComparingTo(category);
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceId);
 		assertThat(disturbanceEntityCaptorValue.getTitle()).isEqualTo(title);
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(description);
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(disturbanceEntityCaptorValue.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(se.sundsvall.disturbance.api.model.Status.OPEN.toString());
+		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualByComparingTo(Status.OPEN);
 	}
 
 	@Test
@@ -598,7 +599,7 @@ class DisturbanceServiceTest {
 		final var existingDisturbanceEntity = new DisturbanceEntity();
 		existingDisturbanceEntity.setCategory(category);
 		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(status.toString());
+		existingDisturbanceEntity.setStatus(status);
 		existingDisturbanceEntity.setTitle(existingTitle);
 		existingDisturbanceEntity.setDescription(existingDescription);
 		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
@@ -629,11 +630,11 @@ class DisturbanceServiceTest {
 					tuple("partyId-2", "reference-2", "facilityId-2", "coordinate-2"),
 					tuple("partyId-3", "reference-3", "facilityId-3", "coordinate-3"),
 					tuple("partyId-4", "reference-4", "facilityId-4", "coordinate-4"));
-			assertThat(updatedEntity.getCategory()).isEqualTo(category);
+			assertThat(updatedEntity.getCategory()).isEqualByComparingTo(category);
 			assertThat(updatedEntity.getDisturbanceId()).isEqualTo(disturbanceId);
 			assertThat(updatedEntity.getTitle()).isEqualTo(newTitle);
 			assertThat(updatedEntity.getDescription()).isEqualTo(newDescription);
-			assertThat(updatedEntity.getStatus()).isEqualTo(status.toString());
+			assertThat(updatedEntity.getStatus()).isEqualByComparingTo(status);
 			assertThat(updatedEntity.getPlannedStartDate()).isEqualTo(plannedStartDate);
 			assertThat(updatedEntity.getPlannedStopDate()).isEqualTo(newPlannedStopDate);
 		});
@@ -674,7 +675,7 @@ class DisturbanceServiceTest {
 		final var existingDisturbanceEntity = new DisturbanceEntity();
 		existingDisturbanceEntity.setCategory(category);
 		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(se.sundsvall.disturbance.api.model.Status.CLOSED.toString());
+		existingDisturbanceEntity.setStatus(Status.CLOSED);
 
 		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
 
@@ -732,7 +733,7 @@ class DisturbanceServiceTest {
 		final var existingDisturbanceEntity = new DisturbanceEntity();
 		existingDisturbanceEntity.setCategory(category);
 		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(status.toString());
+		existingDisturbanceEntity.setStatus(status);
 		existingDisturbanceEntity.setTitle(existingTitle);
 		existingDisturbanceEntity.setDescription(existingDescription);
 		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
@@ -762,11 +763,11 @@ class DisturbanceServiceTest {
 					tuple("partyId-1", "reference-1", "facilityId-1", "coordinate-1"),
 					tuple("partyId-2", "reference-2", "facilityId-2", "coordinate-2"),
 					tuple("partyId-3", "reference-3", "facilityId-3", "coordinate-3"));
-			assertThat(updatedEntity.getCategory()).isEqualTo(category);
+			assertThat(updatedEntity.getCategory()).isEqualByComparingTo(category);
 			assertThat(updatedEntity.getDisturbanceId()).isEqualTo(disturbanceId);
 			assertThat(updatedEntity.getTitle()).isEqualTo(newTitle);
 			assertThat(updatedEntity.getDescription()).isEqualTo(newDescription);
-			assertThat(updatedEntity.getStatus()).isEqualTo(status.toString());
+			assertThat(updatedEntity.getStatus()).isEqualByComparingTo(status);
 			assertThat(updatedEntity.getPlannedStartDate()).isEqualTo(plannedStartDate);
 			assertThat(updatedEntity.getPlannedStopDate()).isEqualTo(newPlannedStopDate);
 		});
@@ -810,7 +811,7 @@ class DisturbanceServiceTest {
 		final var existingDisturbanceEntity = new DisturbanceEntity();
 		existingDisturbanceEntity.setCategory(category);
 		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(existingStatus.toString());
+		existingDisturbanceEntity.setStatus(existingStatus);
 		existingDisturbanceEntity.setTitle(existingTitle);
 		existingDisturbanceEntity.setDescription(existingDescription);
 		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
@@ -840,11 +841,11 @@ class DisturbanceServiceTest {
 					tuple("partyId-1", "reference-1", "facilityId-1", "coordinate-1"),
 					tuple("partyId-2", "reference-2", "facilityId-2", "coordinate-2"),
 					tuple("partyId-3", "reference-3", "facilityId-3", "coordinate-3"));
-			assertThat(updatedEntity.getCategory()).isEqualTo(category);
+			assertThat(updatedEntity.getCategory()).isEqualByComparingTo(category);
 			assertThat(updatedEntity.getDisturbanceId()).isEqualTo(disturbanceId);
 			assertThat(updatedEntity.getTitle()).isEqualTo(existingTitle);
 			assertThat(updatedEntity.getDescription()).isEqualTo(existingDescription);
-			assertThat(updatedEntity.getStatus()).isEqualTo(newStatus.toString());
+			assertThat(updatedEntity.getStatus()).isEqualByComparingTo(newStatus);
 			assertThat(updatedEntity.getPlannedStartDate()).isEqualTo(plannedStartDate);
 			assertThat(updatedEntity.getPlannedStopDate()).isEqualTo(newPlannedStopDate);
 		});
@@ -873,12 +874,12 @@ class DisturbanceServiceTest {
 		final var disturbanceEntity1 = new DisturbanceEntity();
 		disturbanceEntity1.setDisturbanceId("disturbanceId1");
 		disturbanceEntity1.setCategory(Category.COMMUNICATION);
-		disturbanceEntity1.setStatus(se.sundsvall.disturbance.api.model.Status.OPEN.toString());
+		disturbanceEntity1.setStatus(Status.OPEN);
 
 		final var disturbanceEntity2 = new DisturbanceEntity();
 		disturbanceEntity2.setDisturbanceId("disturbanceId2");
 		disturbanceEntity2.setCategory(Category.COMMUNICATION);
-		disturbanceEntity2.setStatus(se.sundsvall.disturbance.api.model.Status.OPEN.toString());
+		disturbanceEntity2.setStatus(Status.OPEN);
 
 		return List.of(disturbanceEntity1, disturbanceEntity2);
 	}

@@ -62,7 +62,7 @@ class DisturbanceUpdateRequestTest {
 		assertThat(disturbanceUpdateRequest.getAffecteds()).isEqualTo(affecteds);
 		assertThat(disturbanceUpdateRequest.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(disturbanceUpdateRequest.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(disturbanceUpdateRequest.getStatus()).isEqualTo(status);
+		assertThat(disturbanceUpdateRequest.getStatus()).isEqualByComparingTo(status);
 	}
 
 	@Test

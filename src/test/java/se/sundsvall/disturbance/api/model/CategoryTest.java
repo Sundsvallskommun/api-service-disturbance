@@ -15,7 +15,7 @@ class CategoryTest {
 
 	@Test
 	void categoryEnum() {
-		System.out.println(COMMUNICATION.toString());
+		System.out.println(COMMUNICATION);
 		assertThat(Category.values()).containsExactly(COMMUNICATION, DISTRICT_COOLING, DISTRICT_HEATING, ELECTRICITY, ELECTRICITY_TRADE, WASTE_MANAGEMENT, WATER);
 	}
 }

@@ -5,17 +5,16 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 import java.util.Map;
 import java.util.Objects;
 
-import se.sundsvall.disturbance.api.validation.OneOf;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Opt-out setting model")
 public class OptOutSetting {
 
 	@Schema(requiredMode = REQUIRED, description = "Category of the disturbance", example = "ELECTRICITY")
-	@OneOf({"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
-	private String category;
+	@NotNull
+	private Category category;
 
 	@Schema(description = """
 		Key/value pairs of opt-out values. E.g. ["facilityId" : "12345"].
@@ -28,15 +27,15 @@ public class OptOutSetting {
 		return new OptOutSetting();
 	}
 
-	public String getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 
-	public OptOutSetting withCategory(String category) {
+	public OptOutSetting withCategory(Category category) {
 		this.category = category;
 		return this;
 	}

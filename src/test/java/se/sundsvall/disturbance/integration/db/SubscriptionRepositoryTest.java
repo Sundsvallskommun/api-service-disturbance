@@ -72,12 +72,12 @@ class SubscriptionRepositoryTest {
 		assertThat(entityByPartyId.getOptOuts())
 			.satisfiesExactlyInAnyOrder(
 				optOut1 -> {
-					assertThat(optOut1.getCategory()).isEqualTo(Category.ELECTRICITY);
+					assertThat(optOut1.getCategory()).isEqualByComparingTo(Category.ELECTRICITY);
 					assertThat(optOut1.getOptOuts()).containsEntry("key1", "value1");
 					assertThat(optOut1.getOptOuts()).containsEntry("key2", "value2");
 				},
 				optOut2 -> {
-					assertThat(optOut2.getCategory()).isEqualTo(Category.DISTRICT_COOLING);
+					assertThat(optOut2.getCategory()).isEqualByComparingTo(Category.DISTRICT_COOLING);
 					assertThat(optOut2.getOptOuts()).containsEntry("key3", "value3");
 					assertThat(optOut2.getOptOuts()).containsEntry("key4", "value4");
 				});

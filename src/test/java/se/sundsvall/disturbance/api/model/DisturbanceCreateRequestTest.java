@@ -52,7 +52,7 @@ class DisturbanceCreateRequestTest {
 		final var title = "Title";
 
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
-			.withCategory(category.toString())
+			.withCategory(category)
 			.withDescription(description)
 			.withId(id)
 			.withAffecteds(affecteds)
@@ -62,13 +62,13 @@ class DisturbanceCreateRequestTest {
 			.withTitle(title);
 
 		assertThat(disturbanceCreateRequest).isNotNull().hasNoNullFieldsOrProperties();
-		assertThat(disturbanceCreateRequest.getCategory()).isEqualTo(category.toString());
+		assertThat(disturbanceCreateRequest.getCategory()).isEqualByComparingTo(category);
 		assertThat(disturbanceCreateRequest.getDescription()).isEqualTo(description);
 		assertThat(disturbanceCreateRequest.getId()).isEqualTo(id);
 		assertThat(disturbanceCreateRequest.getAffecteds()).isEqualTo(affecteds);
 		assertThat(disturbanceCreateRequest.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(disturbanceCreateRequest.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(disturbanceCreateRequest.getStatus()).isEqualTo(status);
+		assertThat(disturbanceCreateRequest.getStatus()).isEqualByComparingTo(status);
 	}
 
 	@Test

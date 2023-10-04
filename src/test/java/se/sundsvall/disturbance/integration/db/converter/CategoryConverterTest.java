@@ -27,7 +27,7 @@ class CategoryConverterTest {
 	@Test
 	void testConvertToEntityAttribute() {
 		final var communication = categoryConverter.convertToEntityAttribute(Category.COMMUNICATION.toString());
-		assertThat(communication).isEqualTo(Category.COMMUNICATION);
+		assertThat(communication).isEqualByComparingTo(Category.COMMUNICATION);
 	}
 
 	@Test

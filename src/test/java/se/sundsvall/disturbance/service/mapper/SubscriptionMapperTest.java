@@ -31,10 +31,10 @@ class SubscriptionMapperTest {
 		final var subscriptionCreateRequest = SubscriptionCreateRequest.create()
 			.withOptOutSettings(List.of(
 				OptOutSetting.create()
-					.withCategory(ELECTRICITY.toString())
+					.withCategory(ELECTRICITY)
 					.withValues(Map.of("facilityId", "111111")),
 				OptOutSetting.create()
-					.withCategory(DISTRICT_HEATING.toString())
+					.withCategory(DISTRICT_HEATING)
 					.withValues(Map.of("facilityId", "222222"))))
 			.withPartyId(partyId);
 
@@ -90,8 +90,8 @@ class SubscriptionMapperTest {
 		assertThat(result.getOptOutSettings())
 			.extracting(OptOutSetting::getCategory, OptOutSetting::getValues)
 			.containsExactlyInAnyOrder(
-				tuple(ELECTRICITY.toString(), Map.of("facilityId", "111111")),
-				tuple(DISTRICT_HEATING.toString(), Map.of("facilityId", "222222")));
+				tuple(ELECTRICITY, Map.of("facilityId", "111111")),
+				tuple(DISTRICT_HEATING, Map.of("facilityId", "222222")));
 	}
 
 	@Test
@@ -123,7 +123,7 @@ class SubscriptionMapperTest {
 
 		final var subscriptionUpdateRequest = SubscriptionUpdateRequest.create()
 			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(COMMUNICATION.toString())
+				.withCategory(COMMUNICATION)
 				.withValues(Map.of("connectionPoint", "333333"))));
 
 		// Act

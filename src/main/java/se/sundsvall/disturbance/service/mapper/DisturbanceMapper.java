@@ -15,7 +15,6 @@ import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.service.util.MappingUtils;
@@ -26,13 +25,13 @@ public class DisturbanceMapper {
 
 	public static Disturbance toDisturbance(final DisturbanceEntity disturbanceEntity) {
 		return Disturbance.create()
-			.withCategory(disturbanceEntity.getCategory().toString())
+			.withCategory(disturbanceEntity.getCategory())
 			.withTitle(disturbanceEntity.getTitle())
 			.withDescription(disturbanceEntity.getDescription())
 			.withId(disturbanceEntity.getDisturbanceId())
 			.withDescription(disturbanceEntity.getDescription())
 			.withAffecteds(toAffecteds(disturbanceEntity.getAffectedEntities()))
-			.withStatus(isNull(disturbanceEntity.getStatus()) ? null : Status.valueOf(disturbanceEntity.getStatus()))
+			.withStatus(disturbanceEntity.getStatus())
 			.withCreated(disturbanceEntity.getCreated())
 			.withPlannedStartDate(disturbanceEntity.getPlannedStartDate())
 			.withPlannedStopDate(disturbanceEntity.getPlannedStopDate())
@@ -42,12 +41,12 @@ public class DisturbanceMapper {
 	public static DisturbanceEntity toDisturbanceEntity(final DisturbanceCreateRequest disturbanceCreateRequest) {
 		return DisturbanceEntity.create()
 			.addAffectedEntities(toAffectedEntities(disturbanceCreateRequest.getAffecteds()))
-			.withCategory(Category.valueOf(disturbanceCreateRequest.getCategory()))
+			.withCategory(disturbanceCreateRequest.getCategory())
 			.withDescription(disturbanceCreateRequest.getDescription())
 			.withDisturbanceId(disturbanceCreateRequest.getId())
 			.withPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStartDate()))
 			.withPlannedStopDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStopDate()))
-			.withStatus(Objects.toString(disturbanceCreateRequest.getStatus(), null))
+			.withStatus(disturbanceCreateRequest.getStatus())
 			.withTitle(disturbanceCreateRequest.getTitle());
 	}
 
@@ -59,7 +58,7 @@ public class DisturbanceMapper {
 			.withDisturbanceId(disturbanceId)
 			.withPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceUpdateRequest.getPlannedStartDate()))
 			.withPlannedStopDate(toOffsetDateTimeWithLocalOffset(disturbanceUpdateRequest.getPlannedStopDate()))
-			.withStatus(Objects.toString(disturbanceUpdateRequest.getStatus(), null))
+			.withStatus(disturbanceUpdateRequest.getStatus())
 			.withTitle(disturbanceUpdateRequest.getTitle());
 	}
 
