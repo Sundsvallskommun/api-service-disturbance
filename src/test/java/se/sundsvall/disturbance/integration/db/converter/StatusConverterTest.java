@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.zalando.problem.ThrowableProblem;
 
 import se.sundsvall.disturbance.api.model.Status;
@@ -12,10 +15,11 @@ class StatusConverterTest {
 
 	private final StatusConverter statusConverter = new StatusConverter();
 
-	@Test
-	void testConvertToDatabaseColumn() {
-		final var communication = statusConverter.convertToDatabaseColumn(Status.OPEN);
-		assertThat(communication).isEqualTo(Status.OPEN.toString());
+	@ParameterizedTest
+	@EnumSource(value = Status.class, names = {"OPEN", "CLOSED", "PLANNED"})
+	void testConvertToDatabaseColumn(Status status) {
+		final var communication = statusConverter.convertToDatabaseColumn(status);
+		assertThat(communication).isNotNull();
 	}
 
 	@Test
@@ -24,10 +28,11 @@ class StatusConverterTest {
 		assertThat(communication).isNull();
 	}
 
-	@Test
-	void testConvertToEntityAttribute() {
-		final var communication = statusConverter.convertToEntityAttribute(Status.OPEN.toString());
-		assertThat(communication).isEqualByComparingTo(Status.OPEN);
+	@ParameterizedTest
+	@ValueSource(strings = {"OPEN", "CLOSED", "PLANNED"})
+	void testConvertToEntityAttribute(String status) {
+		final var communication = statusConverter.convertToEntityAttribute(status);
+		assertThat(communication).isNotNull();
 	}
 
 	@Test

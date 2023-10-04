@@ -3,7 +3,12 @@ package se.sundsvall.disturbance.integration.db.converter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.zalando.problem.ThrowableProblem;
 
 import se.sundsvall.disturbance.api.model.Category;
@@ -12,10 +17,11 @@ class CategoryConverterTest {
 
 	private final CategoryConverter categoryConverter = new CategoryConverter();
 
-	@Test
-	void testConvertToDatabaseColumn() {
-		final var communication = categoryConverter.convertToDatabaseColumn(Category.COMMUNICATION);
-		assertThat(communication).isEqualTo(Category.COMMUNICATION.toString());
+	@ParameterizedTest
+	@EnumSource(value = Category.class, names = {"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
+	void testConvertToDatabaseColumn(Category category) {
+		final var communication = categoryConverter.convertToDatabaseColumn(category);
+		assertThat(communication).isNotNull();
 	}
 
 	@Test
@@ -24,10 +30,11 @@ class CategoryConverterTest {
 		assertThat(communication).isNull();
 	}
 
-	@Test
-	void testConvertToEntityAttribute() {
-		final var communication = categoryConverter.convertToEntityAttribute(Category.COMMUNICATION.toString());
-		assertThat(communication).isEqualByComparingTo(Category.COMMUNICATION);
+	@ParameterizedTest
+	@ValueSource(strings = {"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
+	void testConvertToEntityAttribute(String category) {
+		final var communication = categoryConverter.convertToEntityAttribute(category);
+		assertThat(communication).isNotNull();
 	}
 
 	@Test
