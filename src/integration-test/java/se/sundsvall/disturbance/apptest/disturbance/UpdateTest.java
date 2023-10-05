@@ -1,4 +1,4 @@
-package se.sundsvall.disturbance.apptest;
+package se.sundsvall.disturbance.apptest.disturbance;
 
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
@@ -30,12 +30,12 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
  *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
-@WireMockAppTestSuite(files = "classpath:/UpdateDisturbanceTest/", classes = Application.class)
+@WireMockAppTestSuite(files = "classpath:/disturbance/UpdateTest/", classes = Application.class)
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata-it.sql"
 })
-class UpdateDisturbanceTest extends AbstractAppTest {
+class UpdateTest extends AbstractAppTest {
 
 	@Autowired
 	private DisturbanceRepository disturbanceRepository;

@@ -1,4 +1,4 @@
-package se.sundsvall.disturbance.apptest;
+package se.sundsvall.disturbance.apptest.disturbance;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.OK;
@@ -15,12 +15,12 @@ import se.sundsvall.disturbance.Application;
  *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
-@WireMockAppTestSuite(files = "classpath:/ReadDisturbanceTest/", classes = Application.class)
+@WireMockAppTestSuite(files = "classpath:/disturbance/ReadTest/", classes = Application.class)
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata-it.sql"
 })
-class ReadDisturbanceTest extends AbstractAppTest {
+class ReadTest extends AbstractAppTest {
 
 	@Test
 	void test1_readDisturbanceById() {

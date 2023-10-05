@@ -1,4 +1,4 @@
-package se.sundsvall.disturbance.apptest;
+package se.sundsvall.disturbance.apptest.disturbance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.LOCATION;
@@ -24,12 +24,12 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
  *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
-@WireMockAppTestSuite(files = "classpath:/CreateDisturbanceTest/", classes = Application.class)
+@WireMockAppTestSuite(files = "classpath:/disturbance/CreateTest/", classes = Application.class)
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata-it.sql"
 })
-class CreateDisturbanceTest extends AbstractAppTest {
+class CreateTest extends AbstractAppTest {
 
 	@Autowired
 	private DisturbanceRepository disturbanceRepository;
