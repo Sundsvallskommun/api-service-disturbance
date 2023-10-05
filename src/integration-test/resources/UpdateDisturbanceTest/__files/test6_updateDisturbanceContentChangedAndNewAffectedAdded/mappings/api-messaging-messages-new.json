@@ -17,13 +17,13 @@
 				"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3"
 			  },
 			  "filters": {
-				"FACILITY_ID": [
+				"facilityId": [
 				  "facility-22"
 				],
-				"CATEGORY": [
+				"category": [
 				  "ELECTRICITY"
 				],
-				"TYPE": [
+				"type": [
 				  "DISTURBANCE"
 				]
 			  },

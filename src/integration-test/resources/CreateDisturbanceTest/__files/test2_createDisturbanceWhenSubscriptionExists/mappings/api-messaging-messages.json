@@ -17,14 +17,14 @@
 				"partyId": "fbfbd90c-4c47-11ec-81d3-0242ac130003"
 			  },
 			  "filters": {
-				"FACILITY_ID": [
-				  "facility-11"
-				],
-				"CATEGORY": [
+				"category": [
 				  "COMMUNICATION"
 				],
-				"TYPE": [
+				"type": [
 				  "DISTURBANCE"
+				],
+				"facilityId": [
+				  "facility-11"
 				]
 			  },
 			  "sender": {
@@ -44,14 +44,14 @@
 				"partyId": "257f6aa0-4c48-11ec-81d3-0242ac130003"
 			  },
 			  "filters": {
-				"FACILITY_ID": [
-				  "facility-33"
-				],
-				"CATEGORY": [
+				"category": [
 				  "COMMUNICATION"
 				],
-				"TYPE": [
+				"type": [
 				  "DISTURBANCE"
+				],
+				"facilityId": [
+				  "facility-33"
 				]
 			  },
 			  "sender": {

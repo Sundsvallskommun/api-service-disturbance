@@ -17,14 +17,14 @@
 				"partyId": "00000001-0000-1000-8000-00805f9b34fb"
 			  },
 			  "filters": {
-				"FACILITY_ID": [
-				  "facility-11"
-				],
-				"CATEGORY": [
+				"category": [
 				  "ELECTRICITY"
 				],
-				"TYPE": [
+				"type": [
 				  "DISTURBANCE"
+				],
+				"facilityId": [
+				  "facility-11"
 				]
 			  },
 			  "sender": {
@@ -44,14 +44,14 @@
 				"partyId": "00000003-0000-1000-8000-00805f9b34fb"
 			  },
 			  "filters": {
-				"FACILITY_ID": [
-				  "facility-33"
-				],
-				"CATEGORY": [
+				"category": [
 				  "ELECTRICITY"
 				],
-				"TYPE": [
+				"type": [
 				  "DISTURBANCE"
+				],
+				"facilityId": [
+				  "facility-33"
 				]
 			  },
 			  "sender": {
