@@ -81,3 +81,8 @@ INSERT INTO subscription (id, party_id, created, updated) VALUES
 	(10, 'eeca0c8a-3b1d-11ec-8d3d-0242ac130003', '2023-09-26 16:06:33.220', '2023-09-27 11:21:24.824'),
 	(11, 'eeca0d7a-3b1d-11ec-8d3d-0242ac130003', '2023-09-26 16:06:33.220', '2023-09-27 11:21:24.824');
 	
+INSERT INTO opt_out_settings (id, subscription_id, category) VALUES
+	(1, 1, 'ELECTRICITY');
+INSERT INTO opt_out_settings_key_values (opt_out_settings_id, opt_outs, opt_outs_key) VALUES
+	(1, '1234567', 'facilityId');
+	

@@ -1,4 +1,4 @@
-package se.sundsvall.disturbance.apptest;
+package se.sundsvall.disturbance.apptest.disturbance;
 
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -16,12 +16,12 @@ import se.sundsvall.disturbance.api.model.Category;
  *
  * @see src/test/resources/db/scripts/testdata.sql for data setup.
  */
-@WireMockAppTestSuite(files = "classpath:/DeleteDisturbanceTest/", classes = Application.class)
+@WireMockAppTestSuite(files = "classpath:/disturbance/DeleteTest/", classes = Application.class)
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
 	"/db/scripts/testdata-it.sql"
 })
-class DeleteDisturbanceTest extends AbstractAppTest {
+class DeleteTest extends AbstractAppTest {
 
 	@Test
 	void test1_deleteDisturbanceWithStatusOpen() {
