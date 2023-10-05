@@ -1,63 +1,54 @@
 {
-	"name": "api-messaging",
-	"request": {
-		"urlPath": "/api-messaging/messages",
-		"method": "POST",
-		"queryParameters": {
-			"async": {
-				"equalTo": "true"
-			}
-		},
-		"bodyPatterns": [
-			{
-				"equalToJson": {
-					"messages": [
-						{
-							"party": {
-								"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3"
-							},
-							"headers": [
-								{
-									"name": "TYPE",
-									"values": [
-										"DISTURBANCE"
-									]
-								},
-								{
-									"name": "FACILITY_ID",
-									"values": [
-										"facility-22"
-									]
-								},
-								{
-									"name": "CATEGORY",
-									"values": [
-										"ELECTRICITY"
-									]
-								}
-							],
-							"sender": {
-								"sms": {
-									"name": "[TEST] SvallElnat"
-								},
-								"email": {
-									"name": "[TEST] Sundsvall Elnät",
-									"address": "test@sundsvall.se"
-								}
-							},
-							"subject": "[TEST] Driftstörning på Streetname 22",
-							"message": "[TEST] Hej! Just nu har vi en driftstörning i elnätet på Streetname 22 som vi felsöker. Hälsningar, Sundsvall Elnät"
-						}
-					]
-				}
-			}
-		]
+  "name": "api-messaging",
+  "request": {
+	"urlPath": "/api-messaging/messages",
+	"method": "POST",
+	"queryParameters": {
+	  "async": {
+		"equalTo": "true"
+	  }
 	},
-	"response": {
-		"headers": {
-			"Content-Type": "application/json"
-		},
-		"status": 200,
-		"bodyFileName": "test6_updateDisturbanceContentChangedAndNewAffectedAdded/mocking/api-messaging-messages-response.json"
-	}
+	"bodyPatterns": [
+	  {
+		"equalToJson": {
+		  "messages": [
+			{
+			  "party": {
+				"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3"
+			  },
+			  "filters": {
+				"FACILITY_ID": [
+				  "facility-22"
+				],
+				"CATEGORY": [
+				  "ELECTRICITY"
+				],
+				"TYPE": [
+				  "DISTURBANCE"
+				]
+			  },
+			  "sender": {
+				"email": {
+				  "name": "[TEST] Sundsvall Elnät",
+				  "address": "test@sundsvall.se"
+				},
+				"sms": {
+				  "name": "[TEST] SvallElnat"
+				}
+			  },
+			  "subject": "[TEST] Driftstörning på Streetname 22",
+			  "message": "[TEST] Hej! Just nu har vi en driftstörning i elnätet på Streetname 22 som vi felsöker. Hälsningar, Sundsvall Elnät"
+			}
+		  ]
+		}
+	  }
+	]
+  },
+  "response": {
+	"headers": {
+	  "Content-Type": "application/json"
+	},
+	"status": 200,
+	"bodyFileName": "test6_updateDisturbanceContentChangedAndNewAffectedAdded/mocking/api-messaging-messages-response.json"
+  }
 }
