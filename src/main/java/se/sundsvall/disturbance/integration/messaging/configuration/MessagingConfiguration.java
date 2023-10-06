@@ -10,12 +10,12 @@ import se.sundsvall.dept44.configuration.feign.FeignMultiCustomizer;
 import se.sundsvall.dept44.configuration.feign.decoder.ProblemErrorDecoder;
 
 @Import(FeignConfiguration.class)
-public class ApiMessagingConfiguration {
+public class MessagingConfiguration {
 
 	public static final String CLIENT_ID = "messaging";
 
 	@Bean
-	FeignBuilderCustomizer feignBuilderCustomizer(ClientRegistrationRepository clientRepository, ApiMessagingProperties apiMessagingProperties) {
+	FeignBuilderCustomizer feignBuilderCustomizer(ClientRegistrationRepository clientRepository, MessagingProperties apiMessagingProperties) {
 		return FeignMultiCustomizer.create()
 			.withErrorDecoder(new ProblemErrorDecoder(CLIENT_ID))
 			.withRequestTimeoutsInSeconds(apiMessagingProperties.connectTimeout(), apiMessagingProperties.readTimeout())

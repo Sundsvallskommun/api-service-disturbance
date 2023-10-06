@@ -26,23 +26,22 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.api.model.Status;
-import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
-import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
-import se.sundsvall.disturbance.integration.messaging.ApiMessagingClient;
-import se.sundsvall.disturbance.integration.messaging.mapper.Filter;
-import se.sundsvall.disturbance.service.SubscriptionService;
-import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
-import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping;
-import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
-
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageParty;
 import generated.se.sundsvall.messaging.MessageRequest;
 import generated.se.sundsvall.messaging.MessageSender;
 import generated.se.sundsvall.messaging.Sms;
+import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Status;
+import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
+import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
+import se.sundsvall.disturbance.integration.messaging.MessagingClient;
+import se.sundsvall.disturbance.integration.messaging.mapper.Filter;
+import se.sundsvall.disturbance.service.SubscriptionService;
+import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
+import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping;
+import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
 
 @ExtendWith(MockitoExtension.class)
 class SendMessageLogicTest {
@@ -65,7 +64,7 @@ class SendMessageLogicTest {
 	private MessageConfiguration messageConfigurationMock;
 
 	@Mock
-	private ApiMessagingClient apiMessagingClientMock;
+	private MessagingClient messagingClientMock;
 
 	@InjectMocks
 	private SendMessageLogic sendMessageLogic;
@@ -91,14 +90,14 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCloseMessageToAllApplicableAffecteds(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -166,7 +165,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock);
+		verifyNoInteractions(messagingClientMock);
 	}
 
 	@Test
@@ -209,11 +208,11 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCloseMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -229,9 +228,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("Close subject for reference-4")
 				.message("Close message for reference-4"),
@@ -243,9 +242,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("Close subject for reference-6")
 				.message("Close message for reference-6"));
@@ -281,7 +280,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock, messageConfigurationMock);
+		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
 
 	@Test
@@ -305,14 +304,14 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendUpdateMessage(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -329,9 +328,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
 				.subject("Update subject for reference-2")
 				.message("Update message for reference-2. Planned stop date 2021-11-10 18:30"),
@@ -342,9 +341,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("Update subject for reference-4")
 				.message("Update message for reference-4. Planned stop date 2021-11-10 18:30"),
@@ -356,9 +355,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
 				.subject("Update subject for reference-6")
 				.message("Update message for reference-6. Planned stop date 2021-11-10 18:30"));
@@ -381,10 +380,10 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendUpdateMessage(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -401,9 +400,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-1")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-1")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(1)))
 				.subject("Update subject for reference-1")
 				.message("Update message for reference-1. Planned stop date N/A"),
@@ -415,9 +414,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
 				.subject("Update subject for reference-2")
 				.message("Update message for reference-2. Planned stop date N/A"));
@@ -438,7 +437,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(messageConfigurationMock, apiMessagingClientMock);
+		verifyNoInteractions(messageConfigurationMock, messagingClientMock);
 	}
 
 	@Test
@@ -463,14 +462,14 @@ class SendMessageLogicTest {
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
 
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -487,9 +486,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
 				.subject("New subject for reference-2")
 				.message("New message for reference-2"),
@@ -501,9 +500,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("New subject for reference-4")
 				.message("New message for reference-4"),
@@ -515,9 +514,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
 				.subject("New subject for reference-6")
 				.message("New message for reference-6"));
@@ -538,7 +537,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock, messageConfigurationMock);
+		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
 
 	@Test
@@ -581,11 +580,11 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCreateMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -601,9 +600,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("New subject for reference-4")
 				.message("New message for reference-4"),
@@ -615,9 +614,9 @@ class SendMessageLogicTest {
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
 				.filters(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
-						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("New subject for reference-6")
 				.message("New message for reference-6"));
@@ -653,7 +652,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock, messageConfigurationMock);
+		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
 
 	@Test
@@ -685,7 +684,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoInteractions(apiMessagingClientMock);
+		verifyNoInteractions(messagingClientMock);
 		verifyNoMoreInteractions(messageConfigurationMock);
 	}
 

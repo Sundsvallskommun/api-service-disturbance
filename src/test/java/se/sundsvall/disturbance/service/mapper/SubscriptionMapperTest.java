@@ -11,7 +11,6 @@ import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +34,9 @@ class SubscriptionMapperTest {
 					.withValues(Map.of("facilityId", "111111")),
 				OptOutSetting.create()
 					.withCategory(DISTRICT_HEATING)
+					.withValues(Map.of("facilityId", "222222")),
+				OptOutSetting.create() // Will be removed since it is a duplicate.
+					.withCategory(DISTRICT_HEATING)
 					.withValues(Map.of("facilityId", "222222"))))
 			.withPartyId(partyId);
 
@@ -44,7 +46,7 @@ class SubscriptionMapperTest {
 		// Assert
 		assertThat(result).isNotNull();
 		assertThat(result.getPartyId()).isEqualTo(partyId);
-		assertThat(result.getOptOuts())
+		assertThat(result.getOptOutSettings())
 			.extracting(OptOutSettingsEntity::getCategory, OptOutSettingsEntity::getOptOuts)
 			.containsExactlyInAnyOrder(
 				tuple(ELECTRICITY, Map.of("facilityId", "111111")),
@@ -72,9 +74,10 @@ class SubscriptionMapperTest {
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withCreated(created)
 			.withId(id)
-			.withOptOuts(Set.of(
+			.withOptOutSettings(List.of(
 				OptOutSettingsEntity.create().withCategory(ELECTRICITY).withOptOuts(Map.of("facilityId", "111111")),
-				OptOutSettingsEntity.create().withCategory(DISTRICT_HEATING).withOptOuts(Map.of("facilityId", "222222"))))
+				OptOutSettingsEntity.create().withCategory(DISTRICT_HEATING).withOptOuts(Map.of("facilityId", "222222")),
+				OptOutSettingsEntity.create().withCategory(DISTRICT_HEATING).withOptOuts(Map.of("facilityId", "222222")))) // Will be removed since it is a duplicate.
 			.withPartyId(partyId)
 			.withUpdated(updated);
 
@@ -115,16 +118,17 @@ class SubscriptionMapperTest {
 		final var oldSubscriptionEntity = SubscriptionEntity.create()
 			.withCreated(created)
 			.withId(id)
-			.withOptOuts(Set.of(
+			.withOptOutSettings(List.of(
 				OptOutSettingsEntity.create().withCategory(ELECTRICITY).withOptOuts(Map.of("facilityId", "111111")),
 				OptOutSettingsEntity.create().withCategory(DISTRICT_HEATING).withOptOuts(Map.of("facilityId", "222222"))))
 			.withPartyId(partyId)
 			.withUpdated(updated);
 
 		final var subscriptionUpdateRequest = SubscriptionUpdateRequest.create()
-			.withOptOutSettings(List.of(OptOutSetting.create()
-				.withCategory(COMMUNICATION)
-				.withValues(Map.of("connectionPoint", "333333"))));
+			.withOptOutSettings(List.of(
+				OptOutSetting.create().withCategory(COMMUNICATION).withValues(Map.of("connectionPoint", "333333")),
+				OptOutSetting.create().withCategory(COMMUNICATION).withValues(Map.of("connectionPoint", "333333")) // Will be removed since it is a duplicate.
+			));
 
 		// Act
 		final var result = SubscriptionMapper.toUpdatedSubscriptionEntity(oldSubscriptionEntity, subscriptionUpdateRequest);
@@ -135,7 +139,7 @@ class SubscriptionMapperTest {
 		assertThat(result.getId()).isEqualTo(id);
 		assertThat(result.getCreated()).isEqualTo(created);
 		assertThat(result.getUpdated()).isEqualTo(updated);
-		assertThat(result.getOptOuts())
+		assertThat(result.getOptOutSettings())
 			.extracting(OptOutSettingsEntity::getCategory, OptOutSettingsEntity::getOptOuts)
 			.containsExactlyInAnyOrder(
 				tuple(COMMUNICATION, Map.of("connectionPoint", "333333")));

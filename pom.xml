@@ -23,7 +23,6 @@
 		<openapi-generator-maven-plugin.version>7.0.1</openapi-generator-maven-plugin.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
-		<generated-sources-java-path>src/main/java</generated-sources-java-path>
 		<hibernate-jpamodelgen.version>6.3.1.Final</hibernate-jpamodelgen.version>
 	</properties>
 	<dependencies>
@@ -75,6 +74,7 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-jpamodelgen</artifactId>
 			<version>${hibernate-jpamodelgen.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		
 		<!-- Test -->
@@ -105,8 +105,8 @@
 				<configuration>
 					<excludes>
 						<exclude>**/se/sundsvall/disturbance/Application*</exclude>
-						<exclude>**/generated/se/sundsvall/**/*</exclude>
-						<exclude>**/se/sundsvall/disturbance/integration/db/model/*Entity_**</exclude>
+						<exclude>**/generated/se/sundsvall/**/*</exclude> <!-- API model classes -->
+						<exclude>**/*Entity_*</exclude> <!-- JPAModelGen classes -->
 					</excludes>
 				</configuration>
 			</plugin>
@@ -130,7 +130,7 @@
 								<useSpringBoot3>true</useSpringBoot3>
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
-								<sourceFolder>${generated-sources-java-path}</sourceFolder>
+								<sourceFolder>models</sourceFolder>
 								<dateLibrary>java8</dateLibrary>
 								<modelPackage>generated.se.sundsvall.messaging</modelPackage>
 								<openApiNullable>false</openApiNullable>
@@ -148,14 +148,14 @@
 				<executions>
 					<execution>
 						<id>add-generated-source</id>
-						<phase>initialize</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
 						<configuration>
 							<sources>
-								<source>${generated-sources-path}/${generated-sources-java-path}
-								</source>
+								<source>${generated-sources-path}/models</source> <!-- API model classes -->
+								<source>${generated-sources-path}/annotations</source> <!-- JPAModelGen classes -->
 							</sources>
 						</configuration>
 					</execution>

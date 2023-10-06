@@ -4,7 +4,7 @@ import static io.micrometer.common.util.StringUtils.isBlank;
 import static java.lang.String.format;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
-import static java.util.Collections.emptySet;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.zalando.problem.Status.CONFLICT;
@@ -89,11 +89,11 @@ public class SubscriptionService {
 			return false;
 		}
 
-		final var subscription = subscriptionRepository.findByPartyId(partyId);
+		final var subscriptionEntity = subscriptionRepository.findByPartyId(partyId);
 
-		if (subscription.isPresent()) {
+		if (subscriptionEntity.isPresent()) {
 			// Check if parameters matches any current optOutValues on the subscription.
-			final var hasMatchingOptOut = Optional.ofNullable(subscription.get().getOptOuts()).orElse(emptySet()).stream()
+			final var hasMatchingOptOut = Optional.ofNullable(subscriptionEntity.get().getOptOutSettings()).orElse(emptyList()).stream()
 				.anyMatch(optOutSetting -> hasMatchingOptOut(optOutSetting, category, facilityId));
 
 			if (!hasMatchingOptOut) {
