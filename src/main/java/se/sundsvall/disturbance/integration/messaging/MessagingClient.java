@@ -1,6 +1,7 @@
 package se.sundsvall.disturbance.integration.messaging;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static se.sundsvall.disturbance.integration.messaging.configuration.MessagingConfiguration.CLIENT_ID;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,6 +20,6 @@ public interface MessagingClient {
 	 * @param  messageRequest with a list of messages.
 	 * @return                a MessageResult
 	 */
-	@PostMapping(path = "/messages?async=true", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/messages?async=true", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE }, consumes = APPLICATION_JSON_VALUE)
 	MessageResult sendMessage(MessageRequest messageRequest);
 }
