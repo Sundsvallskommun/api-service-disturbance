@@ -1,99 +1,81 @@
 {
-	"name": "api-messaging",
-	"request": {
-		"urlPath": "/api-messaging/messages",
-		"method": "POST",
-		"queryParameters": {
-			"async": {
-				"equalTo": "true"
-			}
-		},
-		"bodyPatterns": [
-			{
-				"equalToJson": {
-					"messages": [
-						{
-							"party": {
-								"partyId": "b6d929c8-fac3-4ac6-8b15-d255bad864df"
-							},
-							"headers": [
-								{
-									"name": "TYPE",
-									"values": [
-										"DISTURBANCE"
-									]
-								},
-								{
-									"name": "FACILITY_ID",
-									"values": [
-										"facility-11"
-									]
-								},
-								{
-									"name": "CATEGORY",
-									"values": [
-										"ELECTRICITY"
-									]
-								}
-							],
-							"sender": {
-								"sms": {
-									"name": "[TEST] SvallElnat"
-								},
-								"email": {
-									"name": "[TEST] Sundsvall Elnät",
-									"address": "test@sundsvall.se"
-								}
-							},
-							"subject": "[TEST] Uppdatering om driftstörning på Streetname 11",
-							"message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 11. Description updated. Driftstörningen beräknas åtgärdad: 2022-01-11 11:30"
-						},
-						{
-							"party": {
-								"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3"
-							},
-							"headers": [
-								{
-									"name": "TYPE",
-									"values": [
-										"DISTURBANCE"
-									]
-								},
-								{
-									"name": "FACILITY_ID",
-									"values": [
-										"facility-22"
-									]
-								},
-								{
-									"name": "CATEGORY",
-									"values": [
-										"ELECTRICITY"
-									]
-								}
-							],
-							"sender": {
-								"sms": {
-									"name": "[TEST] SvallElnat"
-								},
-								"email": {
-									"name": "[TEST] Sundsvall Elnät",
-									"address": "test@sundsvall.se"
-								}
-							},
-							"subject": "[TEST] Uppdatering om driftstörning på Streetname 22",
-							"message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 22. Description updated. Driftstörningen beräknas åtgärdad: 2022-01-11 11:30"
-						}
-					]
-				}
-			}
-		]
+  "name": "api-messaging",
+  "request": {
+	"urlPath": "/api-messaging/messages",
+	"method": "POST",
+	"queryParameters": {
+	  "async": {
+		"equalTo": "true"
+	  }
 	},
-	"response": {
-		"headers": {
-			"Content-Type": "application/json"
-		},
-		"status": 200,
-		"bodyFileName": "test6_updateDisturbanceContentChangedAndNewAffectedAdded/mocking/api-messaging-messages-response.json"
-	}
+	"bodyPatterns": [
+	  {
+		"equalToJson": {
+		  "messages": [
+			{
+			  "party": {
+				"partyId": "b6d929c8-fac3-4ac6-8b15-d255bad864df"
+			  },
+			  "filters": {
+				"facilityId": [
+				  "facility-11"
+				],
+				"category": [
+				  "ELECTRICITY"
+				],
+				"type": [
+				  "DISTURBANCE"
+				]
+			  },
+			  "sender": {
+				"email": {
+				  "name": "[TEST] Sundsvall Elnät",
+				  "address": "test@sundsvall.se"
+				},
+				"sms": {
+				  "name": "[TEST] SvallElnat"
+				}
+			  },
+			  "subject": "[TEST] Uppdatering om driftstörning på Streetname 11",
+			  "message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 11. Description updated. Driftstörningen beräknas åtgärdad: 2022-01-11 11:30"
+			},
+			{
+			  "party": {
+				"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3"
+			  },
+			  "filters": {
+				"facilityId": [
+				  "facility-22"
+				],
+				"category": [
+				  "ELECTRICITY"
+				],
+				"type": [
+				  "DISTURBANCE"
+				]
+			  },
+			  "sender": {
+				"email": {
+				  "name": "[TEST] Sundsvall Elnät",
+				  "address": "test@sundsvall.se"
+				},
+				"sms": {
+				  "name": "[TEST] SvallElnat"
+				}
+			  },
+			  "subject": "[TEST] Uppdatering om driftstörning på Streetname 22",
+			  "message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 22. Description updated. Driftstörningen beräknas åtgärdad: 2022-01-11 11:30"
+			}
+		  ]
+		}
+	  }
+	]
+  },
+  "response": {
+	"headers": {
+	  "Content-Type": "application/json"
+	},
+	"status": 200,
+	"bodyFileName": "test6_updateDisturbanceContentChangedAndNewAffectedAdded/mocking/api-messaging-messages-response.json"
+  }
 }

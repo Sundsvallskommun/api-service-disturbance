@@ -3,7 +3,7 @@ package se.sundsvall.disturbance.service.message;
 import static java.lang.System.lineSeparator;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toEmail;
-import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toHeaders;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toFilters;
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toMessage;
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toParty;
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toSms;
@@ -20,10 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import generated.se.sundsvall.messaging.Message;
-import generated.se.sundsvall.messaging.MessageRequest;
-import generated.se.sundsvall.messaging.MessageSender;
-import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
@@ -31,6 +27,11 @@ import se.sundsvall.disturbance.integration.messaging.ApiMessagingClient;
 import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
+
+import generated.se.sundsvall.messaging.Message;
+import generated.se.sundsvall.messaging.MessageRequest;
+import generated.se.sundsvall.messaging.MessageSender;
+import jakarta.transaction.Transactional;
 
 @Component
 public class SendMessageLogic {
@@ -174,11 +175,11 @@ public class SendMessageLogic {
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
 
-		final var headers = toHeaders(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
+		final var filters = toFilters(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectUpdate());
 		final var message = propertyResolver.replace(messageConfig.getMessageUpdate());
 
-		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
+		return toMessage(filters, sender, toParty(affectedEntity.getPartyId()), subject, message);
 	}
 
 	private Message mapToNewMessage(final DisturbanceEntity disturbanceEntity, final AffectedEntity affectedEntity) {
@@ -202,11 +203,11 @@ public class SendMessageLogic {
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
 
-		final var headers = toHeaders(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
+		final var filters = toFilters(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectNew());
 		final var message = propertyResolver.replace(messageConfig.getMessageNew());
 
-		return toMessage(headers, sender, toParty(affectedEntity.getPartyId()), subject, message);
+		return toMessage(filters, sender, toParty(affectedEntity.getPartyId()), subject, message);
 	}
 
 	private Message mapToCloseMessage(final DisturbanceEntity disturbanceEntity, final AffectedEntity affectedEntity) {
@@ -229,12 +230,12 @@ public class SendMessageLogic {
 		final var sender = new MessageSender()
 			.email(toEmail(messageConfig.getSenderEmailName(), messageConfig.getSenderEmailAddress()))
 			.sms(toSms(messageConfig.getSenderSmsName()));
-		final var headers = toHeaders(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
+		final var filters = toFilters(disturbanceEntity.getCategory(), affectedEntity.getFacilityId());
 		final var subject = propertyResolver.replace(messageConfig.getSubjectClose());
 		final var message = propertyResolver.replace(messageConfig.getMessageClose());
 		final var party = toParty(affectedEntity.getPartyId());
 
-		return toMessage(headers, sender, party, subject, message);
+		return toMessage(filters, sender, party, subject, message);
 	}
 
 	private void sendMessages(final List<Message> messages) {

@@ -2,6 +2,7 @@ package se.sundsvall.disturbance.service.message;
 
 import static java.time.ZoneId.systemDefault;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -29,14 +31,13 @@ import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.integration.messaging.ApiMessagingClient;
+import se.sundsvall.disturbance.integration.messaging.mapper.Filter;
 import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
 
 import generated.se.sundsvall.messaging.Email;
-import generated.se.sundsvall.messaging.Header;
-import generated.se.sundsvall.messaging.Header.NameEnum;
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageParty;
 import generated.se.sundsvall.messaging.MessageRequest;
@@ -113,10 +114,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-2")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
 				.subject("Close subject for reference-2")
 				.message("Close message for reference-2"),
@@ -127,10 +128,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-4")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("Close subject for reference-4")
 				.message("Close message for reference-4"),
@@ -141,10 +142,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-6")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+					entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+					entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+					entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
 				.subject("Close subject for reference-6")
 				.message("Close message for reference-6"));
@@ -227,10 +228,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-4")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("Close subject for reference-4")
 				.message("Close message for reference-4"),
@@ -241,10 +242,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-6")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("Close subject for reference-6")
 				.message("Close message for reference-6"));
@@ -327,10 +328,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-2")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
 				.subject("Update subject for reference-2")
 				.message("Update message for reference-2. Planned stop date 2021-11-10 18:30"),
@@ -340,10 +341,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-4")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("Update subject for reference-4")
 				.message("Update message for reference-4. Planned stop date 2021-11-10 18:30"),
@@ -354,10 +355,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-6")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
 				.subject("Update subject for reference-6")
 				.message("Update message for reference-6. Planned stop date 2021-11-10 18:30"));
@@ -399,10 +400,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-1")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-1")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(1)))
 				.subject("Update subject for reference-1")
 				.message("Update message for reference-1. Planned stop date N/A"),
@@ -413,10 +414,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-2")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
 				.subject("Update subject for reference-2")
 				.message("Update message for reference-2. Planned stop date N/A"));
@@ -485,10 +486,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-2")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-2")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(2)))
 				.subject("New subject for reference-2")
 				.message("New message for reference-2"),
@@ -499,10 +500,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-4")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("New subject for reference-4")
 				.message("New message for reference-4"),
@@ -513,10 +514,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-6")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(6)))
 				.subject("New subject for reference-6")
 				.message("New message for reference-6"));
@@ -599,10 +600,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-4")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-4")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("New subject for reference-4")
 				.message("New message for reference-4"),
@@ -613,10 +614,10 @@ class SendMessageLogicTest {
 					.email(new Email()
 						.name("SenderEmailName")
 						.address("noreply@host.se")))
-				.headers(List.of(
-					new Header().name(NameEnum.TYPE).values(List.of(ISSUE_TYPE)),
-					new Header().name(NameEnum.FACILITY_ID).values(List.of("facilityId-6")),
-					new Header().name(NameEnum.CATEGORY).values(List.of(String.valueOf(CATEGORY)))))
+				.filters(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId-6")),
+						entry(Filter.CATEGORY.toString(), List.of(String.valueOf(CATEGORY)))))
 				.party(new MessageParty().partyId(uuidFromInt(4)))
 				.subject("New subject for reference-6")
 				.message("New message for reference-6"));
