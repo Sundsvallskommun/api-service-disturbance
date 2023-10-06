@@ -40,8 +40,8 @@ spring:
 integration:
   messaging:
     url: http://localhost:${wiremock.server.port:}/api-messaging
-    connectTimeout: "10"
-    readTimeout: "20"
+    connectTimeout: 10
+    readTimeout: 20
     
 #========================================
 # Scheduler settings
