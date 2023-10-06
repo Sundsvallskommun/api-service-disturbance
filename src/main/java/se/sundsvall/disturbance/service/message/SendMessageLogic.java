@@ -27,7 +27,7 @@ import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
-import se.sundsvall.disturbance.integration.messaging.ApiMessagingClient;
+import se.sundsvall.disturbance.integration.messaging.MessagingClient;
 import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
@@ -52,7 +52,7 @@ public class SendMessageLogic {
 	private MessageConfiguration messageConfiguration;
 
 	@Autowired
-	private ApiMessagingClient apiMessagingClient;
+	private MessagingClient messagingClient;
 
 	/**
 	 * Send a "closed disturbance" message to all affected persons/organizations in a disturbance with an existing
@@ -244,7 +244,7 @@ public class SendMessageLogic {
 		// Send messageRequest to api-messaging-service service (if it contains messages).
 		if (isNotEmpty(messages)) {
 			LOGGER.info("apiMessagingClient: Sending '{}' messages to api-messaging-service...", messages.size());
-			apiMessagingClient.sendMessage(new MessageRequest().messages(messages));
+			messagingClient.sendMessage(new MessageRequest().messages(messages));
 			LOGGER.info("apiMessagingClient: Messages sent!");
 		}
 	}

@@ -21,7 +21,7 @@ import se.sundsvall.disturbance.api.model.Category;
 @Table(name = "opt_out_settings")
 public class OptOutSettingsEntity implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6411620272543678958L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

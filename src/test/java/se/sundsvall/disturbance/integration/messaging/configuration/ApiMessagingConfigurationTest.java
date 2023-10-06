@@ -3,7 +3,7 @@ package se.sundsvall.disturbance.integration.messaging.configuration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.sundsvall.disturbance.integration.messaging.configuration.ApiMessagingConfiguration.CLIENT_ID;
+import static se.sundsvall.disturbance.integration.messaging.configuration.MessagingConfiguration.CLIENT_ID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class ApiMessagingConfigurationTest {
 	private ClientRegistration clientRegistrationMock;
 
 	@Mock
-	private ApiMessagingProperties propertiesMock;
+	private MessagingProperties propertiesMock;
 
 	@Spy
 	private FeignMultiCustomizer feignMultiCustomizerSpy;
@@ -41,7 +41,7 @@ class ApiMessagingConfigurationTest {
 	private ArgumentCaptor<ErrorDecoder> errorDecoderCaptor;
 
 	@InjectMocks
-	private ApiMessagingConfiguration configuration;
+	private MessagingConfiguration configuration;
 
 	@Test
 	void testFeignBuilderHelper() {

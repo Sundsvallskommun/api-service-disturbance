@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ class SubscriptionRepositoryTest {
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = new SubscriptionEntity()
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(new OptOutSettingsEntity()
+			.withOptOutSettings(List.of(new OptOutSettingsEntity()
 				.withCategory(Category.ELECTRICITY)
 				.withOptOuts(new HashMap<>() {
 					{
@@ -65,11 +65,11 @@ class SubscriptionRepositoryTest {
 		assertThat(entityByPartyId)
 			.satisfies(entity -> {
 				assertThat(entity.getPartyId()).isEqualTo(partyId);
-				assertThat(entity.getOptOuts()).hasSize(2);
+				assertThat(entity.getOptOutSettings()).hasSize(2);
 			});
 
 		// Assert OptOutSettingsEntity and their optOuts
-		assertThat(entityByPartyId.getOptOuts())
+		assertThat(entityByPartyId.getOptOutSettings())
 			.satisfiesExactlyInAnyOrder(
 				optOut1 -> {
 					assertThat(optOut1.getCategory()).isEqualByComparingTo(Category.ELECTRICITY);

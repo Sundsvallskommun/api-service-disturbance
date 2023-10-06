@@ -8,9 +8,9 @@ import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.TimeZoneStorage;
 
@@ -36,7 +36,7 @@ import jakarta.persistence.Table;
 	})
 public class SubscriptionEntity implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8971474792184802872L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +48,7 @@ public class SubscriptionEntity implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "subscription_id", foreignKey = @ForeignKey(name = "fk_opt_out_settings_subscription_id"))
-	private Set<OptOutSettingsEntity> optOuts;
+	private List<OptOutSettingsEntity> optOutSettings;
 
 	@Column(name = "created")
 	@TimeZoneStorage(NORMALIZE)
@@ -88,25 +88,25 @@ public class SubscriptionEntity implements Serializable {
 		return this;
 	}
 
-	public Set<OptOutSettingsEntity> getOptOuts() {
-		return optOuts;
+	public List<OptOutSettingsEntity> getOptOutSettings() {
+		return optOutSettings;
 	}
 
-	public void setOptOuts(Set<OptOutSettingsEntity> optOuts) {
-		if (this.optOuts == null) {
-			this.optOuts = new HashSet<>();
+	public void setOptOutSettings(List<OptOutSettingsEntity> optOutSettings) {
+		if (this.optOutSettings == null) {
+			this.optOutSettings = new ArrayList<>();
 		}
 
-		if (nonNull(optOuts)) {
-			this.optOuts.retainAll(optOuts);
-			this.optOuts.addAll(optOuts);
+		if (nonNull(optOutSettings)) {
+			this.optOutSettings.retainAll(optOutSettings);
+			this.optOutSettings.addAll(optOutSettings);
 		} else {
-			this.optOuts.clear();
+			this.optOutSettings.clear();
 		}
 	}
 
-	public SubscriptionEntity withOptOuts(Set<OptOutSettingsEntity> optOuts) {
-		this.setOptOuts(optOuts);
+	public SubscriptionEntity withOptOutSettings(List<OptOutSettingsEntity> optOutSettings) {
+		this.setOptOutSettings(optOutSettings);
 		return this;
 	}
 
@@ -148,20 +148,20 @@ public class SubscriptionEntity implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(created, id, optOuts, partyId, updated);
+		return Objects.hash(created, id, optOutSettings, partyId, updated);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) { return true; }
 		if (!(obj instanceof final SubscriptionEntity other)) { return false; }
-		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(optOuts, other.optOuts) && Objects.equals(partyId, other.partyId) && Objects.equals(updated, other.updated);
+		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId) && Objects.equals(updated, other.updated);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("SubscriptionEntity [id=").append(id).append(", partyId=").append(partyId).append(", optOuts=").append(optOuts).append(", created=").append(created).append(", updated=").append(updated).append("]");
+		builder.append("SubscriptionEntity [id=").append(id).append(", partyId=").append(partyId).append(", optOutSettings=").append(optOutSettings).append(", created=").append(created).append(", updated=").append(updated).append("]");
 		return builder.toString();
 	}
 }

@@ -28,7 +28,7 @@ import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
-import se.sundsvall.disturbance.integration.messaging.ApiMessagingClient;
+import se.sundsvall.disturbance.integration.messaging.MessagingClient;
 import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping;
@@ -64,7 +64,7 @@ class SendMessageLogicTest {
 	private MessageConfiguration messageConfigurationMock;
 
 	@Mock
-	private ApiMessagingClient apiMessagingClientMock;
+	private MessagingClient messagingClientMock;
 
 	@InjectMocks
 	private SendMessageLogic sendMessageLogic;
@@ -90,14 +90,14 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCloseMessageToAllApplicableAffecteds(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -165,7 +165,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock);
+		verifyNoInteractions(messagingClientMock);
 	}
 
 	@Test
@@ -208,11 +208,11 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCloseMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -280,7 +280,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock, messageConfigurationMock);
+		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
 
 	@Test
@@ -304,14 +304,14 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendUpdateMessage(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -380,10 +380,10 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendUpdateMessage(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -437,7 +437,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(messageConfigurationMock, apiMessagingClientMock);
+		verifyNoInteractions(messageConfigurationMock, messagingClientMock);
 	}
 
 	@Test
@@ -462,14 +462,14 @@ class SendMessageLogicTest {
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
 
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -537,7 +537,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock, messageConfigurationMock);
+		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
 
 	@Test
@@ -580,11 +580,11 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCreateMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(apiMessagingClientMock).sendMessage(messageRequestCaptor.capture());
+		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, apiMessagingClientMock);
+		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
 		 * Assert sent messages.
@@ -652,7 +652,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verifyNoMoreInteractions(subscriptionServiceMock);
-		verifyNoInteractions(apiMessagingClientMock, messageConfigurationMock);
+		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
 
 	@Test
@@ -684,7 +684,7 @@ class SendMessageLogicTest {
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
 		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
-		verifyNoInteractions(apiMessagingClientMock);
+		verifyNoInteractions(messagingClientMock);
 		verifyNoMoreInteractions(messageConfigurationMock);
 	}
 
