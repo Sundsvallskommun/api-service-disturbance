@@ -2,19 +2,17 @@ package se.sundsvall.disturbance.integration.messaging.mapper;
 
 import static java.util.Map.entry;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
-import se.sundsvall.disturbance.api.model.Category;
 
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageParty;
 import generated.se.sundsvall.messaging.MessageSender;
 import generated.se.sundsvall.messaging.Sms;
+import se.sundsvall.disturbance.api.model.Category;
 
 public class MessagingMapper {
 
@@ -42,10 +40,9 @@ public class MessagingMapper {
 
 	public static Map<String, List<String>> toFilters(final Category category, final String facilityId) {
 		return Map.ofEntries(
-				entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-				entry(Filter.FACILITY_ID.toString(), List.of(facilityId)),
-				entry(Filter.CATEGORY.toString(), List.of(Objects.toString(category, null)))
-		);
+			entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+			entry(Filter.FACILITY_ID.toString(), List.of(facilityId)),
+			entry(Filter.CATEGORY.toString(), List.of(Objects.toString(category, null))));
 	}
 
 	public static Email toEmail(final String senderEmailName, final String senderEmailAddress) {

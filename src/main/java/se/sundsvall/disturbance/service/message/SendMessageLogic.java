@@ -20,6 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import generated.se.sundsvall.messaging.Message;
+import generated.se.sundsvall.messaging.MessageRequest;
+import generated.se.sundsvall.messaging.MessageSender;
+import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
@@ -27,11 +31,6 @@ import se.sundsvall.disturbance.integration.messaging.MessagingClient;
 import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
-
-import generated.se.sundsvall.messaging.Message;
-import generated.se.sundsvall.messaging.MessageRequest;
-import generated.se.sundsvall.messaging.MessageSender;
-import jakarta.transaction.Transactional;
 
 @Component
 public class SendMessageLogic {

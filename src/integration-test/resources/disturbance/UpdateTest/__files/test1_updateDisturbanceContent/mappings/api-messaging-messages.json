@@ -1,81 +1,81 @@
 {
-  "name": "api-messaging",
-  "request": {
-	"urlPath": "/api-messaging/messages",
-	"method": "POST",
-	"queryParameters": {
-	  "async": {
-		"equalTo": "true"
-	  }
-	},
-	"bodyPatterns": [
-	  {
-		"equalToJson": {
-		  "messages": [
-			{
-			  "party": {
-				"partyId": "00000001-0000-1000-8000-00805f9b34fb"
-			  },
-			  "filters": {
-				"category": [
-				  "ELECTRICITY"
-				],
-				"type": [
-				  "DISTURBANCE"
-				],
-				"facilityId": [
-				  "facility-11"
-				]
-			  },
-			  "sender": {
-				"email": {
-				  "name": "[TEST] Sundsvall Elnät",
-				  "address": "test@sundsvall.se"
-				},
-				"sms": {
-				  "name": "[TEST] SvallElnat"
-				}
-			  },
-			  "subject": "[TEST] Uppdatering om driftstörning på Streetname 11",
-			  "message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 11. Vi felsöker strömavbrottet. Driftstörningen beräknas åtgärdad: 2022-01-04 18:00"
-			},
-			{
-			  "party": {
-				"partyId": "00000003-0000-1000-8000-00805f9b34fb"
-			  },
-			  "filters": {
-				"category": [
-				  "ELECTRICITY"
-				],
-				"type": [
-				  "DISTURBANCE"
-				],
-				"facilityId": [
-				  "facility-33"
-				]
-			  },
-			  "sender": {
-				"email": {
-				  "name": "[TEST] Sundsvall Elnät",
-				  "address": "test@sundsvall.se"
-				},
-				"sms": {
-				  "name": "[TEST] SvallElnat"
-				}
-			  },
-			  "subject": "[TEST] Uppdatering om driftstörning på Streetname 33",
-			  "message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 33. Vi felsöker strömavbrottet. Driftstörningen beräknas åtgärdad: 2022-01-04 18:00"
+	"name": "api-messaging",
+	"request": {
+		"urlPath": "/api-messaging/messages",
+		"method": "POST",
+		"queryParameters": {
+			"async": {
+				"equalTo": "true"
 			}
-		  ]
-		}
-	  }
-	]
-  },
-  "response": {
-	"headers": {
-	  "Content-Type": "application/json"
+		},
+		"bodyPatterns": [
+			{
+				"equalToJson": {
+					"messages": [
+						{
+							"party": {
+								"partyId": "00000001-0000-1000-8000-00805f9b34fb"
+							},
+							"filters": {
+								"category": [
+									"ELECTRICITY"
+								],
+								"type": [
+									"DISTURBANCE"
+								],
+								"facilityId": [
+									"facility-11"
+								]
+							},
+							"sender": {
+								"email": {
+									"name": "[TEST] Sundsvall Elnät",
+									"address": "test@sundsvall.se"
+								},
+								"sms": {
+									"name": "[TEST] SvallElnat"
+								}
+							},
+							"subject": "[TEST] Uppdatering om driftstörning på Streetname 11",
+							"message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 11. Vi felsöker strömavbrottet. Driftstörningen beräknas åtgärdad: 2022-01-04 18:00"
+						},
+						{
+							"party": {
+								"partyId": "00000003-0000-1000-8000-00805f9b34fb"
+							},
+							"filters": {
+								"category": [
+									"ELECTRICITY"
+								],
+								"type": [
+									"DISTURBANCE"
+								],
+								"facilityId": [
+									"facility-33"
+								]
+							},
+							"sender": {
+								"email": {
+									"name": "[TEST] Sundsvall Elnät",
+									"address": "test@sundsvall.se"
+								},
+								"sms": {
+									"name": "[TEST] SvallElnat"
+								}
+							},
+							"subject": "[TEST] Uppdatering om driftstörning på Streetname 33",
+							"message": "[TEST] Hej! Uppdatering om driftstörningen i elnätet på Streetname 33. Vi felsöker strömavbrottet. Driftstörningen beräknas åtgärdad: 2022-01-04 18:00"
+						}
+					]
+				}
+			}
+		]
 	},
-	"status": 200,
-	"bodyFileName": "test1_updateDisturbanceContent/mocking/api-messaging-messages-response.json"
-  }
+	"response": {
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"status": 200,
+		"bodyFileName": "test1_updateDisturbanceContent/mocking/api-messaging-messages-response.json"
+	}
 }
