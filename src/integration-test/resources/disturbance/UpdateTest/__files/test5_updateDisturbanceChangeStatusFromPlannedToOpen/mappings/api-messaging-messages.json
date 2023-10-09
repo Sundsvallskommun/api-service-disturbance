@@ -1,0 +1,81 @@
+{
+	"name": "api-messaging",
+	"request": {
+		"urlPath": "/api-messaging/messages",
+		"method": "POST",
+		"queryParameters": {
+			"async": {
+				"equalTo": "true"
+			}
+		},
+		"bodyPatterns": [
+			{
+				"equalToJson": {
+					"messages": [
+						{
+							"party": {
+								"partyId": "00000001-0000-1000-8000-00805f9b34fb"
+							},
+							"filters": {
+								"facilityId": [
+									"facility-11"
+								],
+								"category": [
+									"ELECTRICITY"
+								],
+								"type": [
+									"DISTURBANCE"
+								]
+							},
+							"sender": {
+								"email": {
+									"name": "[TEST] Sundsvall Elnät",
+									"address": "test@sundsvall.se"
+								},
+								"sms": {
+									"name": "[TEST] SvallElnat"
+								}
+							},
+							"subject": "[TEST] Driftstörning på Streetname 11",
+							"message": "[TEST] Hej! Just nu har vi en driftstörning i elnätet på Streetname 11 som vi felsöker. Hälsningar, Sundsvall Elnät"
+						},
+						{
+							"party": {
+								"partyId": "00000003-0000-1000-8000-00805f9b34fb"
+							},
+							"filters": {
+								"facilityId": [
+									"facility-33"
+								],
+								"category": [
+									"ELECTRICITY"
+								],
+								"type": [
+									"DISTURBANCE"
+								]
+							},
+							"sender": {
+								"email": {
+									"name": "[TEST] Sundsvall Elnät",
+									"address": "test@sundsvall.se"
+								},
+								"sms": {
+									"name": "[TEST] SvallElnat"
+								}
+							},
+							"subject": "[TEST] Driftstörning på Streetname 33",
+							"message": "[TEST] Hej! Just nu har vi en driftstörning i elnätet på Streetname 33 som vi felsöker. Hälsningar, Sundsvall Elnät"
+						}
+					]
+				}
+			}
+		]
+	},
+	"response": {
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"status": 200,
+		"bodyFileName": "test5_updateDisturbanceChangeStatusFromPlannedToOpen/mocking/api-messaging-messages-response.json"
+	}
+}

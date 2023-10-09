@@ -23,9 +23,9 @@ public class DatabaseCleanerSchedulerService {
 
 	private static final List<Status> STATUSES_ELIGIBLE_FOR_REMOVAL = List.of(CLOSED);
 
-	private static final String LOG_CLEANING_STARTED = "Beginning removal of obsolete entities in the database";
-	private static final String LOG_CLEANING_DELETE_RANGE = "Removing all disturbances older than '{}' and with status matching '{}'";
-	private static final String LOG_CLEANING_ENDED = "Cleaning of obsolete entities in database has ended";
+	private static final String LOG_CLEANING_STARTED = "Beginning removal of obsolete entities in the database.";
+	private static final String LOG_CLEANING_DELETE_RANGE = "Removing all disturbances older than '{}' and with status matching '{}'.";
+	private static final String LOG_CLEANING_ENDED = "Cleaning of obsolete entities in database has ended.";
 
 	@Autowired
 	private DatabaseCleanerSchedulerProperties properties;

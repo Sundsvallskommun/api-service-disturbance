@@ -26,6 +26,10 @@ openapi:
 #========================================
 # Integration settings
 #========================================
+integration:
+  messaging:
+    connectTimeout: 5
+    readTimeout: 20
 
 # Circuit breaker settings
 resilience4j:

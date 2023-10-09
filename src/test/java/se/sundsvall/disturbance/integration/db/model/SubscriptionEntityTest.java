@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
 
 import java.time.OffsetDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -52,20 +52,20 @@ class SubscriptionEntityTest {
 
 	@Test
 	void testBuilders() {
-		final var optOuts = new HashSet<OptOutSettingsEntity>();
+		final var optOutSettings = new ArrayList<OptOutSettingsEntity>();
 		final var created = now(systemDefault());
 		final var updated = now(systemDefault()).plusDays(2);
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withCreated(created)
 			.withId(1L)
-			.withOptOuts(optOuts)
+			.withOptOutSettings(optOutSettings)
 			.withPartyId(partyId)
 			.withUpdated(updated);
 
 		assertThat(subscriptionEntity.getCreated()).isEqualTo(created);
 		assertThat(subscriptionEntity.getId()).isEqualTo(1L);
-		assertThat(subscriptionEntity.getOptOuts()).isEqualTo(optOuts);
+		assertThat(subscriptionEntity.getOptOutSettings()).isEqualTo(optOutSettings);
 		assertThat(subscriptionEntity.getPartyId()).isEqualTo(partyId);
 		assertThat(subscriptionEntity.getUpdated()).isEqualTo(updated);
 	}
@@ -96,10 +96,10 @@ class SubscriptionEntityTest {
 
 	@Test
 	void testOptOutsHasCorrectAnnotationsAndValues() {
-		final var optOuts = FieldUtils.getDeclaredField(SubscriptionEntity.class, "optOuts", true);
-		assertThat(optOuts.getAnnotations()).hasSize(2);
+		final var optOutSettings = FieldUtils.getDeclaredField(SubscriptionEntity.class, "optOutSettings", true);
+		assertThat(optOutSettings.getAnnotations()).hasSize(2);
 
-		final var oneToMany = optOuts.getDeclaredAnnotation(OneToMany.class);
+		final var oneToMany = optOutSettings.getDeclaredAnnotation(OneToMany.class);
 		assertThat(oneToMany.cascade()).containsExactly(CascadeType.ALL);
 		assertThat(oneToMany.orphanRemoval()).isTrue();
 	}

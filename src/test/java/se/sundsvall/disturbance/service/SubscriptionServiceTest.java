@@ -14,9 +14,9 @@ import static org.zalando.problem.Status.NOT_FOUND;
 import static se.sundsvall.disturbance.api.model.Category.DISTRICT_COOLING;
 import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -91,7 +91,7 @@ class SubscriptionServiceTest {
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(randomUUID().toString())
-			.withOptOuts(Set.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
+			.withOptOutSettings(List.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
 
 		when(subscriptionRepository.findById(id)).thenReturn(Optional.of(subscriptionEntity));
 
@@ -132,7 +132,7 @@ class SubscriptionServiceTest {
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
+			.withOptOutSettings(List.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
 
 		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
 
@@ -209,7 +209,7 @@ class SubscriptionServiceTest {
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(randomUUID().toString())
-			.withOptOuts(Set.of(OptOutSettingsEntity.create()));
+			.withOptOutSettings(List.of(OptOutSettingsEntity.create()));
 
 		when(subscriptionRepository.findById(id)).thenReturn(Optional.of(subscriptionEntity));
 		when(subscriptionRepository.save(any())).thenReturn(subscriptionEntity);
@@ -271,7 +271,7 @@ class SubscriptionServiceTest {
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)));
 
 		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
@@ -292,7 +292,7 @@ class SubscriptionServiceTest {
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)
 				.withOptOuts(Map.of("facilityId", "12345"))));
 
@@ -331,7 +331,7 @@ class SubscriptionServiceTest {
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)));
 
 		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
@@ -352,7 +352,7 @@ class SubscriptionServiceTest {
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(OptOutSettingsEntity.create()
+			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)
 				.withOptOuts(Map.of("facilityId", "12345"))));
 
@@ -374,7 +374,7 @@ class SubscriptionServiceTest {
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(
+			.withOptOutSettings(List.of(
 				OptOutSettingsEntity.create()
 					.withCategory(DISTRICT_COOLING)
 					.withOptOuts(Map.of(
@@ -400,7 +400,7 @@ class SubscriptionServiceTest {
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
-			.withOptOuts(Set.of(
+			.withOptOutSettings(List.of(
 				OptOutSettingsEntity.create()
 					.withCategory(DISTRICT_COOLING)
 					.withOptOuts(Map.of(
