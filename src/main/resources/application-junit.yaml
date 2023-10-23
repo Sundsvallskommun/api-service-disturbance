@@ -7,6 +7,8 @@ spring:
       jakarta:
         persistence:
           schema-generation:
+            database:
+              action: update
             scripts:
               action: create
               create-target: target/database/generated-schema.sql
@@ -32,12 +34,24 @@ spring:
         provider:
           messaging:
             token-uri: http://localhost:${wiremock.server.port:}/api-gateway/token
+  flyway:
+    enabled: false
 integration:
   messaging:
     url: http://localhost:${wiremock.server.port:}/api-messaging
-    connectTimeout: "10"
-    readTimeout: "20"
-    
+    connectTimeout: 10
+    readTimeout: 20
+   
+#========================================
+# Scheduler settings
+#
+# - To disable the scheduling, set spring cron expression to "-" or remove "cron"-property.
+#========================================
+scheduler:
+  dbcleaner:
+    cron: "-"
+    deleteDisturbancesOlderThanMonths: 66
+     
 #----------------------------------------
 # Message configuration
 #

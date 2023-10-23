@@ -16,9 +16,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "affected", indexes = {
-	@Index(name = "party_id_index", columnList = "party_id")
-})
+@Table(name = "affected",
+	indexes = {
+		@Index(name = "party_id_index", columnList = "party_id")
+	})
 public class AffectedEntity implements Serializable {
 
 	private static final long serialVersionUID = 8835799401886595749L;
@@ -44,12 +45,21 @@ public class AffectedEntity implements Serializable {
 	@JoinColumn(name = "parent_id", nullable = false, foreignKey = @ForeignKey(name = "fk_affected_parent_id_disturbance_id"))
 	private DisturbanceEntity disturbanceEntity;
 
+	public static AffectedEntity create() {
+		return new AffectedEntity();
+	}
+
 	public long getId() {
 		return id;
 	}
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public AffectedEntity withId(long id) {
+		this.id = id;
+		return this;
 	}
 
 	public String getPartyId() {
@@ -60,12 +70,22 @@ public class AffectedEntity implements Serializable {
 		this.partyId = partyId;
 	}
 
+	public AffectedEntity withPartyId(String partyId) {
+		this.partyId = partyId;
+		return this;
+	}
+
 	public DisturbanceEntity getDisturbanceEntity() {
 		return disturbanceEntity;
 	}
 
 	public void setDisturbanceEntity(DisturbanceEntity disturbanceEntity) {
 		this.disturbanceEntity = disturbanceEntity;
+	}
+
+	public AffectedEntity withDisturbanceEntity(DisturbanceEntity disturbanceEntity) {
+		this.disturbanceEntity = disturbanceEntity;
+		return this;
 	}
 
 	public String getReference() {
@@ -76,6 +96,11 @@ public class AffectedEntity implements Serializable {
 		this.reference = reference;
 	}
 
+	public AffectedEntity withReference(String reference) {
+		this.reference = reference;
+		return this;
+	}
+
 	public String getFacilityId() {
 		return facilityId;
 	}
@@ -84,12 +109,22 @@ public class AffectedEntity implements Serializable {
 		this.facilityId = facilityId;
 	}
 
+	public AffectedEntity withFacilityId(String facilityId) {
+		this.facilityId = facilityId;
+		return this;
+	}
+
 	public String getCoordinates() {
 		return coordinates;
 	}
 
 	public void setCoordinates(String coordinates) {
 		this.coordinates = coordinates;
+	}
+
+	public AffectedEntity withCoordinates(String coordinates) {
+		this.coordinates = coordinates;
+		return this;
 	}
 
 	@Override
@@ -108,15 +143,15 @@ public class AffectedEntity implements Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AffectedEntity other = (AffectedEntity) obj;
-		return Objects.equals(facilityId, other.facilityId) && Objects.equals(coordinates, other.coordinates) && id == other.id && Objects.equals(partyId, other.partyId)
+		final AffectedEntity other = (AffectedEntity) obj;
+		return Objects.equals(facilityId, other.facilityId) && Objects.equals(coordinates, other.coordinates) && (id == other.id) && Objects.equals(partyId, other.partyId)
 			&& Objects.equals(reference, other.reference);
 	}
 
 	@Override
 	public String toString() {
-		long disturbanceId = disturbanceEntity == null ? 0L : disturbanceEntity.getId();
-		StringBuilder builder = new StringBuilder();
+		final long disturbanceId = disturbanceEntity == null ? 0L : disturbanceEntity.getId();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("AffectedEntity [id=").append(id).append(", partyId=").append(partyId).append(", reference=").append(reference).append(", facilityId=").append(facilityId).append(", coordinates=").append(coordinates).append(
 			", disturbanceEntity.id=").append(disturbanceId).append("]");
 		return builder.toString();

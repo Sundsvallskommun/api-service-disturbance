@@ -7,12 +7,12 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>2.1.4</version>
+		<version>3.2</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
 	<artifactId>api-service-disturbance</artifactId>
-	<version>3.0</version>
+	<version>4.0</version>
 	<name>api-service-disturbance</name>
 	<properties>
 		<!-- Pipeline properties -->
@@ -23,7 +23,7 @@
 		<openapi-generator-maven-plugin.version>7.0.1</openapi-generator-maven-plugin.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
-		<generated-sources-java-path>src/main/java</generated-sources-java-path>
+		<hibernate-jpamodelgen.version>6.3.1.Final</hibernate-jpamodelgen.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -70,6 +70,12 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>${hibernate-jpamodelgen.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		
 		<!-- Test -->
 		<dependency>
@@ -86,12 +92,21 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<reuseForks>true</reuseForks>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
 						<exclude>**/se/sundsvall/disturbance/Application*</exclude>
-						<exclude>**/generated/se/sundsvall/**/*</exclude>
+						<exclude>**/generated/se/sundsvall/**/*</exclude> <!-- API model classes -->
+						<exclude>**/*Entity_*</exclude> <!-- JPAModelGen classes -->
 					</excludes>
 				</configuration>
 			</plugin>
@@ -115,34 +130,9 @@
 								<useSpringBoot3>true</useSpringBoot3>
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
-								<sourceFolder>${generated-sources-java-path}</sourceFolder>
+								<sourceFolder>models</sourceFolder>
 								<dateLibrary>java8</dateLibrary>
 								<modelPackage>generated.se.sundsvall.messaging</modelPackage>
-								<openApiNullable>false</openApiNullable>
-								<generatePom>false</generatePom>
-								<interfaceOnly>true</interfaceOnly>
-							</configOptions>
-						</configuration>
-					</execution>
-					<execution>
-						<!-- Model used for the header values in Messaging -->
-						<id>business-rules-api</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<inputSpec>src/main/resources/integrations/business-rules-api.yaml</inputSpec>
-							<output>${generated-sources-path}</output>
-							<generatorName>jaxrs-spec</generatorName>
-							<generateApis>false</generateApis>
-							<generateSupportingFiles>false</generateSupportingFiles>
-							<configOptions>
-								<useSpringBoot3>true</useSpringBoot3>
-								<useBeanValidation>false</useBeanValidation>
-								<useSwaggerAnnotations>false</useSwaggerAnnotations>
-								<sourceFolder>${generated-sources-java-path}</sourceFolder>
-								<dateLibrary>java8</dateLibrary>
-								<modelPackage>generated.se.sundsvall.businessrules</modelPackage>
 								<openApiNullable>false</openApiNullable>
 								<generatePom>false</generatePom>
 								<interfaceOnly>true</interfaceOnly>
@@ -158,14 +148,14 @@
 				<executions>
 					<execution>
 						<id>add-generated-source</id>
-						<phase>initialize</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
 						<configuration>
 							<sources>
-								<source>${generated-sources-path}/${generated-sources-java-path}
-								</source>
+								<source>${generated-sources-path}/models</source> <!-- API model classes -->
+								<source>${generated-sources-path}/annotations</source> <!-- JPAModelGen classes -->
 							</sources>
 						</configuration>
 					</execution>

@@ -1,18 +1,21 @@
 package se.sundsvall.disturbance.integration.db.model;
 
 import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Optional.ofNullable;
 import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.TimeZoneStorage;
+
+import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Status;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -46,7 +49,7 @@ public class DisturbanceEntity implements Serializable {
 	private String disturbanceId;
 
 	@Column(name = "category", nullable = false)
-	private String category;
+	private Category category;
 
 	@Column(name = "title")
 	private String title;
@@ -55,7 +58,7 @@ public class DisturbanceEntity implements Serializable {
 	private String description;
 
 	@Column(name = "status", nullable = false)
-	private String status;
+	private Status status;
 
 	@Column(name = "planned_start_date")
 	@TimeZoneStorage(NORMALIZE)
@@ -81,12 +84,16 @@ public class DisturbanceEntity implements Serializable {
 
 	@PrePersist
 	void prePersist() {
-		created = now(ZoneId.systemDefault()).truncatedTo(MILLIS);
+		created = now(systemDefault()).truncatedTo(MILLIS);
 	}
 
 	@PreUpdate
 	void preUpdate() {
-		updated = now(ZoneId.systemDefault()).truncatedTo(MILLIS);
+		updated = now(systemDefault()).truncatedTo(MILLIS);
+	}
+
+	public static DisturbanceEntity create() {
+		return new DisturbanceEntity();
 	}
 
 	public long getId() {
@@ -97,6 +104,11 @@ public class DisturbanceEntity implements Serializable {
 		this.id = id;
 	}
 
+	public DisturbanceEntity withId(final long id) {
+		this.id = id;
+		return this;
+	}
+
 	public String getDisturbanceId() {
 		return disturbanceId;
 	}
@@ -105,12 +117,22 @@ public class DisturbanceEntity implements Serializable {
 		this.disturbanceId = disturbanceId;
 	}
 
-	public String getCategory() {
+	public DisturbanceEntity withDisturbanceId(final String disturbanceId) {
+		this.disturbanceId = disturbanceId;
+		return this;
+	}
+
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(final String category) {
+	public void setCategory(final Category category) {
 		this.category = category;
+	}
+
+	public DisturbanceEntity withCategory(final Category category) {
+		this.category = category;
+		return this;
 	}
 
 	public String getTitle() {
@@ -121,6 +143,11 @@ public class DisturbanceEntity implements Serializable {
 		this.title = title;
 	}
 
+	public DisturbanceEntity withTitle(final String title) {
+		this.title = title;
+		return this;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -129,12 +156,22 @@ public class DisturbanceEntity implements Serializable {
 		this.description = description;
 	}
 
-	public String getStatus() {
+	public DisturbanceEntity withDescription(final String description) {
+		this.description = description;
+		return this;
+	}
+
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(final String status) {
+	public void setStatus(final Status status) {
 		this.status = status;
+	}
+
+	public DisturbanceEntity withStatus(final Status status) {
+		this.status = status;
+		return this;
 	}
 
 	public OffsetDateTime getPlannedStartDate() {
@@ -145,12 +182,22 @@ public class DisturbanceEntity implements Serializable {
 		this.plannedStartDate = plannedStartDate;
 	}
 
+	public DisturbanceEntity withPlannedStartDate(final OffsetDateTime plannedStartDate) {
+		this.plannedStartDate = plannedStartDate;
+		return this;
+	}
+
 	public OffsetDateTime getPlannedStopDate() {
 		return plannedStopDate;
 	}
 
 	public void setPlannedStopDate(final OffsetDateTime plannedStopDate) {
 		this.plannedStopDate = plannedStopDate;
+	}
+
+	public DisturbanceEntity withPlannedStopDate(final OffsetDateTime plannedStopDate) {
+		this.plannedStopDate = plannedStopDate;
+		return this;
 	}
 
 	public OffsetDateTime getCreated() {
@@ -161,12 +208,22 @@ public class DisturbanceEntity implements Serializable {
 		this.created = created;
 	}
 
+	public DisturbanceEntity withCreated(final OffsetDateTime created) {
+		this.created = created;
+		return this;
+	}
+
 	public OffsetDateTime getUpdated() {
 		return updated;
 	}
 
 	public void setUpdated(final OffsetDateTime updated) {
 		this.updated = updated;
+	}
+
+	public DisturbanceEntity withUpdated(final OffsetDateTime updated) {
+		this.updated = updated;
+		return this;
 	}
 
 	public boolean getDeleted() {
@@ -177,6 +234,11 @@ public class DisturbanceEntity implements Serializable {
 		this.deleted = deleted;
 	}
 
+	public DisturbanceEntity withDeleted(final boolean deleted) {
+		this.deleted = deleted;
+		return this;
+	}
+
 	public List<AffectedEntity> getAffectedEntities() {
 		return affectedEntities;
 	}
@@ -185,7 +247,12 @@ public class DisturbanceEntity implements Serializable {
 		this.affectedEntities = affectedEntities;
 	}
 
-	public void addAffectedEntities(final List<AffectedEntity> affectedEntities) {
+	public DisturbanceEntity withAffectedEntities(final List<AffectedEntity> affectedEntities) {
+		this.affectedEntities = affectedEntities;
+		return this;
+	}
+
+	public DisturbanceEntity addAffectedEntities(final List<AffectedEntity> affectedEntities) {
 		ofNullable(affectedEntities).ifPresent(entities -> {
 			if (this.affectedEntities == null) {
 				this.affectedEntities = new ArrayList<>();
@@ -195,6 +262,8 @@ public class DisturbanceEntity implements Serializable {
 				this.affectedEntities.add(e);
 			});
 		});
+
+		return this;
 	}
 
 	@Override

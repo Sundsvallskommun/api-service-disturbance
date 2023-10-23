@@ -11,6 +11,8 @@ spring:
               action: create
               create-target: target/database/generated-schema.sql
             create-source: metadata
+            database:
+              action: none
       hibernate:
         hbm2ddl:
           schema-generation:
@@ -19,7 +21,10 @@ spring:
         format_sql: "true"
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:mariadb:10.6.4:///
+    url: jdbc:tc:mariadb:10.6.4:///ittest
+  flyway:
+    enabled: true
+    baselineOnMigrate: false
   security:
     oauth2:
       client:
@@ -35,8 +40,17 @@ spring:
 integration:
   messaging:
     url: http://localhost:${wiremock.server.port:}/api-messaging
-    connectTimeout: "10"
-    readTimeout: "20"
+    connectTimeout: 10
+    readTimeout: 20
+    
+#========================================
+# Scheduler settings
+#
+# - To disable the scheduling, set spring cron expression to "-" or remove "cron"-property.
+#========================================
+scheduler:
+  dbcleaner:
+    cron: "-"
     
 #----------------------------------------
 # Message configuration

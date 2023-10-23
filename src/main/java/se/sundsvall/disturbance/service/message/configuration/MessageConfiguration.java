@@ -15,6 +15,6 @@ public class MessageConfiguration {
 	private MessageConfigurationMapping messageConfigurationMapping;
 
 	public CategoryConfig getCategoryConfig(Category category) {
-		return messageConfigurationMapping.getTemplate().get(lowerCase(category.name()));
+		return messageConfigurationMapping.getTemplate().get(lowerCase(category.toString()));
 	}
 }

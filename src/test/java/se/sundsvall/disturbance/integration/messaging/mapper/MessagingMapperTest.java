@@ -1,20 +1,18 @@
 package se.sundsvall.disturbance.integration.messaging.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
+import static org.assertj.core.api.Assertions.entry;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.ISSUE_TYPE;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
-import generated.se.sundsvall.businessrules.IssueType;
-import generated.se.sundsvall.messaging.Header;
-import generated.se.sundsvall.messaging.Header.NameEnum;
-import generated.se.sundsvall.messaging.MessageSender;
 import se.sundsvall.disturbance.api.model.Category;
+
+import generated.se.sundsvall.messaging.MessageSender;
 
 class MessagingMapperTest {
 
@@ -23,9 +21,9 @@ class MessagingMapperTest {
 
 		final var email = MessagingMapper.toEmail("senderEmailName", "senderEmailAddress");
 		final var sms = MessagingMapper.toSms("smsName");
-		final var headerCategory = Category.ELECTRICITY;
-		final var headerFacilityId = "facilityId";
-		final var headerIssueType = IssueType.DISTURBANCE;
+		final var filterCategory = Category.ELECTRICITY;
+		final var filterFacilityId = "facilityId";
+		final var filterIssueType = ISSUE_TYPE;
 
 		final var sender = new MessageSender()
 			.email(email)
@@ -34,10 +32,10 @@ class MessagingMapperTest {
 		final var subject = "subject";
 		final var messageText = "message";
 
-		final var headers = MessagingMapper.toHeaders(headerCategory, headerFacilityId);
+		final var filters = MessagingMapper.toFilters(filterCategory, filterFacilityId);
 		final var party = MessagingMapper.toParty(partyId);
 
-		final var message = MessagingMapper.toMessage(headers, sender, party, subject, messageText);
+		final var message = MessagingMapper.toMessage(filters, sender, party, subject, messageText);
 
 		assertThat(message).isNotNull();
 		assertThat(message.getSender()).isNotNull();
@@ -47,12 +45,11 @@ class MessagingMapperTest {
 		assertThat(message.getParty().getPartyId()).isEqualTo(party.getPartyId());
 		assertThat(message.getSubject()).isEqualTo(subject);
 		assertThat(message.getMessage()).isEqualTo(messageText);
-		assertThat(message.getHeaders())
-			.extracting(Header::getName, Header::getValues)
-			.containsExactly(
-				tuple(NameEnum.TYPE, List.of(headerIssueType.toString())),
-				tuple(NameEnum.FACILITY_ID, List.of(headerFacilityId)),
-				tuple(NameEnum.CATEGORY, List.of(headerCategory.toString())));
+		assertThat(message.getFilters())
+			.containsExactlyInAnyOrderEntriesOf(Map.ofEntries(
+				entry(Filter.TYPE.toString(), List.of(filterIssueType)),
+				entry(Filter.FACILITY_ID.toString(), List.of(filterFacilityId)),
+				entry(Filter.CATEGORY.toString(), List.of(filterCategory.toString()))));
 	}
 
 	@Test
@@ -80,28 +77,14 @@ class MessagingMapperTest {
 	}
 
 	@Test
-	void toHeaders() {
+	void toFilters() {
 
-		final var headers = MessagingMapper.toHeaders(Category.WATER, "facilityId");
+		final var filters = MessagingMapper.toFilters(Category.WATER, "facilityId");
 
-		assertThat(headers)
-			.extracting(Header::getName, Header::getValues)
-			.containsExactly(
-				tuple(NameEnum.TYPE, List.of(IssueType.DISTURBANCE.toString())),
-				tuple(NameEnum.FACILITY_ID, List.of("facilityId")),
-				tuple(NameEnum.CATEGORY, List.of(Category.WATER.toString())));
-	}
-
-	@ParameterizedTest
-	@EnumSource(Category.class)
-	void toBusinessRulesCategory(final Category category) {
-		assertThat(MessagingMapper.toBusinessRulesCategory(category))
-			.isInstanceOf(generated.se.sundsvall.businessrules.Category.class)
-			.asString().isEqualTo(category.toString());
-	}
-
-	@Test
-	void toBusinessRulesCategoryWhenInputIsNull() {
-		assertThat(MessagingMapper.toBusinessRulesCategory(null)).isNull();
+		assertThat(filters)
+				.containsExactlyInAnyOrderEntriesOf(Map.ofEntries(
+						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+						entry(Filter.FACILITY_ID.toString(), List.of("facilityId")),
+						entry(Filter.CATEGORY.toString(), List.of(Category.WATER.toString()))));
 	}
 }

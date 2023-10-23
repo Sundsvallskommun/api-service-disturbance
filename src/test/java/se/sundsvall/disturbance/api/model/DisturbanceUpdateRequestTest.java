@@ -7,6 +7,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToString;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static com.google.code.beanmatchers.BeanMatchers.registerValueGenerator;
 import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,7 +24,7 @@ class DisturbanceUpdateRequestTest {
 
 	@BeforeAll
 	static void setup() {
-		registerValueGenerator(() -> now().plusDays(new Random().nextInt()), OffsetDateTime.class);
+		registerValueGenerator(() -> now(systemDefault()).plusDays(new Random().nextInt()), OffsetDateTime.class);
 	}
 
 	@Test
@@ -43,8 +44,8 @@ class DisturbanceUpdateRequestTest {
 		final var affecteds = List.of(
 			Affected.create().withPartyId(UUID.randomUUID().toString()),
 			Affected.create().withPartyId(UUID.randomUUID().toString()));
-		final var plannedStartDate = now();
-		final var plannedStopDate = now().plusHours(1);
+		final var plannedStartDate = now(systemDefault());
+		final var plannedStopDate = now(systemDefault()).plusHours(1);
 		final var status = Status.OPEN;
 		final var title = "Title";
 
@@ -61,7 +62,7 @@ class DisturbanceUpdateRequestTest {
 		assertThat(disturbanceUpdateRequest.getAffecteds()).isEqualTo(affecteds);
 		assertThat(disturbanceUpdateRequest.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(disturbanceUpdateRequest.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(disturbanceUpdateRequest.getStatus()).isEqualTo(status);
+		assertThat(disturbanceUpdateRequest.getStatus()).isEqualByComparingTo(status);
 	}
 
 	@Test

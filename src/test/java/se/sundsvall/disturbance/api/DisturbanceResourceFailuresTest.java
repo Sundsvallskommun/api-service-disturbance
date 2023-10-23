@@ -26,17 +26,13 @@ import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.service.DisturbanceFeedbackService;
+import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.service.DisturbanceService;
 
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class DisturbanceResourceFailuresTest {
-
-	@MockBean
-	private DisturbanceFeedbackService disturbanceFeedbackServiceMock;
 
 	@MockBean
 	private DisturbanceService disturbanceServiceMock;
@@ -68,7 +64,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.DisturbanceResource.createDisturbance(org.springframework.web.util.UriComponentsBuilder,se.sundsvall.disturbance.api.model.DisturbanceCreateRequest)");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -97,7 +93,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("status", "must not be null"),
 				tuple("title", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -108,7 +104,7 @@ class DisturbanceResourceFailuresTest {
 			.withCategory(Category.COMMUNICATION)
 			.withTitle("Title")
 			.withDescription("Description")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN);
+			.withStatus(Status.OPEN);
 
 		// Act
 		final var response = webTestClient.post().uri("/disturbances")
@@ -128,7 +124,7 @@ class DisturbanceResourceFailuresTest {
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("id", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -137,7 +133,7 @@ class DisturbanceResourceFailuresTest {
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with missing category.
 			.withId("id")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withTitle("Title")
 			.withDescription("Description");
 
@@ -159,7 +155,7 @@ class DisturbanceResourceFailuresTest {
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("category", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -171,7 +167,7 @@ class DisturbanceResourceFailuresTest {
 			.withCategory(Category.ELECTRICITY)
 			.withTitle("Title")
 			.withDescription("Description")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withAffecteds(List.of(
 				Affected.create().withPartyId("11e9e570-2ce4-11ec-8d3d-0242ac130003").withReference("test1"),
 				Affected.create().withPartyId("invalid-party-id"), // Invalid UUID and missing reference.
@@ -197,7 +193,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("affecteds[1].partyId", "not a valid UUID"),
 				tuple("affecteds[1].reference", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -206,7 +202,7 @@ class DisturbanceResourceFailuresTest {
 		// Arrange
 		final var body = DisturbanceCreateRequest.create() // Body with to long parameters.
 			.withId(repeat("*", 256))
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withCategory(Category.ELECTRICITY)
 			.withTitle(repeat("*", 256))
 			.withDescription(repeat("*", 8193))
@@ -236,7 +232,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("id", "size must be between 0 and 255"),
 				tuple("title", "size must be between 0 and 255"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	/**
@@ -262,7 +258,7 @@ class DisturbanceResourceFailuresTest {
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("getDisturbancesByPartyId.partyId", "not a valid UUID"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -283,7 +279,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Category] for value [not-a-category]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -304,7 +300,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Status] for value [not-a-status]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	/**
@@ -330,7 +326,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Required request body is missing: public org.springframework.http.ResponseEntity<se.sundsvall.disturbance.api.model.Disturbance> se.sundsvall.disturbance.api.DisturbanceResource.updateDisturbance(se.sundsvall.disturbance.api.model.Category,java.lang.String,se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest)");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -365,7 +361,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("affecteds[1].partyId", "not a valid UUID"),
 				tuple("affecteds[1].reference", "must not be null"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -399,104 +395,7 @@ class DisturbanceResourceFailuresTest {
 				tuple("description", "size must be between 0 and 8192"),
 				tuple("title", "size must be between 0 and 255"));
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	/**
-	 * Create disturbance feedback tests:
-	 */
-
-	@Test
-	void createDisturbanceFeedbackMissingBody() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(Problem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.DisturbanceResource.createDisturbanceFeedback(se.sundsvall.disturbance.api.model.Category,java.lang.String,se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest)");
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedbackMissingPartyId() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.bodyValue(DisturbanceFeedbackCreateRequest.create().withPartyId(null)) // Missing partyId
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(ConstraintViolationProblem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("partyId", "not a valid UUID"));
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedbackBadBodyFormat() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.bodyValue("badformat")
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(Problem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"JSON parse error: Unrecognized token 'badformat': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')");
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedbackBadPartyId() {
-
-		// Act
-		final var response = webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", Category.ELECTRICITY, "12345")
-			.contentType(APPLICATION_JSON)
-			.bodyValue(DisturbanceFeedbackCreateRequest.create().withPartyId("bad-party-id"))
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-			.expectBody(ConstraintViolationProblem.class)
-			.returnResult()
-			.getResponseBody();
-
-		// Assert
-		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(tuple("partyId", "not a valid UUID"));
-
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -517,7 +416,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Category] for value [not-a-category]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -538,6 +437,6 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo(
 			"Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Status] for value [not-a-status]");
 
-		verifyNoInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoInteractions(disturbanceServiceMock);
 	}
 }

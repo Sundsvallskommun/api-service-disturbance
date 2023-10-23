@@ -6,18 +6,19 @@ import static se.sundsvall.disturbance.integration.db.specification.DisturbanceS
 import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withPartyId;
 import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withStatusFilter;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.transaction.Transactional;
 
 @Transactional
 @CircuitBreaker(name = "disturbanceRepository")
@@ -36,6 +37,14 @@ public interface DisturbanceRepository extends JpaRepository<DisturbanceEntity, 
 
 	default List<DisturbanceEntity> findByStatusAndCategory(List<Status> statusFilter, List<Category> categoryFilter) {
 		return this.findAll(withStatusFilter(statusFilter)
-				.and(withCategoryFilter(categoryFilter)));
+			.and(withCategoryFilter(categoryFilter)));
 	}
+
+	/**
+	 * Delete all disturbances older than the provided date and with the provided statuses.
+	 *
+	 * @param expiryDate the expiryDate. All disturbances older than this date will be deleted.
+	 * @param statuses   a List of statuses to delete by.
+	 */
+	void deleteByCreatedBeforeAndStatusIn(OffsetDateTime expiryDate, Status... statuses);
 }

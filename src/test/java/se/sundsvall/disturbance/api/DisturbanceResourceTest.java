@@ -3,7 +3,6 @@ package se.sundsvall.disturbance.api;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -26,9 +25,8 @@ import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceFeedbackCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.service.DisturbanceFeedbackService;
+import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.service.DisturbanceService;
 
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
@@ -37,9 +35,6 @@ class DisturbanceResourceTest {
 
 	@MockBean
 	private DisturbanceService disturbanceServiceMock;
-
-	@MockBean
-	private DisturbanceFeedbackService disturbanceFeedbackServiceMock;
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -62,7 +57,7 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).findByPartyIdAndCategoryAndStatus(partyId, null, null);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoMoreInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -71,7 +66,7 @@ class DisturbanceResourceTest {
 		// Arrange
 		final var partyId = UUID.randomUUID().toString();
 		final var categoryFilter = List.of(Category.COMMUNICATION, Category.ELECTRICITY);
-		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.PLANNED, se.sundsvall.disturbance.api.model.Status.OPEN);
+		final var statusFilter = List.of(Status.PLANNED, Status.OPEN);
 
 		// Act
 		webTestClient.get().uri(uriBuilder -> uriBuilder.path("/disturbances/affecteds/{partyId}")
@@ -85,7 +80,7 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).findByPartyIdAndCategoryAndStatus(partyId, categoryFilter, statusFilter);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
+		verifyNoMoreInteractions(disturbanceServiceMock);
 	}
 
 	@Test
@@ -111,7 +106,6 @@ class DisturbanceResourceTest {
 		assertThat(response).isNotNull();
 
 		verify(disturbanceServiceMock).findByCategoryAndDisturbanceId(category, disturbanceId);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -142,7 +136,6 @@ class DisturbanceResourceTest {
 		assertThat(response).isNotNull();
 
 		verify(disturbanceServiceMock).updateDisturbance(category, disturbanceId, body);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -163,7 +156,6 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).deleteDisturbance(category, disturbanceId);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -173,11 +165,14 @@ class DisturbanceResourceTest {
 		final var body = DisturbanceCreateRequest.create()
 			.withCategory(Category.COMMUNICATION)
 			.withId("123")
-			.withStatus(se.sundsvall.disturbance.api.model.Status.OPEN)
+			.withStatus(Status.OPEN)
 			.withTitle("title")
 			.withDescription("description");
 
-		when(disturbanceServiceMock.createDisturbance(body)).thenReturn(Disturbance.create().withId(body.getId()).withCategory(body.getCategory()));
+		when(disturbanceServiceMock.createDisturbance(body))
+				.thenReturn(Disturbance.create()
+						.withId(body.getId())
+						.withCategory(body.getCategory()));
 
 		// Act
 		webTestClient.post().uri("/disturbances")
@@ -191,27 +186,6 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).createDisturbance(body);
-		verifyNoInteractions(disturbanceFeedbackServiceMock);
-	}
-
-	@Test
-	void createDisturbanceFeedback() {
-
-		// Arrange
-		final var category = Category.COMMUNICATION;
-		final var disturbanceId = "12345";
-		final var body = DisturbanceFeedbackCreateRequest.create().withPartyId(UUID.randomUUID().toString());
-
-		webTestClient.post().uri("/disturbances/{category}/{disturbanceId}/feedback", category, disturbanceId)
-			.contentType(APPLICATION_JSON)
-			.bodyValue(body)
-			.exchange()
-			.expectStatus().isNoContent()
-			.expectHeader().doesNotExist(HttpHeaders.CONTENT_TYPE)
-			.expectBody().isEmpty();
-
-		verify(disturbanceFeedbackServiceMock).createDisturbanceFeedback(category, disturbanceId, body);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
 	}
 
 	@Test
@@ -219,7 +193,7 @@ class DisturbanceResourceTest {
 
 		// Arrange
 		final var categoryFilter = List.of(Category.COMMUNICATION, Category.ELECTRICITY);
-		final var statusFilter = List.of(se.sundsvall.disturbance.api.model.Status.PLANNED, se.sundsvall.disturbance.api.model.Status.OPEN);
+		final var statusFilter = List.of(Status.PLANNED, Status.OPEN);
 
 		// Act
 		webTestClient.get().uri(uriBuilder -> uriBuilder.path("/disturbances")
@@ -233,6 +207,5 @@ class DisturbanceResourceTest {
 
 		// Assert
 		verify(disturbanceServiceMock).findByStatusAndCategory(statusFilter, categoryFilter);
-		verifyNoMoreInteractions(disturbanceServiceMock, disturbanceFeedbackServiceMock);
 	}
 }

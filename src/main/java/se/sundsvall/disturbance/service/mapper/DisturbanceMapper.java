@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static se.sundsvall.dept44.util.DateUtils.toOffsetDateTimeWithLocalOffset;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +15,6 @@ import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.service.util.MappingUtils;
@@ -25,13 +25,13 @@ public class DisturbanceMapper {
 
 	public static Disturbance toDisturbance(final DisturbanceEntity disturbanceEntity) {
 		return Disturbance.create()
-			.withCategory(isNull(disturbanceEntity.getCategory()) ? null : Category.valueOf(disturbanceEntity.getCategory()))
+			.withCategory(disturbanceEntity.getCategory())
 			.withTitle(disturbanceEntity.getTitle())
 			.withDescription(disturbanceEntity.getDescription())
 			.withId(disturbanceEntity.getDisturbanceId())
 			.withDescription(disturbanceEntity.getDescription())
 			.withAffecteds(toAffecteds(disturbanceEntity.getAffectedEntities()))
-			.withStatus(isNull(disturbanceEntity.getStatus()) ? null : Status.valueOf(disturbanceEntity.getStatus()))
+			.withStatus(disturbanceEntity.getStatus())
 			.withCreated(disturbanceEntity.getCreated())
 			.withPlannedStartDate(disturbanceEntity.getPlannedStartDate())
 			.withPlannedStopDate(disturbanceEntity.getPlannedStopDate())
@@ -39,39 +39,35 @@ public class DisturbanceMapper {
 	}
 
 	public static DisturbanceEntity toDisturbanceEntity(final DisturbanceCreateRequest disturbanceCreateRequest) {
-		final var disturbanceEntity = new DisturbanceEntity();
-		disturbanceEntity.addAffectedEntities(toAffectedEntities(disturbanceCreateRequest.getAffecteds()));
-		disturbanceEntity.setCategory(String.valueOf(disturbanceCreateRequest.getCategory()));
-		disturbanceEntity.setDescription(disturbanceCreateRequest.getDescription());
-		disturbanceEntity.setDisturbanceId(disturbanceCreateRequest.getId());
-		disturbanceEntity.setPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStartDate()));
-		disturbanceEntity.setPlannedStopDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStopDate()));
-		disturbanceEntity.setStatus(Objects.toString(disturbanceCreateRequest.getStatus(), null));
-		disturbanceEntity.setTitle(disturbanceCreateRequest.getTitle());
-
-		return disturbanceEntity;
+		return DisturbanceEntity.create()
+			.addAffectedEntities(toAffectedEntities(disturbanceCreateRequest.getAffecteds()))
+			.withCategory(disturbanceCreateRequest.getCategory())
+			.withDescription(disturbanceCreateRequest.getDescription())
+			.withDisturbanceId(disturbanceCreateRequest.getId())
+			.withPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStartDate()))
+			.withPlannedStopDate(toOffsetDateTimeWithLocalOffset(disturbanceCreateRequest.getPlannedStopDate()))
+			.withStatus(disturbanceCreateRequest.getStatus())
+			.withTitle(disturbanceCreateRequest.getTitle());
 	}
 
 	public static DisturbanceEntity toDisturbanceEntity(final Category category, final String disturbanceId, final DisturbanceUpdateRequest disturbanceUpdateRequest) {
-		final var disturbanceEntity = new DisturbanceEntity();
-		disturbanceEntity.addAffectedEntities(toAffectedEntities(disturbanceUpdateRequest.getAffecteds()));
-		disturbanceEntity.setCategory(String.valueOf(category));
-		disturbanceEntity.setDescription(disturbanceUpdateRequest.getDescription());
-		disturbanceEntity.setDisturbanceId(disturbanceId);
-		disturbanceEntity.setPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceUpdateRequest.getPlannedStartDate()));
-		disturbanceEntity.setPlannedStopDate(toOffsetDateTimeWithLocalOffset(disturbanceUpdateRequest.getPlannedStopDate()));
-		disturbanceEntity.setStatus(Objects.toString(disturbanceUpdateRequest.getStatus(), null));
-		disturbanceEntity.setTitle(disturbanceUpdateRequest.getTitle());
-
-		return disturbanceEntity;
+		return DisturbanceEntity.create()
+			.addAffectedEntities(toAffectedEntities(disturbanceUpdateRequest.getAffecteds()))
+			.withCategory(category)
+			.withDescription(disturbanceUpdateRequest.getDescription())
+			.withDisturbanceId(disturbanceId)
+			.withPlannedStartDate(toOffsetDateTimeWithLocalOffset(disturbanceUpdateRequest.getPlannedStartDate()))
+			.withPlannedStopDate(toOffsetDateTimeWithLocalOffset(disturbanceUpdateRequest.getPlannedStopDate()))
+			.withStatus(disturbanceUpdateRequest.getStatus())
+			.withTitle(disturbanceUpdateRequest.getTitle());
 	}
 
 	/**
 	 * Merge all new values from "newEntity" the the "oldEntity". Values are only used (copied) if they are not null.
 	 *
-	 * @param oldEntity the old entity.
-	 * @param newEntity the new (changed) entity.
-	 * @return the old entity with available (non-null) values from the new entity.
+	 * @param  oldEntity the old entity.
+	 * @param  newEntity the new (changed) entity.
+	 * @return           the old entity with available (non-null) values from the new entity.
 	 */
 	public static DisturbanceEntity toMergedDisturbanceEntity(final DisturbanceEntity oldEntity, final DisturbanceEntity newEntity) {
 
@@ -105,21 +101,19 @@ public class DisturbanceMapper {
 			return null;
 		}
 
-		return affecteds.stream()
+		return new ArrayList<>(affecteds.stream()
 			.filter(Objects::nonNull)
 			.distinct() // Remove duplicates
 			.map(DisturbanceMapper::toAffectedEntity)
-			.toList();
+			.toList());
 	}
 
 	private static AffectedEntity toAffectedEntity(final Affected affected) {
-		final var affectedEntity = new AffectedEntity();
-		affectedEntity.setFacilityId(affected.getFacilityId());
-		affectedEntity.setCoordinates(affected.getCoordinates());
-		affectedEntity.setPartyId(affected.getPartyId());
-		affectedEntity.setReference(affected.getReference());
-
-		return affectedEntity;
+		return AffectedEntity.create()
+			.withCoordinates(affected.getCoordinates())
+			.withFacilityId(affected.getFacilityId())
+			.withPartyId(affected.getPartyId())
+			.withReference(affected.getReference());
 	}
 
 	private static List<Affected> toAffecteds(final List<AffectedEntity> affectedEntityList) {
