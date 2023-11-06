@@ -23,7 +23,6 @@
 		<openapi-generator-maven-plugin.version>7.0.1</openapi-generator-maven-plugin.version>
 		<commons-text.version>1.11.0</commons-text.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
-		<hibernate-jpamodelgen.version>6.3.1.Final</hibernate-jpamodelgen.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -64,16 +63,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-jpamodelgen</artifactId>
-			<version>${hibernate-jpamodelgen.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		
