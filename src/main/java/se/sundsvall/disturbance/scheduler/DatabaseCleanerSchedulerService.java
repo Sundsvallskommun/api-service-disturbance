@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -27,11 +26,13 @@ public class DatabaseCleanerSchedulerService {
 	private static final String LOG_CLEANING_DELETE_RANGE = "Removing all disturbances older than '{}' and with status matching '{}'.";
 	private static final String LOG_CLEANING_ENDED = "Cleaning of obsolete entities in database has ended.";
 
-	@Autowired
-	private DatabaseCleanerSchedulerProperties properties;
+	private final DatabaseCleanerSchedulerProperties properties;
+	private final DisturbanceRepository disturbanceRepository;
 
-	@Autowired
-	private DisturbanceRepository disturbanceRepository;
+	public DatabaseCleanerSchedulerService(DatabaseCleanerSchedulerProperties properties, DisturbanceRepository disturbanceRepository) {
+		this.properties = properties;
+		this.disturbanceRepository = disturbanceRepository;
+	}
 
 	@Scheduled(cron = "${scheduler.dbcleaner.cron:-}")
 	public void execute() {

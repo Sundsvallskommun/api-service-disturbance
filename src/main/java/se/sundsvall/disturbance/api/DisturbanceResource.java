@@ -11,7 +11,6 @@ import static org.springframework.http.ResponseEntity.ok;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,14 +26,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.problem.Problem;
 import org.zalando.problem.violations.ConstraintViolationProblem;
 
-import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
-import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.api.model.Disturbance;
-import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.api.model.Status;
-import se.sundsvall.disturbance.service.DisturbanceService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -43,6 +34,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
+import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Disturbance;
+import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
+import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
+import se.sundsvall.disturbance.api.model.Status;
+import se.sundsvall.disturbance.service.DisturbanceService;
 
 @RestController
 @Validated
@@ -50,8 +48,11 @@ import jakarta.validation.Valid;
 @Tag(name = "Disturbance", description = "Disturbance operations")
 public class DisturbanceResource {
 
-	@Autowired
-	private DisturbanceService disturbanceService;
+	private final DisturbanceService disturbanceService;
+
+	public DisturbanceResource(DisturbanceService disturbanceService) {
+		this.disturbanceService = disturbanceService;
+	}
 
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Create a new disturbance.")
