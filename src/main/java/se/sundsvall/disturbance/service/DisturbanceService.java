@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.zalando.problem.Problem;
 
 import se.sundsvall.disturbance.api.model.Category;
@@ -35,18 +35,18 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.service.message.SendMessageLogic;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class DisturbanceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DisturbanceService.class);
 
-	@Autowired
-	private DisturbanceRepository disturbanceRepository;
+	private final DisturbanceRepository disturbanceRepository;
+	private final SendMessageLogic sendMessageLogic;
 
-	@Autowired
-	private SendMessageLogic sendMessageLogic;
+	public DisturbanceService(DisturbanceRepository disturbanceRepository, SendMessageLogic sendMessageLogic) {
+		this.disturbanceRepository = disturbanceRepository;
+		this.sendMessageLogic = sendMessageLogic;
+	}
 
 	@Transactional
 	public Disturbance findByCategoryAndDisturbanceId(final Category category, final String disturbanceId) {
@@ -140,11 +140,11 @@ public class DisturbanceService {
 		}
 		// Send "update" message to all affecteds, if the disturbance content is updated (but not for status PLANNED).
 		else if (disturbanceContentIsChanged && !hasStatusPlanned(mergedDisturbanceEntity)) {
-			LOGGER.info("Disturbance status changed from PLANNED to OPEN: '{}'. Sending update messages.", mergedDisturbanceEntity);
+			LOGGER.info("Disturbance content was changed: '{}'. Sending update messages.", mergedDisturbanceEntity);
 			sendMessageLogic.sendUpdateMessage(mergedDisturbanceEntity);
 		}
 
-		var save = disturbanceRepository.save(mergedDisturbanceEntity);
+		final var save = disturbanceRepository.save(mergedDisturbanceEntity);
 		return toDisturbance(save);
 	}
 

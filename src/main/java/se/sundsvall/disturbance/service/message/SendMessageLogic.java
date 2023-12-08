@@ -17,13 +17,12 @@ import java.util.Optional;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageRequest;
 import generated.se.sundsvall.messaging.MessageSender;
-import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
@@ -45,14 +44,15 @@ public class SendMessageLogic {
 	private static final String MSG_PLANNED_STOP_DATE = "disturbance.plannedStopDate";
 	private static final String MSG_AFFECTED_REFERENCE = "disturbance.affected.reference";
 
-	@Autowired
-	private SubscriptionService subscriptionService;
+	private final SubscriptionService subscriptionService;
+	private final MessageConfiguration messageConfiguration;
+	private final MessagingClient messagingClient;
 
-	@Autowired
-	private MessageConfiguration messageConfiguration;
-
-	@Autowired
-	private MessagingClient messagingClient;
+	public SendMessageLogic(SubscriptionService subscriptionService, MessageConfiguration messageConfiguration, MessagingClient messagingClient) {
+		this.subscriptionService = subscriptionService;
+		this.messageConfiguration = messageConfiguration;
+		this.messagingClient = messagingClient;
+	}
 
 	/**
 	 * Send a "closed disturbance" message to all affected persons/organizations in a disturbance with an existing

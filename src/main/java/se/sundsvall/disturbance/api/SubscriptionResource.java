@@ -9,7 +9,6 @@ import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,12 +24,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.problem.Problem;
 import org.zalando.problem.violations.ConstraintViolationProblem;
 
-import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
-import se.sundsvall.disturbance.api.model.Subscription;
-import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
-import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
-import se.sundsvall.disturbance.service.SubscriptionService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -39,6 +32,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
+import se.sundsvall.disturbance.api.model.Subscription;
+import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
+import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
+import se.sundsvall.disturbance.service.SubscriptionService;
 
 @RestController
 @Validated
@@ -46,8 +44,11 @@ import jakarta.validation.Valid;
 @Tag(name = "Subscription", description = "Subscription operations")
 public class SubscriptionResource {
 
-	@Autowired
-	private SubscriptionService subscriptionService;
+	private final SubscriptionService subscriptionService;
+
+	public SubscriptionResource(SubscriptionService subscriptionService) {
+		this.subscriptionService = subscriptionService;
+	}
 
 	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = { APPLICATION_PROBLEM_JSON_VALUE })
 	@Operation(summary = "Create a subscription for a person or an organization. I.e. subscribe on notifications for all new future disturbances.")
