@@ -19,11 +19,10 @@ import static se.sundsvall.disturbance.service.mapper.SubscriptionMapper.toUpdat
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.zalando.problem.Problem;
 
-import jakarta.transaction.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
@@ -34,8 +33,11 @@ import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
 @Service
 public class SubscriptionService {
 
-	@Autowired
-	private SubscriptionRepository subscriptionRepository;
+	private final SubscriptionRepository subscriptionRepository;
+
+	public SubscriptionService(SubscriptionRepository subscriptionRepository) {
+		this.subscriptionRepository = subscriptionRepository;
+	}
 
 	@Transactional
 	public Subscription create(final SubscriptionCreateRequest request) {

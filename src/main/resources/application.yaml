@@ -52,6 +52,7 @@ scheduler:
 # Message configuration
 #
 # Available variables:
+# ${newline}
 # ${disturbance.title} - Variable will be replaced with value in disturbance.title 
 # ${disturbance.description} - Variable will be replaced with value in disturbance.description 
 # ${disturbance.plannedStartDate} - Variable will be replaced with value in disturbance.plannedStartDate 
@@ -75,9 +76,9 @@ message:
       active: "true"
       subject-new: Driftstörning på ${disturbance.affected.reference}
       subject-update: Uppdatering om driftstörning på ${disturbance.affected.reference}
-      subject-close: Driftstörning på ${affected.reference} åtgärdad
+      subject-close: Driftstörning på ${disturbance.affected.reference} åtgärdad
       message-new: Hej! Just nu har vi en driftstörning i elnätet på ${disturbance.affected.reference} som vi felsöker. Hälsningar, Sundsvall Elnät
-      message-update: 'Hej! Uppdatering om driftstörningen i elnätet på ${affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
+      message-update: 'Hej! Uppdatering om driftstörningen i elnätet på ${disturbance.affected.reference}. ${disturbance.description} Driftstörningen beräknas åtgärdad: ${disturbance.plannedStopDate}'
       message-close: Hej! Nu är driftstörningen i elnätet på ${disturbance.affected.reference} åtgärdad. Vi ber om ursäkt för eventuella problem som driftstörningen har orsakat dig.
       sender-email-name: Sundsvall Elnät
       sender-email-address: noreply@sundsvall.se
