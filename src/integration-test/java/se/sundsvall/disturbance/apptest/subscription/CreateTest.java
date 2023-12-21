@@ -42,7 +42,7 @@ class CreateTest extends AbstractAppTest {
 			.getResponseHeaders();
 
 		setupCall()
-			.withServicePath(headers.get(LOCATION).stream().findFirst().get())
+			.withServicePath(headers.get(LOCATION).getFirst())
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
