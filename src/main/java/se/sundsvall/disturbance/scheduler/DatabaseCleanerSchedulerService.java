@@ -7,6 +7,7 @@ import static se.sundsvall.disturbance.api.model.Status.CLOSED;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,6 +36,7 @@ public class DatabaseCleanerSchedulerService {
 	}
 
 	@Scheduled(cron = "${scheduler.dbcleaner.cron:-}")
+	@SchedulerLock(name = "dbcleaner", lockAtMostFor = "${scheduler.dbcleaner.shedlock-lock-at-most-for}")
 	public void execute() {
 
 		LOGGER.info(LOG_CLEANING_STARTED);
