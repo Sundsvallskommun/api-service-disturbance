@@ -62,7 +62,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.DisturbanceResource.createDisturbance(org.springframework.web.util.UriComponentsBuilder,se.sundsvall.disturbance.api.model.DisturbanceCreateRequest)");
+			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.DisturbanceResource.createDisturbance(se.sundsvall.disturbance.api.model.DisturbanceCreateRequest)");
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}

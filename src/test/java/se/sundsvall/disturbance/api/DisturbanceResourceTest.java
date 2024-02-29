@@ -39,9 +39,6 @@ class DisturbanceResourceTest {
 	@Autowired
 	private WebTestClient webTestClient;
 
-	@LocalServerPort
-	private int port;
-
 	@Test
 	void getDisturbancesByPartyId() {
 
@@ -181,7 +178,7 @@ class DisturbanceResourceTest {
 			.exchange()
 			.expectStatus().isCreated()
 			.expectHeader().contentType(ALL_VALUE)
-			.expectHeader().location("http://localhost:".concat(String.valueOf(port)).concat("/disturbances/COMMUNICATION/123"))
+			.expectHeader().location("/disturbances/" + body.getCategory() + "/" + body.getId())
 			.expectBody().isEmpty();
 
 		// Assert

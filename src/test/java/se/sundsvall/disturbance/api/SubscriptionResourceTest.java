@@ -43,9 +43,6 @@ class SubscriptionResourceTest {
 	@Autowired
 	private WebTestClient webTestClient;
 
-	@LocalServerPort
-	private int port;
-
 	@Test
 	void create() {
 
@@ -65,7 +62,7 @@ class SubscriptionResourceTest {
 			.bodyValue(request)
 			.exchange()
 			.expectStatus().isCreated()
-			.expectHeader().location("http://localhost:".concat(String.valueOf(port)).concat(fromPath("/subscriptions/{id}").build(Map.of("id", id)).toString()))
+			.expectHeader().location("/subscriptions/" + id)
 			.expectBody().isEmpty();
 
 		// Assert

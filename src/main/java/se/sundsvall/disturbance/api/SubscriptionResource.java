@@ -8,6 +8,7 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -57,10 +58,10 @@ public class SubscriptionResource {
 	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createSubscription(final UriComponentsBuilder uriComponentsBuilder, @RequestBody @Valid final SubscriptionCreateRequest body) {
+	public ResponseEntity<Void> createSubscription(@RequestBody @Valid final SubscriptionCreateRequest body) {
 
 		final var subscription = subscriptionService.create(body);
-		return created(uriComponentsBuilder.path("/subscriptions/{id}").buildAndExpand(subscription.getId()).toUri()).header(CONTENT_TYPE, ALL_VALUE).build();
+		return created(fromPath("/subscriptions/{id}").buildAndExpand(subscription.getId()).toUri()).header(CONTENT_TYPE, ALL_VALUE).build();
 	}
 
 	@GetMapping(produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
