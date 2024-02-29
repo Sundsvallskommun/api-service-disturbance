@@ -57,7 +57,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.SubscriptionResource.createSubscription(org.springframework.web.util.UriComponentsBuilder,se.sundsvall.disturbance.api.model.SubscriptionCreateRequest)");
+			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.SubscriptionResource.createSubscription(se.sundsvall.disturbance.api.model.SubscriptionCreateRequest)");
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}

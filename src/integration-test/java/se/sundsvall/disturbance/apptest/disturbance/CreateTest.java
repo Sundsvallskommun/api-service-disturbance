@@ -48,7 +48,7 @@ class CreateTest extends AbstractAppTest {
 			.withRequest("request.json")
 			.withExpectedResponseStatus(CREATED)
 			.withExpectedResponseBodyIsNull()
-			.withExpectedResponseHeader(LOCATION, List.of("http://localhost:(.*)/disturbances/" + category + "/" + disturbanceId))
+			.withExpectedResponseHeader(LOCATION, List.of("/disturbances/" + category + "/" + disturbanceId))
 			.sendRequestAndVerifyResponse();
 
 		assertThat(disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)))).isPresent();
@@ -68,7 +68,7 @@ class CreateTest extends AbstractAppTest {
 			.withRequest("request.json")
 			.withExpectedResponseStatus(CREATED)
 			.withExpectedResponseBodyIsNull()
-			.withExpectedResponseHeader(LOCATION, List.of("http://localhost:(.*)/disturbances/" + category + "/" + disturbanceId))
+			.withExpectedResponseHeader(LOCATION, List.of("/disturbances/" + category + "/" + disturbanceId))
 			.sendRequestAndVerifyResponse();
 
 		assertThat(disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)))).isPresent();

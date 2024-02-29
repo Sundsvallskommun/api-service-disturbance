@@ -8,6 +8,7 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
 import java.util.List;
 
@@ -61,10 +62,9 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createDisturbance(final UriComponentsBuilder uriComponentsBuilder, @RequestBody @Valid final DisturbanceCreateRequest body) {
-
+	public ResponseEntity<Void> createDisturbance(@RequestBody @Valid final DisturbanceCreateRequest body) {
 		final var result = disturbanceService.createDisturbance(body);
-		return created(uriComponentsBuilder.path("/disturbances/{category}/{disturbanceId}").buildAndExpand(result.getCategory(), result.getId()).toUri())
+		return created(fromPath("/disturbances/{category}/{disturbanceId}").buildAndExpand(result.getCategory(), result.getId()).toUri())
 			.header(CONTENT_TYPE, ALL_VALUE)
 			.build();
 	}
