@@ -29,7 +29,7 @@ import se.sundsvall.disturbance.Application;
 class CreateTest extends AbstractAppTest {
 
 	@Test
-	void test1_createSubscription() throws IOException {
+	void test1_createSubscription() {
 
 		final var headers = setupCall()
 			.withServicePath("/subscriptions")
@@ -37,7 +37,7 @@ class CreateTest extends AbstractAppTest {
 			.withRequest("request.json")
 			.withExpectedResponseStatus(CREATED)
 			.withExpectedResponseBodyIsNull()
-			.withExpectedResponseHeader(LOCATION, List.of("http://localhost:(.*)/subscriptions/(\\d+)"))
+			.withExpectedResponseHeader(LOCATION, List.of("/subscriptions/(\\d+)"))
 			.sendRequest()
 			.getResponseHeaders();
 
