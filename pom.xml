@@ -22,7 +22,7 @@
 		<!-- Service properties -->
 		<commons-text.version>1.11.0</commons-text.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
-		<shedlock.version>5.11.0</shedlock.version>
+		<shedlock.version>5.12.0</shedlock.version>
 	</properties>
 	<dependencies>
 		<dependency>
