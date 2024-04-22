@@ -20,7 +20,7 @@
 		<published.container.port.test>8723</published.container.port.test>
 		<published.container.port.production>8724</published.container.port.production>
 		<!-- Service properties -->
-		<commons-text.version>1.11.0</commons-text.version>
+		<commons-text.version>1.12.0</commons-text.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<shedlock.version>5.13.0</shedlock.version>
 	</properties>
