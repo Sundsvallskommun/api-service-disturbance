@@ -14,7 +14,8 @@
 					"messages": [
 						{
 							"party": {
-								"partyId": "b6d929c8-fac3-4ac6-8b15-d255bad864df"
+								"partyId": "b6d929c8-fac3-4ac6-8b15-d255bad864df",
+								"externalReferences": []
 							},
 							"filters": {
 								"facilityId": [
@@ -41,7 +42,8 @@
 						},
 						{
 							"party": {
-								"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3"
+								"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3",
+								"externalReferences": []
 							},
 							"filters": {
 								"facilityId": [

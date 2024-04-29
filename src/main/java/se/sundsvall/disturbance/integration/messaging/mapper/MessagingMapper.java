@@ -58,6 +58,8 @@ public class MessagingMapper {
 
 	public static MessageParty toParty(final String partyId) {
 		return new MessageParty()
-			.partyId(UUID.fromString(partyId));
+			.partyId(UUID.fromString(partyId))
+			// To keep collection instantiated and not suddenly change to null if openAPI decides to change the implementation.
+			.externalReferences(List.of());
 	}
 }
