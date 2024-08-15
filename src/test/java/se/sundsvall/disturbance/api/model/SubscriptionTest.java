@@ -42,6 +42,7 @@ class SubscriptionTest {
 
 		final var created = now(systemDefault());
 		final var id = 1L;
+		final var municipalityId = "municipalityId";
 		final var optOutSettings = List.of(OptOutSetting.create());
 		final var partyId = UUID.randomUUID().toString();
 		final var updated = now(systemDefault()).plusHours(5);
@@ -49,6 +50,7 @@ class SubscriptionTest {
 		final var bean = Subscription.create()
 			.withCreated(created)
 			.withId(id)
+			.withMunicipalityId(municipalityId)
 			.withOptOutSettings(optOutSettings)
 			.withPartyId(partyId)
 			.withUpdated(updated);
@@ -56,6 +58,7 @@ class SubscriptionTest {
 		assertThat(bean).isNotNull().hasNoNullFieldsOrProperties();
 		assertThat(bean.getCreated()).isEqualTo(created);
 		assertThat(bean.getId()).isEqualTo(id);
+		assertThat(bean.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(bean.getOptOutSettings()).isEqualTo(optOutSettings);
 		assertThat(bean.getPartyId()).isEqualTo(partyId);
 		assertThat(bean.getUpdated()).isEqualTo(updated);

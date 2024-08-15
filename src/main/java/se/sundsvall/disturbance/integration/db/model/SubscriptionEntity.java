@@ -32,7 +32,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "subscription",
 	indexes = {
-		@Index(name = "party_id_index", columnList = "party_id")
+		@Index(name = "party_id_index", columnList = "party_id"),
+		@Index(name = "municipality_id_index", columnList = "municipality_id")
 	})
 public class SubscriptionEntity implements Serializable {
 
@@ -42,6 +43,9 @@ public class SubscriptionEntity implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
+
+	@Column(name = "municipality_id", nullable = false)
+	private String municipalityId;
 
 	@Column(name = "party_id", nullable = false)
 	private String partyId;
@@ -72,6 +76,19 @@ public class SubscriptionEntity implements Serializable {
 
 	public SubscriptionEntity withId(Long id) {
 		this.setId(id);
+		return this;
+	}
+
+	public String getMunicipalityId() {
+		return municipalityId;
+	}
+
+	public void setMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
+	}
+
+	public SubscriptionEntity withMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
 		return this;
 	}
 
@@ -148,20 +165,22 @@ public class SubscriptionEntity implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(created, id, optOutSettings, partyId, updated);
+		return Objects.hash(created, id, municipalityId, optOutSettings, partyId, updated);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) { return true; }
 		if (!(obj instanceof final SubscriptionEntity other)) { return false; }
-		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId) && Objects.equals(updated, other.updated);
+		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(municipalityId, other.municipalityId) && Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId) && Objects
+			.equals(updated, other.updated);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("SubscriptionEntity [id=").append(id).append(", partyId=").append(partyId).append(", optOutSettings=").append(optOutSettings).append(", created=").append(created).append(", updated=").append(updated).append("]");
+		builder.append("SubscriptionEntity [id=").append(id).append(", municipalityId=").append(municipalityId).append(", partyId=").append(partyId).append(", optOutSettings=").append(optOutSettings).append(", created=").append(created).append(
+			", updated=").append(updated).append("]");
 		return builder.toString();
 	}
 }

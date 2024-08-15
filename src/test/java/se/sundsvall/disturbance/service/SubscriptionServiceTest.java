@@ -1,6 +1,5 @@
 package se.sundsvall.disturbance.service;
 
-import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,20 +44,21 @@ class SubscriptionServiceTest {
 	void create() {
 
 		// Arrange
+		final var municipalityId = "2281";
 		final var partyId = randomUUID().toString();
 		final var subscriptionCreateRequest = SubscriptionCreateRequest.create().withPartyId(partyId);
 		final var subscriptionEntity = SubscriptionEntity.create();
 
-		when(subscriptionRepository.existsByPartyId(any())).thenReturn(false);
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(any(), any())).thenReturn(empty());
 		when(subscriptionRepository.save(any())).thenReturn(subscriptionEntity);
 
 		// Act
-		final var result = subscriptionService.create(subscriptionCreateRequest);
+		final var result = subscriptionService.create(municipalityId, subscriptionCreateRequest);
 
 		// Assert
 		assertThat(result).isNotNull();
 
-		verify(subscriptionRepository).existsByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 		verify(subscriptionRepository).save(any(SubscriptionEntity.class));
 	}
 
@@ -66,20 +66,21 @@ class SubscriptionServiceTest {
 	void createWhenAlreadyExists() {
 
 		// Arrange
+		final var municipalityId = "2281";
 		final var partyId = randomUUID().toString();
 		final var subscriptionCreateRequest = SubscriptionCreateRequest.create().withPartyId(partyId);
 
-		when(subscriptionRepository.existsByPartyId(any())).thenReturn(true);
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(any(), any())).thenReturn(Optional.of(SubscriptionEntity.create()));
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.create(subscriptionCreateRequest));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.create(municipalityId, subscriptionCreateRequest));
 
 		// Assert
 		assertThat(throwableProblem).isNotNull();
-		assertThat(throwableProblem.getMessage()).isEqualTo(format("Conflict: A subscription entity for partyId:'%s' already exists!", partyId));
+		assertThat(throwableProblem.getMessage()).isEqualTo("Conflict: A subscription entity for partyId:'%s' already exists!".formatted(partyId));
 		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
-		verify(subscriptionRepository).existsByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 		verify(subscriptionRepository, never()).save(any());
 	}
 
@@ -88,20 +89,21 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var id = 1L;
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
 
-		when(subscriptionRepository.findById(id)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.read(id);
+		final var result = subscriptionService.read(municipalityId, id);
 
 		// Assert
 		assertThat(result).isNotNull();
 
-		verify(subscriptionRepository).findById(id);
+		verify(subscriptionRepository).findByMunicipalityIdAndId(municipalityId, id);
 	}
 
 	@Test
@@ -109,59 +111,62 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var id = 1L;
+		final var municipalityId = "2281";
 
-		when(subscriptionRepository.findById(id)).thenReturn(empty());
+		when(subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)).thenReturn(empty());
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.read(id));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.read(municipalityId, id));
 
 		// Assert
 		assertThat(throwableProblem).isNotNull();
-		assertThat(throwableProblem.getMessage()).isEqualTo(format("Not Found: No subscription entity found for id:'%s'!", id));
+		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No subscription entity found for id:'%s'!".formatted(id));
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
-		verify(subscriptionRepository).findById(id);
+		verify(subscriptionRepository).findByMunicipalityIdAndId(municipalityId, id);
 	}
 
 	@Test
-	void findByPartyId() {
+	void findByMunicipalityIdAndPartyId() {
 
 		// Arrange
 		final var id = 1L;
+		final var municipalityId = "2281";
 		final var partyId = randomUUID().toString();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(partyId)
 			.withOptOutSettings(List.of(OptOutSettingsEntity.create().withCategory(Category.COMMUNICATION)));
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.findByPartyId(partyId);
+		final var result = subscriptionService.findByMunicipalityIdAndPartyId(municipalityId, partyId);
 
 		// Assert
 		assertThat(result).isNotNull();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
-	void findByPartyIdWhenNotFound() {
+	void findByMunicipalityIdAndPartyIdNotFound() {
 
 		// Arrange
+		final var municipalityId = "2281";
 		final var partyId = randomUUID().toString();
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(empty());
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(empty());
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.findByPartyId(partyId));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.findByMunicipalityIdAndPartyId(municipalityId, partyId));
 
 		// Assert
 		assertThat(throwableProblem).isNotNull();
-		assertThat(throwableProblem.getMessage()).isEqualTo(format("Not Found: No subscription entity found for partyId:'%s'!", partyId));
+		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No subscription entity found for partyId:'%s'!".formatted(partyId));
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -169,15 +174,17 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var id = 1L;
+		final var municipalityId = "2281";
+		final var entity = SubscriptionEntity.create();
 
-		when(subscriptionRepository.existsById(id)).thenReturn(true);
+		when(subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)).thenReturn(Optional.of(entity));
 
 		// Act
-		subscriptionService.delete(id);
+		subscriptionService.delete(municipalityId, id);
 
 		// Assert
-		verify(subscriptionRepository).existsById(id);
-		verify(subscriptionRepository).deleteById(id);
+		verify(subscriptionRepository).findByMunicipalityIdAndId(municipalityId, id);
+		verify(subscriptionRepository).delete(entity);
 	}
 
 	@Test
@@ -185,19 +192,20 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var id = 1L;
+		final var municipalityId = "2281";
 
-		when(subscriptionRepository.existsById(id)).thenReturn(false);
+		when(subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)).thenReturn(Optional.empty());
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.delete(id));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.delete(municipalityId, id));
 
 		// Assert
 		assertThat(throwableProblem).isNotNull();
-		assertThat(throwableProblem.getMessage()).isEqualTo(format("Not Found: No subscription entity found for id:'%s'!", id));
+		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No subscription entity found for id:'%s'!".formatted(id));
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
-		verify(subscriptionRepository).existsById(id);
-		verify(subscriptionRepository, never()).deleteById(any());
+		verify(subscriptionRepository).findByMunicipalityIdAndId(municipalityId, id);
+		verify(subscriptionRepository, never()).delete(any());
 	}
 
 	@Test
@@ -205,22 +213,23 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var id = 1L;
+		final var municipalityId = "2281";
 		final var subscriptionUpdateRequest = SubscriptionUpdateRequest.create();
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withId(id)
 			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSettingsEntity.create()));
 
-		when(subscriptionRepository.findById(id)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)).thenReturn(Optional.of(subscriptionEntity));
 		when(subscriptionRepository.save(any())).thenReturn(subscriptionEntity);
 
 		// Act
-		final var result = subscriptionService.update(id, subscriptionUpdateRequest);
+		final var result = subscriptionService.update(municipalityId, id, subscriptionUpdateRequest);
 
 		// Assert
 		assertThat(result).isNotNull();
 
-		verify(subscriptionRepository).findById(id);
+		verify(subscriptionRepository).findByMunicipalityIdAndId(municipalityId, id);
 		verify(subscriptionRepository).save(any(SubscriptionEntity.class));
 	}
 
@@ -229,19 +238,20 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var id = 1L;
+		final var municipalityId = "2281";
 		final var subscriptionUpdateRequest = SubscriptionUpdateRequest.create();
 
-		when(subscriptionRepository.findById(id)).thenReturn(empty());
+		when(subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)).thenReturn(empty());
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.update(id, subscriptionUpdateRequest));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> subscriptionService.update(municipalityId, id, subscriptionUpdateRequest));
 
 		// Assert
 		assertThat(throwableProblem).isNotNull();
-		assertThat(throwableProblem.getMessage()).isEqualTo(format("Not Found: No subscription entity found for id:'%s'!", id));
+		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No subscription entity found for id:'%s'!".formatted(id));
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
-		verify(subscriptionRepository).findById(id);
+		verify(subscriptionRepository).findByMunicipalityIdAndId(municipalityId, id);
 		verify(subscriptionRepository, never()).save(any());
 	}
 
@@ -250,18 +260,19 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId);
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, ELECTRICITY, "some-facilityId");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, ELECTRICITY, "some-facilityId");
 
 		// Assert
 		assertThat(result).isTrue();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -269,20 +280,21 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
 			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)));
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, ELECTRICITY, "some-facilityId");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, ELECTRICITY, "some-facilityId");
 
 		// Assert
 		assertThat(result).isTrue();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -290,21 +302,22 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
 			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)
 				.withOptOuts(Map.of("facilityId", "12345"))));
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, ELECTRICITY, "some-facilityId");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, ELECTRICITY, "some-facilityId");
 
 		// Assert
 		assertThat(result).isTrue();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -312,16 +325,17 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(empty());
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(empty());
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "some-facilityId");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, DISTRICT_COOLING, "some-facilityId");
 
 		// Assert
 		assertThat(result).isFalse();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -329,20 +343,21 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
 			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)));
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "some-facilityId");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, DISTRICT_COOLING, "some-facilityId");
 
 		// Assert
 		assertThat(result).isFalse();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -350,21 +365,22 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
 			.withOptOutSettings(List.of(OptOutSettingsEntity.create()
 				.withCategory(DISTRICT_COOLING)
 				.withOptOuts(Map.of("facilityId", "12345"))));
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "12345");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, DISTRICT_COOLING, "12345");
 
 		// Assert
 		assertThat(result).isFalse();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -372,6 +388,7 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
 			.withOptOutSettings(List.of(
@@ -382,15 +399,15 @@ class SubscriptionServiceTest {
 						"property1", "value1",
 						"property2", "value2"))));
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "12345");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, DISTRICT_COOLING, "12345");
 
 		// Assert
 		assertThat(result).isTrue();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 
 	@Test
@@ -398,6 +415,7 @@ class SubscriptionServiceTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withPartyId(partyId)
 			.withOptOutSettings(List.of(
@@ -410,14 +428,14 @@ class SubscriptionServiceTest {
 					.withOptOuts(Map.of(
 						"facilityId", "67890"))));
 
-		when(subscriptionRepository.findByPartyId(partyId)).thenReturn(Optional.of(subscriptionEntity));
+		when(subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)).thenReturn(Optional.of(subscriptionEntity));
 
 		// Act
-		final var result = subscriptionService.hasApplicableSubscription(partyId, DISTRICT_COOLING, "12345");
+		final var result = subscriptionService.hasApplicableSubscription(municipalityId, partyId, DISTRICT_COOLING, "12345");
 
 		// Assert
 		assertThat(result).isFalse();
 
-		verify(subscriptionRepository).findByPartyId(partyId);
+		verify(subscriptionRepository).findByMunicipalityIdAndPartyId(municipalityId, partyId);
 	}
 }

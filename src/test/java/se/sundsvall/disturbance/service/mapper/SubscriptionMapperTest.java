@@ -27,6 +27,7 @@ class SubscriptionMapperTest {
 
 		// Arrange
 		final var partyId = randomUUID().toString();
+		final var municipalityId = "2281";
 		final var subscriptionCreateRequest = SubscriptionCreateRequest.create()
 			.withOptOutSettings(List.of(
 				OptOutSetting.create()
@@ -41,11 +42,12 @@ class SubscriptionMapperTest {
 			.withPartyId(partyId);
 
 		// Act
-		final var result = SubscriptionMapper.toSubscriptionEntity(subscriptionCreateRequest);
+		final var result = SubscriptionMapper.toSubscriptionEntity(municipalityId, subscriptionCreateRequest);
 
 		// Assert
 		assertThat(result).isNotNull();
 		assertThat(result.getPartyId()).isEqualTo(partyId);
+		assertThat(result.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(result.getOptOutSettings())
 			.extracting(OptOutSettingsEntity::getCategory, OptOutSettingsEntity::getOptOuts)
 			.containsExactlyInAnyOrder(
@@ -57,7 +59,7 @@ class SubscriptionMapperTest {
 	void toSubscriptionEntityWhenInputIsNull() {
 
 		// Act
-		final var result = SubscriptionMapper.toSubscriptionEntity(null);
+		final var result = SubscriptionMapper.toSubscriptionEntity(null, null);
 
 		// Assert
 		assertThat(result).isNull();
@@ -68,12 +70,14 @@ class SubscriptionMapperTest {
 
 		// Arrange
 		final var id = 666L;
+		final var municipalityId = "2281";
 		final var partyId = randomUUID().toString();
 		final var created = now(systemDefault());
 		final var updated = now(systemDefault()).plusDays(2);
 		final var subscriptionEntity = SubscriptionEntity.create()
 			.withCreated(created)
 			.withId(id)
+			.withMunicipalityId(municipalityId)
 			.withOptOutSettings(List.of(
 				OptOutSettingsEntity.create().withCategory(ELECTRICITY).withOptOuts(Map.of("facilityId", "111111")),
 				OptOutSettingsEntity.create().withCategory(DISTRICT_HEATING).withOptOuts(Map.of("facilityId", "222222")),
@@ -88,6 +92,7 @@ class SubscriptionMapperTest {
 		assertThat(result).isNotNull();
 		assertThat(result.getPartyId()).isEqualTo(partyId);
 		assertThat(result.getId()).isEqualTo(id);
+		assertThat(result.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(result.getCreated()).isEqualTo(created);
 		assertThat(result.getUpdated()).isEqualTo(updated);
 		assertThat(result.getOptOutSettings())
@@ -112,12 +117,14 @@ class SubscriptionMapperTest {
 
 		// Arrange
 		final var id = 666L;
+		final var municipalityId = "2281";
 		final var partyId = randomUUID().toString();
 		final var created = now(systemDefault());
 		final var updated = now(systemDefault()).plusDays(2);
 		final var oldSubscriptionEntity = SubscriptionEntity.create()
 			.withCreated(created)
 			.withId(id)
+			.withMunicipalityId(municipalityId)
 			.withOptOutSettings(List.of(
 				OptOutSettingsEntity.create().withCategory(ELECTRICITY).withOptOuts(Map.of("facilityId", "111111")),
 				OptOutSettingsEntity.create().withCategory(DISTRICT_HEATING).withOptOuts(Map.of("facilityId", "222222"))))
@@ -137,6 +144,7 @@ class SubscriptionMapperTest {
 		assertThat(result).isNotNull();
 		assertThat(result.getPartyId()).isEqualTo(partyId);
 		assertThat(result.getId()).isEqualTo(id);
+		assertThat(result.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(result.getCreated()).isEqualTo(created);
 		assertThat(result.getUpdated()).isEqualTo(updated);
 		assertThat(result.getOptOutSettings())

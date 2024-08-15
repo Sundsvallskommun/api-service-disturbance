@@ -38,6 +38,10 @@ public interface DisturbanceSpecification {
 		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.join(DisturbanceEntity_.AFFECTED_ENTITIES).get(AffectedEntity_.PARTY_ID), partyId);
 	}
 
+	static Specification<DisturbanceEntity> withMunicipalityId(String municipalityId) {
+		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.get(DisturbanceEntity_.MUNICIPALITY_ID), municipalityId);
+	}
+
 	static Specification<DisturbanceEntity> withDisturbanceId(String disturbanceId) {
 		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.get(DisturbanceEntity_.DISTURBANCE_ID), disturbanceId);
 	}

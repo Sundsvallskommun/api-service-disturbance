@@ -1,6 +1,7 @@
 [
 	{
 		"id": "disturbance-2",
+		"municipalityId": "2281",
 		"category": "COMMUNICATION",
 		"status": "OPEN",
 		"title": "Title",
@@ -32,6 +33,7 @@
 	},
 	{
 		"id": "disturbance-3",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "OPEN",
 		"title": "Title",
@@ -49,6 +51,7 @@
 	},
 	{
 		"id": "disturbance-4",
+		"municipalityId": "2281",
 		"category": "COMMUNICATION",
 		"status": "CLOSED",
 		"title": "Title",
@@ -66,6 +69,7 @@
 	},
 	{
 		"id": "disturbance-5",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "OPEN",
 		"title": "Title",
@@ -95,6 +99,7 @@
 	},
 	{
 		"id": "disturbance-6",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "OPEN",
 		"title": "Title",
@@ -124,6 +129,7 @@
 	},
 	{
 		"id": "disturbance-7",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "OPEN",
 		"title": "Title",
@@ -153,6 +159,7 @@
 	},
 	{
 		"id": "disturbance-8",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "OPEN",
 		"title": "Title",
@@ -182,6 +189,7 @@
 	},
 	{
 		"id": "disturbance-9",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "OPEN",
 		"title": "Title",
@@ -229,6 +237,7 @@
 	},
 	{
 		"id": "disturbance-10",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "CLOSED",
 		"title": "Title",
@@ -239,6 +248,7 @@
 	},
 	{
 		"id": "disturbance-11",
+		"municipalityId": "2281",
 		"category": "COMMUNICATION",
 		"status": "OPEN",
 		"title": "Title",
@@ -268,6 +278,7 @@
 	},
 	{
 		"id": "disturbance-12",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "PLANNED",
 		"title": "Title",
@@ -297,6 +308,7 @@
 	},
 	{
 		"id": "disturbance-13",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"status": "OPEN",
 		"title": "Title",

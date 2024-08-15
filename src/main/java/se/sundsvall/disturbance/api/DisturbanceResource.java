@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.problem.Problem;
 import org.zalando.problem.violations.ConstraintViolationProblem;
 
@@ -35,6 +34,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import se.sundsvall.dept44.common.validators.annotation.ValidMunicipalityId;
 import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
@@ -45,7 +45,7 @@ import se.sundsvall.disturbance.service.DisturbanceService;
 
 @RestController
 @Validated
-@RequestMapping("/disturbances")
+@RequestMapping("/{municipalityId}/disturbances")
 @Tag(name = "Disturbance", description = "Disturbance operations")
 public class DisturbanceResource {
 
@@ -62,9 +62,12 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createDisturbance(@RequestBody @Valid final DisturbanceCreateRequest body) {
-		final var result = disturbanceService.createDisturbance(body);
-		return created(fromPath("/disturbances/{category}/{disturbanceId}").buildAndExpand(result.getCategory(), result.getId()).toUri())
+	public ResponseEntity<Void> createDisturbance(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
+		@RequestBody @Valid final DisturbanceCreateRequest body) {
+
+		final var result = disturbanceService.createDisturbance(municipalityId, body);
+		return created(fromPath("/{municipalityId}/disturbances/{category}/{disturbanceId}").buildAndExpand(municipalityId, result.getCategory(), result.getId()).toUri())
 			.header(CONTENT_TYPE, ALL_VALUE)
 			.build();
 	}
@@ -76,9 +79,11 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<List<Disturbance>> getDisturbances(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
 		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(value = "category", required = false) final List<Category> category) {
-		return ok(disturbanceService.findByStatusAndCategory(status, category));
+
+		return ok(disturbanceService.findByMunicipalityIdAndStatusAndCategory(municipalityId, status, category));
 	}
 
 	@GetMapping(path = "/{category}/{disturbanceId}", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
@@ -89,10 +94,11 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Disturbance> getDisturbance(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
 		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId) {
 
-		return ok(disturbanceService.findByCategoryAndDisturbanceId(category, disturbanceId));
+		return ok(disturbanceService.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, category, disturbanceId));
 	}
 
 	@GetMapping(path = "/affecteds/{partyId}", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
@@ -103,11 +109,12 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<List<Disturbance>> getDisturbancesByPartyId(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @PathVariable(name = "partyId") final String partyId,
 		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
 		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(value = "category", required = false) final List<Category> category) {
 
-		return ok(disturbanceService.findByPartyIdAndCategoryAndStatus(partyId, category, status));
+		return ok(disturbanceService.findByMunicipalityIdAndPartyIdAndCategoryAndStatus(municipalityId, partyId, category, status));
 	}
 
 	@PatchMapping(path = "/{category}/{disturbanceId}", consumes = APPLICATION_JSON_VALUE, produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
@@ -119,11 +126,12 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Disturbance> updateDisturbance(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
 		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId,
 		@RequestBody @Valid final DisturbanceUpdateRequest body) {
 
-		return ok(disturbanceService.updateDisturbance(category, disturbanceId, body));
+		return ok(disturbanceService.updateDisturbance(municipalityId, category, disturbanceId, body));
 	}
 
 	@DeleteMapping(path = "/{category}/{disturbanceId}", produces = { APPLICATION_PROBLEM_JSON_VALUE })
@@ -134,10 +142,11 @@ public class DisturbanceResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Void> deleteDisturbance(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
 		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId) {
 
-		disturbanceService.deleteDisturbance(category, disturbanceId);
+		disturbanceService.deleteDisturbance(municipalityId, category, disturbanceId);
 		return noContent().build();
 	}
 }

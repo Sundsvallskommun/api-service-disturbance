@@ -25,6 +25,7 @@ public class DisturbanceMapper {
 
 	public static Disturbance toDisturbance(final DisturbanceEntity disturbanceEntity) {
 		return Disturbance.create()
+			.withMunicipalityId(disturbanceEntity.getMunicipalityId())
 			.withCategory(disturbanceEntity.getCategory())
 			.withTitle(disturbanceEntity.getTitle())
 			.withDescription(disturbanceEntity.getDescription())
@@ -38,8 +39,9 @@ public class DisturbanceMapper {
 			.withUpdated(disturbanceEntity.getUpdated());
 	}
 
-	public static DisturbanceEntity toDisturbanceEntity(final DisturbanceCreateRequest disturbanceCreateRequest) {
+	public static DisturbanceEntity toDisturbanceEntity(final String municipalityId, final DisturbanceCreateRequest disturbanceCreateRequest) {
 		return DisturbanceEntity.create()
+			.withMunicipalityId(municipalityId)
 			.addAffectedEntities(toAffectedEntities(disturbanceCreateRequest.getAffecteds()))
 			.withCategory(disturbanceCreateRequest.getCategory())
 			.withDescription(disturbanceCreateRequest.getDescription())

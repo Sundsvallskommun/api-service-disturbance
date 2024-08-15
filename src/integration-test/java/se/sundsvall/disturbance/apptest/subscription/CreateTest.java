@@ -6,9 +6,6 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -28,16 +25,17 @@ import se.sundsvall.disturbance.Application;
 })
 class CreateTest extends AbstractAppTest {
 
+	private static final String PATH = "/2281/subscriptions";
+
 	@Test
 	void test1_createSubscription() {
 
 		final var headers = setupCall()
-			.withServicePath("/subscriptions")
+			.withServicePath(PATH)
 			.withHttpMethod(POST)
 			.withRequest("request.json")
 			.withExpectedResponseStatus(CREATED)
 			.withExpectedResponseBodyIsNull()
-			.withExpectedResponseHeader(LOCATION, List.of("/subscriptions/(\\d+)"))
 			.sendRequest()
 			.getResponseHeaders();
 

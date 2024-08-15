@@ -1,7 +1,8 @@
 {
+	"id": "disturbance-6",
+	"municipalityId": "2281",
 	"category": "ELECTRICITY",
 	"description": "Description",
-	"id": "disturbance-6",
 	"affecteds": [
 		{
 			"partyId": "00000003-0000-1000-8000-00805f9b34fb",

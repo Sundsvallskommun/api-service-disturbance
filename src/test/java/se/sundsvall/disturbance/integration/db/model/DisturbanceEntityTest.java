@@ -49,6 +49,7 @@ class DisturbanceEntityTest {
 		final var description = "description";
 		final var disturbanceId = "disturbanceId";
 		final var id = 1L;
+		final var municipalityId = "municipalityId";
 		final var plannedStartDate = now(systemDefault());
 		final var plannedStopDate = now(systemDefault());
 		final var status = Status.CLOSED;
@@ -63,6 +64,7 @@ class DisturbanceEntityTest {
 			.withDescription(description)
 			.withDisturbanceId(disturbanceId)
 			.withId(id)
+			.withMunicipalityId(municipalityId)
 			.withPlannedStartDate(plannedStartDate)
 			.withPlannedStopDate(plannedStopDate)
 			.withStatus(status)
@@ -77,6 +79,7 @@ class DisturbanceEntityTest {
 		assertThat(bean.getDescription()).isEqualTo(description);
 		assertThat(bean.getDisturbanceId()).isEqualTo(disturbanceId);
 		assertThat(bean.getId()).isEqualTo(id);
+		assertThat(bean.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(bean.getPlannedStartDate()).isEqualTo(plannedStartDate);
 		assertThat(bean.getPlannedStopDate()).isEqualTo(plannedStopDate);
 		assertThat(bean.getStatus()).isEqualByComparingTo(status);

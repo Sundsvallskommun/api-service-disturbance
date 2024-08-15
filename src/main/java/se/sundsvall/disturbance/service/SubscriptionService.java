@@ -1,7 +1,6 @@
 package se.sundsvall.disturbance.service;
 
 import static io.micrometer.common.util.StringUtils.isBlank;
-import static java.lang.String.format;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
 import static java.util.Collections.emptyList;
@@ -40,58 +39,57 @@ public class SubscriptionService {
 	}
 
 	@Transactional
-	public Subscription create(final SubscriptionCreateRequest request) {
+	public Subscription create(final String municipalityId, final SubscriptionCreateRequest request) {
 
-		if (subscriptionRepository.existsByPartyId(request.getPartyId())) {
-			throw Problem.valueOf(CONFLICT, format(ERROR_SUBSCRIPTION_ALREADY_EXISTS, request.getPartyId()));
+		if (subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, request.getPartyId()).isPresent()) {
+			throw Problem.valueOf(CONFLICT, ERROR_SUBSCRIPTION_ALREADY_EXISTS.formatted(request.getPartyId()));
 		}
 
-		return toSubscription(subscriptionRepository.save(toSubscriptionEntity(request)));
+		return toSubscription(subscriptionRepository.save(toSubscriptionEntity(municipalityId, request)));
 	}
 
 	@Transactional
-	public Subscription read(final long id) {
+	public Subscription read(final String municipalityId, final long id) {
 
-		final var subscriptionEntity = subscriptionRepository.findById(id)
-			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_SUBSCRIPTION_NOT_FOUND_BY_ID, id)));
+		final var subscriptionEntity = subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_SUBSCRIPTION_NOT_FOUND_BY_ID.formatted(id)));
 
 		return toSubscription(subscriptionEntity);
 	}
 
 	@Transactional
-	public Subscription findByPartyId(final String partyId) {
+	public Subscription findByMunicipalityIdAndPartyId(final String municipalityId, final String partyId) {
 
-		final var subscriptionEntity = subscriptionRepository.findByPartyId(partyId)
-			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_SUBSCRIPTION_NOT_FOUND_BY_PARTY_ID, partyId)));
+		final var subscriptionEntity = subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_SUBSCRIPTION_NOT_FOUND_BY_PARTY_ID.formatted(partyId)));
 
 		return toSubscription(subscriptionEntity);
 	}
 
 	@Transactional
-	public Subscription update(final long id, final SubscriptionUpdateRequest request) {
+	public Subscription update(final String municipalityId, final long id, final SubscriptionUpdateRequest request) {
 
-		final var subscriptionEntity = subscriptionRepository.findById(id)
-			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_SUBSCRIPTION_NOT_FOUND_BY_ID, id)));
+		final var subscriptionEntity = subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_SUBSCRIPTION_NOT_FOUND_BY_ID.formatted(id)));
 
 		return toSubscription(subscriptionRepository.save(toUpdatedSubscriptionEntity(subscriptionEntity, request).withUpdated(now(systemDefault()))));
 	}
 
 	@Transactional
-	public void delete(final long id) {
+	public void delete(final String municipalityId, final long id) {
 
-		if (!subscriptionRepository.existsById(id)) {
-			throw Problem.valueOf(NOT_FOUND, format(ERROR_SUBSCRIPTION_NOT_FOUND_BY_ID, id));
-		}
+		final var subscriptionEntity = subscriptionRepository.findByMunicipalityIdAndId(municipalityId, id)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_SUBSCRIPTION_NOT_FOUND_BY_ID.formatted(id)));
 
-		subscriptionRepository.deleteById(id);
+		subscriptionRepository.delete(subscriptionEntity);
 	}
 
-	public boolean hasApplicableSubscription(String partyId, Category category, String facilityId) {
+	public boolean hasApplicableSubscription(final String municipalityId, String partyId, Category category, String facilityId) {
 		if (isBlank(partyId)) {
 			return false;
 		}
 
-		final var subscriptionEntity = subscriptionRepository.findByPartyId(partyId);
+		final var subscriptionEntity = subscriptionRepository.findByMunicipalityIdAndPartyId(municipalityId, partyId);
 
 		if (subscriptionEntity.isPresent()) {
 			// Check if parameters matches any current optOutValues on the subscription.

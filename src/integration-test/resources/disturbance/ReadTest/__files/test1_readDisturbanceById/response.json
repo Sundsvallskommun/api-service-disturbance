@@ -1,8 +1,9 @@
 {
+	"id": "disturbance-2",
+	"municipalityId": "2281",
 	"category": "COMMUNICATION",
 	"created": "2021-09-23T09:05:48.198+02:00",
 	"description": "Description",
-	"id": "disturbance-2",
 	"affecteds": [
 		{
 			"partyId": "0d64beb2-3aea-11ec-8d3d-0242ac130003",

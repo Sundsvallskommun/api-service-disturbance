@@ -117,6 +117,7 @@ public class SendMessageLogic {
 	public void sendUpdateMessage(final DisturbanceEntity updatedDisturbanceEntity) {
 
 		// Create messages
+		final var municipalityId = updatedDisturbanceEntity.getMunicipalityId();
 		final var messages = updatedDisturbanceEntity.getAffectedEntities().stream()
 			.filter(this::hasApplicableSubscription)
 			.map(affectedEntity -> mapToUpdateMessage(updatedDisturbanceEntity, affectedEntity))
@@ -124,12 +125,13 @@ public class SendMessageLogic {
 			.toList();
 
 		// Send messages.
-		sendMessages(messages);
+		sendMessages(municipalityId, messages);
 	}
 
 	private void sendCreateMessage(final DisturbanceEntity createdDisturbanceEntity, final List<AffectedEntity> affectedEntities) {
 
 		// Create messages
+		final var municipalityId = createdDisturbanceEntity.getMunicipalityId();
 		final var messages = affectedEntities.stream()
 			.filter(this::hasApplicableSubscription)
 			.map(affectedEntity -> mapToNewMessage(createdDisturbanceEntity, affectedEntity))
@@ -137,12 +139,13 @@ public class SendMessageLogic {
 			.toList();
 
 		// Send messages.
-		sendMessages(messages);
+		sendMessages(municipalityId, messages);
 	}
 
 	private void sendCloseMessage(final DisturbanceEntity disturbanceEntity, final List<AffectedEntity> affectedEntities) {
 
 		// Create messages
+		final var municipalityId = disturbanceEntity.getMunicipalityId();
 		final var messages = affectedEntities.stream()
 			.filter(this::hasApplicableSubscription)
 			.map(affectedEntity -> mapToCloseMessage(disturbanceEntity, affectedEntity))
@@ -150,7 +153,7 @@ public class SendMessageLogic {
 			.toList();
 
 		// Send messages.
-		sendMessages(messages);
+		sendMessages(municipalityId, messages);
 	}
 
 	private Message mapToUpdateMessage(final DisturbanceEntity disturbanceEntity, final AffectedEntity affectedEntity) {
@@ -237,14 +240,14 @@ public class SendMessageLogic {
 		return toMessage(filters, sender, party, subject, message);
 	}
 
-	private void sendMessages(final List<Message> messages) {
+	private void sendMessages(final String municipalityId, final List<Message> messages) {
 
 		LOGGER.debug("Messages to send to api-messaging-service: '{}'", messages);
 
 		// Send messageRequest to api-messaging-service service (if it contains messages).
 		if (isNotEmpty(messages)) {
 			LOGGER.info("apiMessagingClient: Sending '{}' messages to api-messaging-service...", messages.size());
-			messagingClient.sendMessage(new MessageRequest().messages(messages));
+			messagingClient.sendMessage(municipalityId, new MessageRequest().messages(messages));
 			LOGGER.info("apiMessagingClient: Messages sent!");
 		}
 	}
@@ -263,8 +266,9 @@ public class SendMessageLogic {
 	private boolean hasApplicableSubscription(final AffectedEntity affectedEntity) {
 		final var category = affectedEntity.getDisturbanceEntity().getCategory();
 		final var partyId = affectedEntity.getPartyId();
+		final var municipalityId = affectedEntity.getDisturbanceEntity().getMunicipalityId();
 		final var facilityId = affectedEntity.getFacilityId();
 
-		return subscriptionService.hasApplicableSubscription(partyId, category, facilityId);
+		return subscriptionService.hasApplicableSubscription(municipalityId, partyId, category, facilityId);
 	}
 }

@@ -1,7 +1,7 @@
 {
 	"name": "api-messaging",
 	"request": {
-		"urlPath": "/api-messaging/messages",
+		"urlPath": "/api-messaging/2281/messages",
 		"method": "POST",
 		"queryParameters": {
 			"async": {

@@ -3,8 +3,6 @@ package se.sundsvall.disturbance.apptest.subscription;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.OK;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -24,11 +22,13 @@ import se.sundsvall.disturbance.Application;
 })
 class UpdateTest extends AbstractAppTest {
 
+	private static final String PATH = "/2281/subscriptions/1";
+
 	@Test
-	void test1_updateSubscriptionAddOutOutSettings() throws IOException {
+	void test1_updateSubscriptionAddOutOutSettings() {
 
 		setupCall()
-			.withServicePath("/subscriptions/1")
+			.withServicePath(PATH)
 			.withHttpMethod(PUT)
 			.withRequest("request.json")
 			.withExpectedResponseStatus(OK)
@@ -37,10 +37,10 @@ class UpdateTest extends AbstractAppTest {
 	}
 
 	@Test
-	void test2_updateSubscriptionRemoveOutOutSettings() throws IOException {
+	void test2_updateSubscriptionRemoveOutOutSettings() {
 
 		setupCall()
-			.withServicePath("/subscriptions/1")
+			.withServicePath(PATH)
 			.withHttpMethod(PUT)
 			.withRequest("request.json")
 			.withExpectedResponseStatus(OK)

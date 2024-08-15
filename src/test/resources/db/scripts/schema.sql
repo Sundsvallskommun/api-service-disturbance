@@ -19,6 +19,7 @@
         description varchar(8192) not null,
         category varchar(255) not null,
         disturbance_id varchar(255) not null,
+        municipality_id varchar(255) not null,
         status varchar(255) not null,
         title varchar(255),
         primary key (id)
@@ -42,6 +43,7 @@
         created datetime(6),
         id bigint not null auto_increment,
         updated datetime(6),
+        municipality_id varchar(255) not null,
         party_id varchar(255) not null,
         primary key (id)
     ) engine=InnoDB;
@@ -52,11 +54,17 @@
     create index disturbance_id_index 
        on disturbance (disturbance_id);
 
+    create index municipality_id_index 
+       on disturbance (municipality_id);
+
     create index category_index 
        on disturbance (category);
 
     create index party_id_index 
        on subscription (party_id);
+
+    create index municipality_id_index 
+       on subscription (municipality_id);
 
     alter table if exists affected 
        add constraint fk_affected_parent_id_disturbance_id 
