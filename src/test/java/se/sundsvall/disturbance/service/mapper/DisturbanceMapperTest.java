@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.groups.Tuple.tuple;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -29,28 +28,28 @@ class DisturbanceMapperTest {
 	@Test
 	void toDisturbanceSuccess() {
 
-		final var affectedEntity1 = new AffectedEntity();
-		affectedEntity1.setFacilityId("facility-1");
-		affectedEntity1.setCoordinates("coordinate-1");
-		affectedEntity1.setPartyId("partyId-1");
-		affectedEntity1.setReference("reference-1");
+		final var affectedEntity1 = AffectedEntity.create()
+			.withPartyId("partyId-1")
+			.withReference("reference-1")
+			.withFacilityId("facilityId-1")
+			.withCoordinates("coordinate-1");
 
-		final var affectedEntity2 = new AffectedEntity();
-		affectedEntity2.setFacilityId("facility-2");
-		affectedEntity2.setCoordinates("coordinate-2");
-		affectedEntity2.setPartyId("partyId-2");
-		affectedEntity2.setReference("reference-2");
+		final var affectedEntity2 = AffectedEntity.create()
+			.withPartyId("partyId-2")
+			.withReference("reference-2")
+			.withFacilityId("facilityId-2")
+			.withCoordinates("coordinate-2");
 
-		final var disturbanceEntity = new DisturbanceEntity();
-		disturbanceEntity.setDisturbanceId("disturbanceId");
-		disturbanceEntity.setCategory(Category.COMMUNICATION);
-		disturbanceEntity.setDescription("description");
-		disturbanceEntity.setTitle("title");
-		disturbanceEntity.setStatus(Status.OPEN);
-		disturbanceEntity.setPlannedStartDate(now(systemDefault()).plusDays(1));
-		disturbanceEntity.setPlannedStopDate(now(systemDefault()).plusDays(2));
-		disturbanceEntity.setCreated(now(systemDefault()));
-		disturbanceEntity.setAffectedEntities(List.of(affectedEntity1, affectedEntity2));
+		final var disturbanceEntity = DisturbanceEntity.create()
+			.withDisturbanceId("disturbanceId")
+			.withCategory(Category.COMMUNICATION)
+			.withDescription("description")
+			.withTitle("title")
+			.withStatus(Status.OPEN)
+			.withPlannedStartDate(now(systemDefault()).plusDays(1))
+			.withPlannedStopDate(now(systemDefault()).plusDays(2))
+			.withCreated(now(systemDefault()))
+			.withAffectedEntities(List.of(affectedEntity1, affectedEntity2));
 
 		final var disturbance = DisturbanceMapper.toDisturbance(disturbanceEntity);
 
@@ -64,13 +63,14 @@ class DisturbanceMapperTest {
 		assertThat(disturbance.getAffecteds())
 			.extracting(Affected::getFacilityId, Affected::getCoordinates, Affected::getPartyId, Affected::getReference)
 			.containsExactly(
-				tuple("facility-1", "coordinate-1", "partyId-1", "reference-1"),
-				tuple("facility-2", "coordinate-2", "partyId-2", "reference-2"));
+				tuple("facilityId-1", "coordinate-1", "partyId-1", "reference-1"),
+				tuple("facilityId-2", "coordinate-2", "partyId-2", "reference-2"));
 	}
 
 	@Test
 	void toDisturbanceEntityFromDisturbanceCreateRequest() {
 
+		final var municipalityId = "municipalityId";
 		final var disturbanceCreateRequest = DisturbanceCreateRequest.create()
 			.withCategory(Category.COMMUNICATION)
 			.withDescription("Description")
@@ -86,7 +86,7 @@ class DisturbanceMapperTest {
 			.withStatus(Status.OPEN)
 			.withTitle("Title");
 
-		final var disturbanceEntity = DisturbanceMapper.toDisturbanceEntity(disturbanceCreateRequest);
+		final var disturbanceEntity = DisturbanceMapper.toDisturbanceEntity(municipalityId, disturbanceCreateRequest);
 
 		assertThat(disturbanceEntity.getAffectedEntities())
 			.hasSize(3) // Duplicates removed.
@@ -98,6 +98,7 @@ class DisturbanceMapperTest {
 		assertThat(disturbanceEntity.getCategory()).isEqualByComparingTo(Category.COMMUNICATION);
 		assertThat(disturbanceEntity.getDescription()).isEqualTo("Description");
 		assertThat(disturbanceEntity.getDisturbanceId()).isEqualTo("id");
+		assertThat(disturbanceEntity.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(disturbanceEntity.getPlannedStartDate()).isCloseTo(now(systemDefault()), within(2, SECONDS));
 		assertThat(disturbanceEntity.getPlannedStopDate()).isCloseTo(now(systemDefault()).plusDays(1), within(2, SECONDS));
 		assertThat(disturbanceEntity.getStatus()).isEqualByComparingTo(Status.OPEN);
@@ -145,64 +146,68 @@ class DisturbanceMapperTest {
 		/**
 		 * Set up old entity.
 		 */
-		final var oldAffected1 = new AffectedEntity();
-		oldAffected1.setFacilityId("oldFacility-1");
-		oldAffected1.setCoordinates("oldCoordinate-1");
-		oldAffected1.setPartyId("oldpartyId-1");
-		oldAffected1.setReference("oldReference-1");
 
-		final var oldAffected2 = new AffectedEntity();
-		oldAffected2.setFacilityId("oldFacility-2");
-		oldAffected2.setCoordinates("oldCoordinate-2");
-		oldAffected2.setPartyId("oldPartyId-2");
-		oldAffected2.setReference("oldReference-2");
+		final var oldAffected1 = AffectedEntity.create()
+			.withFacilityId("oldFacility-1")
+			.withCoordinates("oldCoordinate-1")
+			.withPartyId("oldpartyId-1")
+			.withReference("oldReference-1");
 
-		final var oldAffected3 = new AffectedEntity();
-		oldAffected3.setFacilityId("oldFacility-3");
-		oldAffected3.setCoordinates("oldCoordinate-3");
-		oldAffected3.setPartyId("oldPartyId-3");
-		oldAffected3.setReference("oldReference-3");
+		final var oldAffected2 = AffectedEntity.create()
+			.withFacilityId("oldFacility-2")
+			.withCoordinates("oldCoordinate-2")
+			.withPartyId("oldPartyId-2")
+			.withReference("oldReference-2");
 
-		final var oldEntity = new DisturbanceEntity();
-		oldEntity.setId(1L);
-		oldEntity.setDisturbanceId("oldDisturbanceId");
-		oldEntity.setCategory(Category.ELECTRICITY);
-		oldEntity.setDescription("oldDescription");
-		oldEntity.setTitle("oldTitle");
-		oldEntity.setStatus(Status.CLOSED);
-		oldEntity.setPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setUpdated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setAffectedEntities(new ArrayList<>(List.of(oldAffected1, oldAffected2, oldAffected3)));
+		final var oldAffected3 = AffectedEntity.create()
+			.withFacilityId("oldFacility-3")
+			.withCoordinates("oldCoordinate-3")
+			.withPartyId("oldPartyId-3")
+			.withReference("oldReference-3");
+
+		final var oldEntity = DisturbanceEntity.create()
+			.withId(1L)
+			.withMunicipalityId("oldMunicipalityId")
+			.withDisturbanceId("oldDisturbanceId")
+			.withCategory(Category.ELECTRICITY)
+			.withDescription("oldDescription")
+			.withTitle("oldTitle")
+			.withStatus(Status.CLOSED)
+			.withPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)))
+			.withCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withUpdated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withAffectedEntities(List.of(oldAffected1, oldAffected2, oldAffected3));
 
 		/**
 		 * Set up new entity.
 		 */
-		final var newAffected1 = new AffectedEntity();
-		newAffected1.setFacilityId("newFacility-1");
-		newAffected1.setCoordinates("newCoordinate-1");
-		newAffected1.setPartyId("newPartyId-1");
-		newAffected1.setReference("newReference-1");
 
-		final var newAffected2 = new AffectedEntity();
-		newAffected2.setFacilityId("newFacility-2");
-		newAffected2.setCoordinates("newCoordinate-2");
-		newAffected2.setPartyId("newPartyId-2");
-		newAffected2.setReference("newReference-2");
+		final var newAffected1 = AffectedEntity.create()
+			.withFacilityId("newFacility-1")
+			.withCoordinates("newCoordinate-1")
+			.withPartyId("newPartyId-1")
+			.withReference("newReference-1");
 
-		final var newEntity = new DisturbanceEntity();
-		newEntity.setId(0L);
-		newEntity.setDisturbanceId("newDisturbanceId");
-		newEntity.setCategory(Category.WATER);
-		newEntity.setDescription("newDescription");
-		newEntity.setTitle("newTitle");
-		newEntity.setStatus(Status.OPEN);
-		newEntity.setPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		newEntity.setPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)));
-		newEntity.setCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		newEntity.setUpdated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		newEntity.setAffectedEntities(new ArrayList<>(List.of(newAffected1, newAffected2)));
+		final var newAffected2 = AffectedEntity.create()
+			.withFacilityId("newFacility-2")
+			.withCoordinates("newCoordinate-2")
+			.withPartyId("newPartyId-2")
+			.withReference("newReference-2");
+
+		final var newEntity = DisturbanceEntity.create()
+			.withId(0L)
+			.withMunicipalityId("newMunicipalityId")
+			.withDisturbanceId("newDisturbanceId")
+			.withCategory(Category.WATER)
+			.withDescription("newDescription")
+			.withTitle("newTitle")
+			.withStatus(Status.OPEN)
+			.withPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)))
+			.withCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withUpdated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withAffectedEntities(List.of(newAffected1, newAffected2));
 
 		final var mergedDisturbanceEntity = DisturbanceMapper.toMergedDisturbanceEntity(oldEntity, newEntity);
 
@@ -213,6 +218,7 @@ class DisturbanceMapperTest {
 		assertThat(mergedDisturbanceEntity.getDescription()).isEqualTo(newEntity.getDescription());
 		assertThat(mergedDisturbanceEntity.getDisturbanceId()).isEqualTo(oldEntity.getDisturbanceId());
 		assertThat(mergedDisturbanceEntity.getId()).isEqualTo(oldEntity.getId());
+		assertThat(mergedDisturbanceEntity.getMunicipalityId()).isEqualTo(oldEntity.getMunicipalityId());
 		assertThat(mergedDisturbanceEntity.getPlannedStartDate()).isEqualTo(newEntity.getPlannedStartDate());
 		assertThat(mergedDisturbanceEntity.getPlannedStopDate()).isEqualTo(newEntity.getPlannedStopDate());
 		assertThat(mergedDisturbanceEntity.getStatus()).isEqualTo(newEntity.getStatus());
@@ -226,41 +232,40 @@ class DisturbanceMapperTest {
 		/**
 		 * Set up old entity.
 		 */
-		final var oldAffected1 = new AffectedEntity();
-		oldAffected1.setFacilityId("oldFacility-1");
-		oldAffected1.setCoordinates("oldCoordinate-1");
-		oldAffected1.setPartyId("oldPartyId-1");
-		oldAffected1.setReference("oldReference-1");
 
-		final var oldAffected2 = new AffectedEntity();
-		oldAffected2.setFacilityId("oldFacility-2");
-		oldAffected2.setCoordinates("oldCoordinate-2");
-		oldAffected2.setPartyId("oldPartyId-2");
-		oldAffected2.setReference("oldReference-2");
+		final var oldAffected1 = AffectedEntity.create()
+			.withFacilityId("oldFacility-1")
+			.withCoordinates("oldCoordinate-1")
+			.withPartyId("oldpartyId-1")
+			.withReference("oldReference-1");
 
-		final var oldAffected3 = new AffectedEntity();
-		oldAffected3.setFacilityId("oldFacility-3");
-		oldAffected3.setCoordinates("oldCoordinate-3");
-		oldAffected3.setPartyId("oldPartyId-3");
-		oldAffected3.setReference("oldReference-3");
+		final var oldAffected2 = AffectedEntity.create()
+			.withFacilityId("oldFacility-2")
+			.withCoordinates("oldCoordinate-2")
+			.withPartyId("oldPartyId-2")
+			.withReference("oldReference-2");
 
-		final var oldEntity = new DisturbanceEntity();
-		oldEntity.setId(1L);
-		oldEntity.setDisturbanceId("oldDisturbanceId");
-		oldEntity.setCategory(Category.ELECTRICITY);
-		oldEntity.setDescription("oldDescription");
-		oldEntity.setTitle("oldTitle");
-		oldEntity.setStatus(Status.CLOSED);
-		oldEntity.setPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setUpdated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)));
-		oldEntity.setAffectedEntities(new ArrayList<>(List.of(oldAffected1, oldAffected2, oldAffected3)));
+		final var oldAffected3 = AffectedEntity.create()
+			.withFacilityId("oldFacility-3")
+			.withCoordinates("oldCoordinate-3")
+			.withPartyId("oldPartyId-3")
+			.withReference("oldReference-3");
+
+		final var oldEntity = DisturbanceEntity.create()
+			.withId(1L)
+			.withDisturbanceId("oldDisturbanceId")
+			.withCategory(Category.ELECTRICITY)
+			.withDescription("oldDescription")
+			.withTitle("oldTitle")
+			.withStatus(Status.CLOSED)
+			.withPlannedStartDate(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withPlannedStopDate(now(systemDefault()).plusDays(new Random().nextInt(1, 1000)))
+			.withCreated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withUpdated(now(systemDefault()).minusDays(new Random().nextInt(1, 1000)))
+			.withAffectedEntities(List.of(oldAffected1, oldAffected2, oldAffected3));
 
 		final var mergedDisturbanceEntity = DisturbanceMapper.toMergedDisturbanceEntity(oldEntity, new DisturbanceEntity());
 
-		assertThat(mergedDisturbanceEntity)
-			.isNotNull()
-			.isEqualTo(oldEntity);
+		assertThat(mergedDisturbanceEntity).isEqualTo(oldEntity);
 	}
 }

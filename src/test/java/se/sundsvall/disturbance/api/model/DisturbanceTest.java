@@ -44,17 +44,19 @@ class DisturbanceTest {
 		final var updated = now(systemDefault()).plusHours(5);
 		final var description = "some description";
 		final var id = "1234567890";
+		final var municipalityId = "municipalityId";
 		final var status = Status.CLOSED;
 		final var title = "Title";
 		final var affecteds = List.of(Affected.create());
 		final var plannedStartDate = now(systemDefault());
 		final var plannedStopDate = now(systemDefault());
 
-		final var disturbance = Disturbance.create()
+		final var bean = Disturbance.create()
 			.withCategory(category)
 			.withCreated(created)
 			.withDescription(description)
 			.withId(id)
+			.withMunicipalityId(municipalityId)
 			.withAffecteds(affecteds)
 			.withPlannedStartDate(plannedStartDate)
 			.withPlannedStopDate(plannedStopDate)
@@ -62,21 +64,23 @@ class DisturbanceTest {
 			.withTitle(title)
 			.withUpdated(updated);
 
-		assertThat(disturbance).isNotNull().hasNoNullFieldsOrProperties();
-		assertThat(disturbance.getAffecteds()).isEqualTo(affecteds);
-		assertThat(disturbance.getCategory()).isEqualByComparingTo(category);
-		assertThat(disturbance.getCreated()).isEqualTo(created);
-		assertThat(disturbance.getDescription()).isEqualTo(description);
-		assertThat(disturbance.getId()).isEqualTo(id);
-		assertThat(disturbance.getPlannedStartDate()).isEqualTo(plannedStartDate);
-		assertThat(disturbance.getPlannedStopDate()).isEqualTo(plannedStopDate);
-		assertThat(disturbance.getStatus()).isEqualByComparingTo(status);
-		assertThat(disturbance.getTitle()).isEqualTo(title);
-		assertThat(disturbance.getUpdated()).isEqualTo(updated);
+		assertThat(bean).isNotNull().hasNoNullFieldsOrProperties();
+		assertThat(bean.getAffecteds()).isEqualTo(affecteds);
+		assertThat(bean.getCategory()).isEqualByComparingTo(category);
+		assertThat(bean.getCreated()).isEqualTo(created);
+		assertThat(bean.getDescription()).isEqualTo(description);
+		assertThat(bean.getId()).isEqualTo(id);
+		assertThat(bean.getMunicipalityId()).isEqualTo(municipalityId);
+		assertThat(bean.getPlannedStartDate()).isEqualTo(plannedStartDate);
+		assertThat(bean.getPlannedStopDate()).isEqualTo(plannedStopDate);
+		assertThat(bean.getStatus()).isEqualByComparingTo(status);
+		assertThat(bean.getTitle()).isEqualTo(title);
+		assertThat(bean.getUpdated()).isEqualTo(updated);
 	}
 
 	@Test
 	void testNoDirtOnCreatedBean() {
 		assertThat(Disturbance.create()).hasAllNullFieldsOrProperties();
+		assertThat(new Disturbance()).hasAllNullFieldsOrProperties();
 	}
 }

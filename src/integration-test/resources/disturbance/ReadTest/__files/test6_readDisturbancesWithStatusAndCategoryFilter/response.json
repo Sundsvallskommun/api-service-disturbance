@@ -1,6 +1,7 @@
 [
 	{
 		"id": "disturbance-2",
+		"municipalityId": "2281",
 		"category": "COMMUNICATION",
 		"status": "OPEN",
 		"title": "Title",
@@ -32,6 +33,7 @@
 	},
 	{
 		"id": "disturbance-11",
+		"municipalityId": "2281",
 		"category": "COMMUNICATION",
 		"status": "OPEN",
 		"title": "Title",

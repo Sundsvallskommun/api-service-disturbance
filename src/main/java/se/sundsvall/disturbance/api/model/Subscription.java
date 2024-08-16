@@ -15,6 +15,9 @@ public class Subscription {
 	@Schema(description = "Subscription ID", example = "1234")
 	private Long id;
 
+	@Schema(description = "Municipality ID", example = "2281", accessMode = READ_ONLY)
+	private String municipalityId;
+
 	@Schema(description = "PartyId (e.g. a personId or an organizationId)", example = "81471222-5798-11e9-ae24-57fa13b361e1")
 	private String partyId;
 
@@ -41,6 +44,19 @@ public class Subscription {
 
 	public Subscription withId(Long id) {
 		this.id = id;
+		return this;
+	}
+
+	public String getMunicipalityId() {
+		return municipalityId;
+	}
+
+	public void setMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
+	}
+
+	public Subscription withMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
 		return this;
 	}
 
@@ -98,20 +114,22 @@ public class Subscription {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(created, id, optOutSettings, partyId, updated);
+		return Objects.hash(created, id, municipalityId, optOutSettings, partyId, updated);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) { return true; }
 		if (!(obj instanceof final Subscription other)) { return false; }
-		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId) && Objects.equals(updated, other.updated);
+		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(municipalityId, other.municipalityId) && Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId) && Objects
+			.equals(updated, other.updated);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("Subscription [id=").append(id).append(", partyId=").append(partyId).append(", optOutSettings=").append(optOutSettings).append(", created=").append(created).append(", updated=").append(updated).append("]");
+		builder.append("Subscription [id=").append(id).append(", municipalityId=").append(municipalityId).append(", partyId=").append(partyId).append(", optOutSettings=").append(optOutSettings).append(", created=").append(created).append(", updated=")
+			.append(updated).append("]");
 		return builder.toString();
 	}
 }

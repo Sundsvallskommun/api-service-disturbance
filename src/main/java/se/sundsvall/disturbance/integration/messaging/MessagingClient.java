@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static se.sundsvall.disturbance.integration.messaging.configuration.MessagingConfiguration.CLIENT_ID;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import generated.se.sundsvall.messaging.MessageRequest;
@@ -17,9 +18,10 @@ public interface MessagingClient {
 	/**
 	 * Send messages as email or SMS to a list of recipients, denoted by the partyId.
 	 *
+	 * @param  municipalityId the municipality ID.
 	 * @param  messageRequest with a list of messages.
 	 * @return                a MessageResult
 	 */
-	@PostMapping(path = "/messages?async=true", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE }, consumes = APPLICATION_JSON_VALUE)
-	MessageResult sendMessage(MessageRequest messageRequest);
+	@PostMapping(path = "/{municipalityId}/messages?async=true", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE }, consumes = APPLICATION_JSON_VALUE)
+	MessageResult sendMessage(@PathVariable("municipalityId") String municipalityId, MessageRequest messageRequest);
 }

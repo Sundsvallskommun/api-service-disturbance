@@ -47,27 +47,33 @@ class SubscriptionEntityTest {
 
 	@Test
 	void testNoDirtOnCreatedBean() {
+		assertThat(SubscriptionEntity.create()).hasAllNullFieldsOrPropertiesExcept("id");
 		assertThat(new SubscriptionEntity()).hasAllNullFieldsOrPropertiesExcept("id");
 	}
 
 	@Test
 	void testBuilders() {
+
+		final var id = 1L;
 		final var optOutSettings = new ArrayList<OptOutSettingsEntity>();
 		final var created = now(systemDefault());
 		final var updated = now(systemDefault()).plusDays(2);
 		final var partyId = randomUUID().toString();
-		final var subscriptionEntity = SubscriptionEntity.create()
+		final var municipalityId = "municipalityId";
+		final var bean = SubscriptionEntity.create()
 			.withCreated(created)
-			.withId(1L)
+			.withId(id)
+			.withMunicipalityId(municipalityId)
 			.withOptOutSettings(optOutSettings)
 			.withPartyId(partyId)
 			.withUpdated(updated);
 
-		assertThat(subscriptionEntity.getCreated()).isEqualTo(created);
-		assertThat(subscriptionEntity.getId()).isEqualTo(1L);
-		assertThat(subscriptionEntity.getOptOutSettings()).isEqualTo(optOutSettings);
-		assertThat(subscriptionEntity.getPartyId()).isEqualTo(partyId);
-		assertThat(subscriptionEntity.getUpdated()).isEqualTo(updated);
+		assertThat(bean.getCreated()).isEqualTo(created);
+		assertThat(bean.getId()).isEqualTo(id);
+		assertThat(bean.getMunicipalityId()).isEqualTo(municipalityId);
+		assertThat(bean.getOptOutSettings()).isEqualTo(optOutSettings);
+		assertThat(bean.getPartyId()).isEqualTo(partyId);
+		assertThat(bean.getUpdated()).isEqualTo(updated);
 	}
 
 	@Test

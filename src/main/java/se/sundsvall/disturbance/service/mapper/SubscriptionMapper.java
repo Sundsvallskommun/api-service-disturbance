@@ -16,12 +16,13 @@ public class SubscriptionMapper {
 
 	private SubscriptionMapper() {}
 
-	public static SubscriptionEntity toSubscriptionEntity(SubscriptionCreateRequest subscriptionCreateRequest) {
+	public static SubscriptionEntity toSubscriptionEntity(String municipalityId, SubscriptionCreateRequest subscriptionCreateRequest) {
 		if (isNull(subscriptionCreateRequest)) {
 			return null;
 		}
 
 		return SubscriptionEntity.create()
+			.withMunicipalityId(municipalityId)
 			.withOptOutSettings(toOptOutSettingsEntities(subscriptionCreateRequest.getOptOutSettings()))
 			.withPartyId(subscriptionCreateRequest.getPartyId());
 	}
@@ -43,6 +44,7 @@ public class SubscriptionMapper {
 		return Subscription.create()
 			.withCreated(subscriptionEntity.getCreated())
 			.withId(subscriptionEntity.getId())
+			.withMunicipalityId(subscriptionEntity.getMunicipalityId())
 			.withOptOutSettings(toOptOutSettings(subscriptionEntity.getOptOutSettings()))
 			.withPartyId(subscriptionEntity.getPartyId())
 			.withUpdated(subscriptionEntity.getUpdated());

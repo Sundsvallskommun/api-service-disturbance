@@ -1,5 +1,6 @@
 package se.sundsvall.disturbance.api;
 
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -11,7 +12,6 @@ import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,9 @@ import se.sundsvall.disturbance.service.SubscriptionService;
 @ActiveProfiles("junit")
 class SubscriptionResourceFailuresTest {
 
+	private static final String PATH = "/{municipalityId}/subscriptions";
+	private static final String MUNICIPALITY_ID = "2281";
+
 	@MockBean
 	private SubscriptionService subscriptionServiceMock;
 
@@ -43,7 +46,8 @@ class SubscriptionResourceFailuresTest {
 	void createSubscriptionMissingBody() {
 
 		// Act
-		final var response = webTestClient.post().uri("/subscriptions")
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.exchange()
 			.expectStatus().isBadRequest()
@@ -57,7 +61,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.SubscriptionResource.createSubscription(se.sundsvall.disturbance.api.model.SubscriptionCreateRequest)");
+			"Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.SubscriptionResource.createSubscription(java.lang.String,se.sundsvall.disturbance.api.model.SubscriptionCreateRequest)");
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}
@@ -66,7 +70,8 @@ class SubscriptionResourceFailuresTest {
 	void createSubscriptionEmptyBody() {
 
 		// Act
-		final var response = webTestClient.post().uri("/subscriptions")
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(SubscriptionCreateRequest.create()) // Empty body
 			.exchange()
@@ -95,7 +100,8 @@ class SubscriptionResourceFailuresTest {
 			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY)));
 
 		// Act
-		final var response = webTestClient.post().uri("/subscriptions")
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
@@ -116,16 +122,48 @@ class SubscriptionResourceFailuresTest {
 	}
 
 	@Test
+	void createSubscriptionInvalidMunicipalityId() {
+
+		// Arrange
+		final var municipalityId = "invalid-municipalityId";
+		final var request = SubscriptionCreateRequest.create()
+			.withPartyId(randomUUID().toString())
+			.withOptOutSettings(List.of(OptOutSetting.create().withCategory(ELECTRICITY)));
+
+		// Act
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", municipalityId)))
+			.contentType(APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("createSubscription.municipalityId", "not a valid municipality ID"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
 	void createSubscriptionMissingOptOutCategory() {
 
 		// Arrange
 		final var request = SubscriptionCreateRequest.create()
-			.withPartyId(UUID.randomUUID().toString())
+			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(null))); // missing category.
 
 		// Act
-		final var response = webTestClient.post().uri("/subscriptions")
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
@@ -150,13 +188,14 @@ class SubscriptionResourceFailuresTest {
 
 		// Arrange
 		final var request = SubscriptionCreateRequest.create()
-			.withPartyId(UUID.randomUUID().toString())
+			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(ELECTRICITY)
 				.withValues(Map.of(" ", "123456")))); // Blank key
 
 		// Act
-		final var response = webTestClient.post().uri("/subscriptions")
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
@@ -181,13 +220,14 @@ class SubscriptionResourceFailuresTest {
 
 		// Arrange
 		final var request = SubscriptionCreateRequest.create()
-			.withPartyId(UUID.randomUUID().toString())
+			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(ELECTRICITY)
 				.withValues(Map.of("facilityId", " ")))); // Blank value
 
 		// Act
-		final var response = webTestClient.post().uri("/subscriptions")
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
@@ -211,7 +251,8 @@ class SubscriptionResourceFailuresTest {
 	void getSubscriptionsByPartyIdMissingPartyId() {
 
 		// Act
-		final var response = webTestClient.get().uri("/subscriptions")
+		final var response = webTestClient.get()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isBadRequest()
 			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
@@ -229,10 +270,16 @@ class SubscriptionResourceFailuresTest {
 	}
 
 	@Test
-	void getSubscriptionsByPartyIdBadPartyId() {
+	void getSubscriptionsByPartyIdInvalidPartyId() {
+
+		// Arrange
+		final var partyId = "invalid-partyId";
 
 		// Act
-		final var response = webTestClient.get().uri("/subscriptions?partyId={partyId}", "this-is-not-an-uuid")
+		final var response = webTestClient.get()
+			.uri(builder -> builder.path(PATH)
+				.queryParam("partyId", partyId)
+				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isBadRequest()
 			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
@@ -251,15 +298,46 @@ class SubscriptionResourceFailuresTest {
 	}
 
 	@Test
+	void getSubscriptionsByPartyIdInvalidMunicipalityId() {
+
+		// Arrange
+		final var municipalityId = "invalid-municipalityId";
+		final var partyId = randomUUID().toString();
+
+		// Act
+		final var response = webTestClient.get()
+			.uri(builder -> builder.path(PATH)
+				.queryParam("partyId", partyId)
+				.build(Map.of("municipalityId", municipalityId)))
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("findSubscription.municipalityId", "not a valid municipality ID"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
 	void updateSubscriptionMissingOptOutCategory() {
 
 		// Arrange
+		final var id = "12345";
 		final var request = SubscriptionUpdateRequest.create()
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(null))); // missing category.
 
 		// Act
-		final var response = webTestClient.put().uri("/subscriptions/{id}", "1234")
+		final var response = webTestClient.put()
+			.uri(builder -> builder.path(PATH + "/{id}").build(Map.of("municipalityId", MUNICIPALITY_ID, "id", id)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
@@ -283,13 +361,15 @@ class SubscriptionResourceFailuresTest {
 	void updateSubscriptionBlankOptOutKey() {
 
 		// Arrange
+		final var id = "12345";
 		final var request = SubscriptionUpdateRequest.create()
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(ELECTRICITY)
 				.withValues(Map.of(" ", "12345")))); // Blank key
 
 		// Act
-		final var response = webTestClient.put().uri("/subscriptions/{id}", "1234")
+		final var response = webTestClient.put()
+			.uri(builder -> builder.path(PATH + "/{id}").build(Map.of("municipalityId", MUNICIPALITY_ID, "id", id)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
@@ -313,13 +393,15 @@ class SubscriptionResourceFailuresTest {
 	void updateSubscriptionBlankOptOutValue() {
 
 		// Arrange
+		final var id = "12345";
 		final var request = SubscriptionUpdateRequest.create()
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(ELECTRICITY)
 				.withValues(Map.of("facilityId", " ")))); // Blank value
 
 		// Act
-		final var response = webTestClient.put().uri("/subscriptions/{id}", "1234")
+		final var response = webTestClient.put()
+			.uri(builder -> builder.path(PATH + "/{id}").build(Map.of("municipalityId", MUNICIPALITY_ID, "id", id)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
@@ -335,6 +417,39 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getViolations())
 			.extracting(Violation::getField, Violation::getMessage)
 			.containsExactly(tuple("optOutSettings[0].values[facilityId]", "must not be blank"));
+
+		verifyNoInteractions(subscriptionServiceMock);
+	}
+
+	@Test
+	void updateSubscriptionInvalidMunicipalityId() {
+
+		// Arrange
+		final var municipalityId = "invalid-municipalityId";
+		final var id = "12345";
+		final var request = SubscriptionUpdateRequest.create()
+			.withOptOutSettings(List.of(OptOutSetting.create()
+				.withCategory(ELECTRICITY)
+				.withValues(Map.of("facilityId", "12345"))));
+
+		// Act
+		final var response = webTestClient.put()
+			.uri(builder -> builder.path(PATH + "/{id}").build(Map.of("municipalityId", municipalityId, "id", id)))
+			.contentType(APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+			.expectBody(ConstraintViolationProblem.class)
+			.returnResult()
+			.getResponseBody();
+
+		// Assert
+		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getViolations())
+			.extracting(Violation::getField, Violation::getMessage)
+			.containsExactly(tuple("updateSubscription.municipalityId", "not a valid municipality ID"));
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}

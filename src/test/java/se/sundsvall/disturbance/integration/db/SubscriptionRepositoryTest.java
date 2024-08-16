@@ -4,8 +4,8 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,44 +27,46 @@ import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
 })
 class SubscriptionRepositoryTest {
 
-	private static final String PARTY_ID = "0d64beb2-3aea-11ec-8d3d-0242ac130003"; // Exists in testdata-junit.sql;
+	private static final Long ID = 1L;
+	private static final String PARTY_ID = "0d64beb2-3aea-11ec-8d3d-0242ac130003";
+	private static final String MUNICIPALITY_ID = "2281";
 
 	@Autowired
 	private SubscriptionRepository subscriptionRepository;
 
-	@SuppressWarnings("serial")
 	@Test
-	void testPersistAndfindByPartyId() {
-		// Setup
+	void testPersistAndfindByMunicipalityIdAndPartyId() {
+
+		// Arrange
 		final var partyId = randomUUID().toString();
-		final var subscriptionEntity = new SubscriptionEntity()
+		final var subscriptionEntity = SubscriptionEntity.create()
+			.withMunicipalityId(MUNICIPALITY_ID)
 			.withPartyId(partyId)
-			.withOptOutSettings(List.of(new OptOutSettingsEntity()
-				.withCategory(Category.ELECTRICITY)
-				.withOptOuts(new HashMap<>() {
-					{
-						put("key1", "value1");
-						put("key2", "value2");
-					}
-				}), new OptOutSettingsEntity()
+			.withOptOutSettings(List.of(
+				OptOutSettingsEntity.create()
+					.withCategory(Category.ELECTRICITY)
+					.withOptOuts(Map.of(
+						"key1", "value1",
+						"key2", "value2")),
+				OptOutSettingsEntity.create()
 					.withCategory(Category.DISTRICT_COOLING)
-					.withOptOuts(new HashMap<>() {
-						{
-							put("key3", "value3");
-							put("key4", "value4");
-						}
-					})));
+					.withOptOuts(Map.of(
+						"key3", "value3",
+						"key4", "value4"))));
+
+		// Act
 
 		// Save
 		subscriptionRepository.save(subscriptionEntity);
 
 		// Read
-		final var entityByPartyId = subscriptionRepository.findByPartyId(partyId).orElseThrow();
+		final var entityByPartyId = subscriptionRepository.findByMunicipalityIdAndPartyId(MUNICIPALITY_ID, partyId).orElseThrow();
 
 		// Assert SubscriptionEntity properties
 		assertThat(entityByPartyId)
 			.satisfies(entity -> {
 				assertThat(entity.getPartyId()).isEqualTo(partyId);
+				assertThat(entity.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 				assertThat(entity.getOptOutSettings()).hasSize(2);
 			});
 
@@ -84,22 +86,42 @@ class SubscriptionRepositoryTest {
 	}
 
 	@Test
-	void existByPartyId() {
+	void findByMunicipalityIdAndPartyId() {
 
 		// Act
-		final var result = subscriptionRepository.existsByPartyId(PARTY_ID);
+		final var result = subscriptionRepository.findByMunicipalityIdAndPartyId(MUNICIPALITY_ID, PARTY_ID);
 
 		// Assert
-		assertThat(result).isTrue();
+		assertThat(result).isPresent();
 	}
 
 	@Test
-	void existByPartyIdNotFound() {
+	void findByMunicipalityIdAndPartyIdNotFound() {
 
 		// Act
-		final var result = subscriptionRepository.existsByPartyId("does-not-exist");
+		final var result = subscriptionRepository.findByMunicipalityIdAndPartyId(MUNICIPALITY_ID, "does-not-exist");
 
 		// Assert
-		assertThat(result).isFalse();
+		assertThat(result).isNotPresent();
+	}
+
+	@Test
+	void findByMunicipalityIdAndId() {
+
+		// Act
+		final var result = subscriptionRepository.findByMunicipalityIdAndId(MUNICIPALITY_ID, ID);
+
+		// Assert
+		assertThat(result).isPresent();
+	}
+
+	@Test
+	void findByMunicipalityIdAndIdNotFound() {
+
+		// Act
+		final var result = subscriptionRepository.findByMunicipalityIdAndId(MUNICIPALITY_ID, 666L);
+
+		// Assert
+		assertThat(result).isNotPresent();
 	}
 }

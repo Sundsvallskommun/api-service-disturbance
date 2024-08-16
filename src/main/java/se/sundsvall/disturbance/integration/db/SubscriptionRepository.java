@@ -12,7 +12,7 @@ import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
 @CircuitBreaker(name = "subscriptionRepository")
 public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, Long> {
 
-	Optional<SubscriptionEntity> findByPartyId(String partyId);
+	Optional<SubscriptionEntity> findByMunicipalityIdAndPartyId(String municipalityId, String partyId);
 
-	boolean existsByPartyId(String partyId);
+	Optional<SubscriptionEntity> findByMunicipalityIdAndId(String municipalityId, Long id);
 }

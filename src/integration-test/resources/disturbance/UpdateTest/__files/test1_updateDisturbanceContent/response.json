@@ -1,5 +1,6 @@
 {
 	"id": "disturbance-5",
+	"municipalityId": "2281",
 	"category": "ELECTRICITY",
 	"title": "Planerat avbrott i eget nät",
 	"description": "Vi felsöker strömavbrottet.",

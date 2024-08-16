@@ -1,12 +1,13 @@
 package se.sundsvall.disturbance.api.model;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Disturbance model")
@@ -14,6 +15,9 @@ public class Disturbance {
 
 	@Schema(description = "Disturbance ID", example = "435553")
 	private String id;
+
+	@Schema(description = "Municipality ID", example = "2281", accessMode = READ_ONLY)
+	private String municipalityId;
 
 	@Schema(implementation = Category.class)
 	@NotNull
@@ -35,10 +39,10 @@ public class Disturbance {
 	@Schema(description = "Planned stop date for the disturbance")
 	private OffsetDateTime plannedStopDate;
 
-	@Schema(description = "Created timestamp", accessMode = AccessMode.READ_ONLY)
+	@Schema(description = "Created timestamp", accessMode = READ_ONLY)
 	private OffsetDateTime created;
 
-	@Schema(description = "Updated timestamp", accessMode = AccessMode.READ_ONLY)
+	@Schema(description = "Updated timestamp", accessMode = READ_ONLY)
 	private OffsetDateTime updated;
 
 	@ArraySchema(schema = @Schema(implementation = Affected.class))
@@ -58,6 +62,19 @@ public class Disturbance {
 
 	public Disturbance withId(String id) {
 		this.id = id;
+		return this;
+	}
+
+	public String getMunicipalityId() {
+		return municipalityId;
+	}
+
+	public void setMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
+	}
+
+	public Disturbance withMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
 		return this;
 	}
 
@@ -180,29 +197,23 @@ public class Disturbance {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(category, created, description, id, affecteds, plannedStartDate, plannedStopDate, status, title, updated);
+		return Objects.hash(affecteds, category, created, description, id, municipalityId, plannedStartDate, plannedStopDate, status, title, updated);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Disturbance other = (Disturbance) obj;
-		return category == other.category && Objects.equals(created, other.created) && Objects.equals(description, other.description) && Objects.equals(id, other.id)
-			&& Objects.equals(affecteds, other.affecteds) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate)
-			&& status == other.status && Objects.equals(title, other.title) && Objects.equals(updated, other.updated);
+		if (this == obj) { return true; }
+		if (!(obj instanceof final Disturbance other)) { return false; }
+		return Objects.equals(affecteds, other.affecteds) && (category == other.category) && Objects.equals(created, other.created) && Objects.equals(description, other.description) && Objects.equals(id, other.id) && Objects.equals(municipalityId,
+			other.municipalityId) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && (status == other.status) && Objects.equals(title, other.title) && Objects.equals(updated,
+				other.updated);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Disturbance [id=").append(id).append(", category=").append(category).append(", title=").append(title).append(", description=").append(description)
-			.append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate).append(", created=")
-			.append(created).append(", updated=").append(updated).append(", affecteds=").append(affecteds).append("]");
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Disturbance [id=").append(id).append(", municipalityId=").append(municipalityId).append(", category=").append(category).append(", status=").append(status).append(", title=").append(title).append(", description=").append(description)
+			.append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate).append(", created=").append(created).append(", updated=").append(updated).append(", affecteds=").append(affecteds).append("]");
 		return builder.toString();
 	}
 }

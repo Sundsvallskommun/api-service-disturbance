@@ -22,13 +22,15 @@ import se.sundsvall.disturbance.Application;
 })
 class ReadTest extends AbstractAppTest {
 
+	private static final String PATH = "/2281/disturbances";
+
 	@Test
 	void test1_readDisturbanceById() {
 
 		final var disturbanceId = "disturbance-2";
 
 		setupCall()
-			.withServicePath("/disturbances/COMMUNICATION/" + disturbanceId)
+			.withServicePath(PATH + "/COMMUNICATION/" + disturbanceId)
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
@@ -41,7 +43,7 @@ class ReadTest extends AbstractAppTest {
 		final var partyId = "c76ae496-3aed-11ec-8d3d-0242ac130003";
 
 		setupCall()
-			.withServicePath("/disturbances/affecteds/" + partyId)
+			.withServicePath(PATH + "/affecteds/" + partyId)
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
@@ -54,7 +56,7 @@ class ReadTest extends AbstractAppTest {
 		final var partyId = "c76ae496-3aed-11ec-8d3d-0242ac130003";
 
 		setupCall()
-			.withServicePath("/disturbances/affecteds/" + partyId + "?category=COMMUNICATION")
+			.withServicePath(PATH + "/affecteds/" + partyId + "?category=COMMUNICATION")
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
@@ -67,7 +69,7 @@ class ReadTest extends AbstractAppTest {
 		final var partyId = "c76ae496-3aed-11ec-8d3d-0242ac130003";
 
 		setupCall()
-			.withServicePath("/disturbances/affecteds/" + partyId + "?status=OPEN")
+			.withServicePath(PATH + "/affecteds/" + partyId + "?status=OPEN")
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
@@ -80,7 +82,7 @@ class ReadTest extends AbstractAppTest {
 		final var partyId = "887a45da-dbd4-4d58-98bc-4afe3c2ecc18"; // Doesn't exist in DB.
 
 		setupCall()
-			.withServicePath("/disturbances/affecteds/" + partyId)
+			.withServicePath(PATH + "/affecteds/" + partyId)
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
@@ -90,7 +92,7 @@ class ReadTest extends AbstractAppTest {
 	@Test
 	void test6_readDisturbancesWithStatusAndCategoryFilter() {
 		setupCall()
-			.withServicePath("/disturbances?status=OPEN&category=COMMUNICATION")
+			.withServicePath(PATH + "?status=OPEN&category=COMMUNICATION")
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
@@ -100,7 +102,7 @@ class ReadTest extends AbstractAppTest {
 	@Test
 	void test7_readDisturbancesWithNoFilter() {
 		setupCall()
-			.withServicePath("/disturbances")
+			.withServicePath(PATH)
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")

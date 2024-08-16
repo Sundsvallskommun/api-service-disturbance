@@ -1,6 +1,5 @@
 package se.sundsvall.disturbance.service;
 
-import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -49,31 +48,31 @@ public class DisturbanceService {
 	}
 
 	@Transactional
-	public Disturbance findByCategoryAndDisturbanceId(final Category category, final String disturbanceId) {
-		return toDisturbance(disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
-			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId))));
+	public Disturbance findByMunicipalityIdAndCategoryAndDisturbanceId(final String municipalityId, final Category category, final String disturbanceId) {
+		return toDisturbance(disturbanceRepository.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, category, disturbanceId)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_DISTURBANCE_NOT_FOUND.formatted(category, disturbanceId))));
 	}
 
 	@Transactional
-	public List<Disturbance> findByPartyIdAndCategoryAndStatus(final String partyId, final List<Category> categoryFilter, final List<se.sundsvall.disturbance.api.model.Status> statusFilter) {
-		return toDisturbances(disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter));
+	public List<Disturbance> findByMunicipalityIdAndPartyIdAndCategoryAndStatus(final String municipalityId, final String partyId, final List<Category> categoryFilter, final List<se.sundsvall.disturbance.api.model.Status> statusFilter) {
+		return toDisturbances(disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(municipalityId, partyId, categoryFilter, statusFilter));
 	}
 
 	@Transactional
-	public List<Disturbance> findByStatusAndCategory(final List<se.sundsvall.disturbance.api.model.Status> statusFilter, final List<Category> categoryFilter) {
-		return toDisturbances(disturbanceRepository.findByStatusAndCategory(statusFilter, categoryFilter));
+	public List<Disturbance> findByMunicipalityIdAndStatusAndCategory(final String municipalityId, final List<se.sundsvall.disturbance.api.model.Status> statusFilter, final List<Category> categoryFilter) {
+		return toDisturbances(disturbanceRepository.findByMunicipalityIdAndStatusAndCategory(municipalityId, statusFilter, categoryFilter));
 	}
 
 	@Transactional
-	public Disturbance createDisturbance(final DisturbanceCreateRequest disturbanceCreateRequest) {
+	public Disturbance createDisturbance(final String municipalityId, final DisturbanceCreateRequest disturbanceCreateRequest) {
 
 		// Check if disturbance already exists.
-		if (disturbanceRepository.findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()).isPresent()) {
-			throw Problem.valueOf(CONFLICT, format(ERROR_DISTURBANCE_ALREADY_EXISTS, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()));
+		if (disturbanceRepository.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()).isPresent()) {
+			throw Problem.valueOf(CONFLICT, ERROR_DISTURBANCE_ALREADY_EXISTS.formatted(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId()));
 		}
 
 		// Persist disturbance entity.
-		final var persistedDisturbanceEntity = disturbanceRepository.save(toDisturbanceEntity(disturbanceCreateRequest));
+		final var persistedDisturbanceEntity = disturbanceRepository.save(toDisturbanceEntity(municipalityId, disturbanceCreateRequest));
 
 		if (isNotEmpty(persistedDisturbanceEntity.getAffectedEntities()) &&
 			!hasStatusClosed(persistedDisturbanceEntity) && hasStatusOpen(persistedDisturbanceEntity)) {
@@ -86,15 +85,15 @@ public class DisturbanceService {
 	}
 
 	@Transactional
-	public Disturbance updateDisturbance(final Category category, final String disturbanceId, final DisturbanceUpdateRequest disturbanceUpdateRequest) {
+	public Disturbance updateDisturbance(final String municipalityId, final Category category, final String disturbanceId, final DisturbanceUpdateRequest disturbanceUpdateRequest) {
 
 		// Get existing disturbance entity.
-		final var existingDisturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
-			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
+		final var existingDisturbanceEntity = disturbanceRepository.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, category, disturbanceId)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_DISTURBANCE_NOT_FOUND.formatted(category, disturbanceId)));
 
 		// No updates allowed on closed disturbance.
 		if (hasStatusClosed(existingDisturbanceEntity)) {
-			throw Problem.valueOf(CONFLICT, format(ERROR_DISTURBANCE_CLOSED_NO_UPDATES_ALLOWED, category, disturbanceId));
+			throw Problem.valueOf(CONFLICT, ERROR_DISTURBANCE_CLOSED_NO_UPDATES_ALLOWED.formatted(category, disturbanceId));
 		}
 
 		// Get new (incoming) disturbance entity.
@@ -144,15 +143,14 @@ public class DisturbanceService {
 			sendMessageLogic.sendUpdateMessage(mergedDisturbanceEntity);
 		}
 
-		final var save = disturbanceRepository.save(mergedDisturbanceEntity);
-		return toDisturbance(save);
+		return toDisturbance(disturbanceRepository.save(mergedDisturbanceEntity));
 	}
 
 	@Transactional
-	public void deleteDisturbance(final Category category, final String disturbanceId) {
+	public void deleteDisturbance(final String municipalityId, final Category category, final String disturbanceId) {
 
-		final var disturbanceEntity = disturbanceRepository.findByCategoryAndDisturbanceId(category, disturbanceId)
-			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, format(ERROR_DISTURBANCE_NOT_FOUND, category, disturbanceId)));
+		final var disturbanceEntity = disturbanceRepository.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, category, disturbanceId)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_DISTURBANCE_NOT_FOUND.formatted(category, disturbanceId)));
 
 		// "Soft delete" disturbance entity.
 		disturbanceEntity.setDeleted(true);

@@ -1,12 +1,13 @@
 {
 	"id": "disturbance-with-subscription-1",
+	"municipalityId": "2281",
 	"category": "COMMUNICATION",
-	"created": "${json-unit.any-string}",
+	"status": "OPEN",
 	"title": "Disturbance",
 	"description": "Major disturbance in city",
-	"status": "OPEN",
 	"plannedStartDate": "2021-01-14T10:09:00+01:00",
 	"plannedStopDate": "2021-01-14T10:09:00+01:00",
+	"created": "${json-unit.any-string}",
 	"affecteds": [
 		{
 			"partyId": "fbfbd90c-4c47-11ec-81d3-0242ac130003",

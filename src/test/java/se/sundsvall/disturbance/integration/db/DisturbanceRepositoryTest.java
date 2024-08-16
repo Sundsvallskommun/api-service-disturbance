@@ -44,6 +44,7 @@ import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 })
 class DisturbanceRepositoryTest {
 
+	private static final String MUNICIPALITY_ID = "2281";
 	private static final String DISTURBANCE_ID_2 = "disturbance-2";
 	private static final String PARTY_ID_1 = "0d64beb2-3aea-11ec-8d3d-0242ac130003"; // Exists in "disturbance-2".
 	private static final String PARTY_ID_2 = "0d64c132-3aea-11ec-8d3d-0242ac130003"; // Exists in "disturbance-2".
@@ -53,8 +54,8 @@ class DisturbanceRepositoryTest {
 	private DisturbanceRepository disturbanceRepository;
 
 	@Test
-	void findByDisturbanceIdAndCategory() {
-		final var disturbanceOptional = disturbanceRepository.findByCategoryAndDisturbanceId(COMMUNICATION, DISTURBANCE_ID_2);
+	void findByMunicipalityIdAndCategoryAndDisturbanceId() {
+		final var disturbanceOptional = disturbanceRepository.findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, COMMUNICATION, DISTURBANCE_ID_2);
 
 		assertThat(disturbanceOptional).isPresent();
 		assertAsDisturbanceEntity2(disturbanceOptional.get());
@@ -67,6 +68,7 @@ class DisturbanceRepositoryTest {
 
 		final var disturbance = disturbanceRepository.save(disturbanceEntity);
 		assertThat(disturbance.getId()).isPositive();
+		assertThat(disturbanceEntity.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 		assertThat(disturbance.getAffectedEntities()).hasSize(1);
 		assertThat(disturbance.getAffectedEntities()).extracting(AffectedEntity::getPartyId, AffectedEntity::getFacilityId, AffectedEntity::getCoordinates)
 			.containsExactly(tuple("partyId-1", "facility-1", "coordinates-1"));
@@ -109,7 +111,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findByPartyIdFilterByCategoryAndStatusWithCategoryFilterAndStatusFilter() {
-		final var disturbances = disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(PARTY_ID_1, List.of(COMMUNICATION), List.of(OPEN));
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, PARTY_ID_1, List.of(COMMUNICATION), List.of(OPEN));
 		assertThat(disturbances)
 			.isNotEmpty()
 			.hasSize(1)
@@ -118,7 +120,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findByPartyIdFilterByCategoryAndStatusWithEmptyCategoryAndEmptyStatus() {
-		final var disturbances = disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(PARTY_ID_2, emptyList(), emptyList());
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, PARTY_ID_2, emptyList(), emptyList());
 		assertThat(disturbances)
 			.isNotEmpty()
 			.hasSize(1)
@@ -127,7 +129,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findByPartyIdFilterByCategoryAndStatusWithMultipleCategoriesAndMultipleStatuses() {
-		final var disturbances = disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(PARTY_ID_2, List.of(COMMUNICATION, ELECTRICITY), List.of(OPEN,
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, PARTY_ID_2, List.of(COMMUNICATION, ELECTRICITY), List.of(OPEN,
 			CLOSED));
 		assertThat(disturbances)
 			.isNotEmpty()
@@ -137,7 +139,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findByPartyIdFilterByCategoryAndStatusWithCategoryFilter() {
-		final var disturbances = disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(PARTY_ID_1, List.of(COMMUNICATION), null);
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, PARTY_ID_1, List.of(COMMUNICATION), null);
 		assertThat(disturbances)
 			.isNotEmpty()
 			.hasSize(1)
@@ -146,7 +148,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findByPartyIdFilterByCategoryAndStatusWithStatusFilter() {
-		final var disturbances = disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(PARTY_ID_2, null, List.of(OPEN));
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, PARTY_ID_2, null, List.of(OPEN));
 		assertThat(disturbances)
 			.isNotEmpty()
 			.hasSize(1)
@@ -155,7 +157,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findByPartyIdFilterByCategoryAndStatusWithNoStatusFilterAndNoCategoryFilter() {
-		final var disturbances = disturbanceRepository.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(PARTY_ID_2, null, null);
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, PARTY_ID_2, null, null);
 		assertThat(disturbances)
 			.isNotEmpty()
 			.hasSize(1)
@@ -164,7 +166,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findAllFilteredByCategory() {
-		final var disturbances = disturbanceRepository.findByStatusAndCategory(null, List.of(COMMUNICATION));
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndStatusAndCategory(MUNICIPALITY_ID, null, List.of(COMMUNICATION));
 
 		assertThat(disturbances)
 			.isNotEmpty()
@@ -178,7 +180,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findAllFilteredByStatus() {
-		final var disturbances = disturbanceRepository.findByStatusAndCategory(List.of(CLOSED), null);
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndStatusAndCategory(MUNICIPALITY_ID, List.of(CLOSED), null);
 
 		assertThat(disturbances)
 			.isNotEmpty()
@@ -192,7 +194,7 @@ class DisturbanceRepositoryTest {
 
 	@Test
 	void findAllFilteredByStatusAndCategory() {
-		final var disturbances = disturbanceRepository.findByStatusAndCategory(List.of(CLOSED, PLANNED), List.of(ELECTRICITY, COMMUNICATION));
+		final var disturbances = disturbanceRepository.findByMunicipalityIdAndStatusAndCategory(MUNICIPALITY_ID, List.of(CLOSED, PLANNED), List.of(ELECTRICITY, COMMUNICATION));
 
 		assertThat(disturbances)
 			.isNotEmpty()
@@ -228,6 +230,7 @@ class DisturbanceRepositoryTest {
 	private void assertAsDisturbanceEntity2(final DisturbanceEntity disturbanceEntity) {
 
 		assertThat(disturbanceEntity.getId()).isEqualTo(2);
+		assertThat(disturbanceEntity.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 		assertThat(disturbanceEntity.getCategory()).isEqualTo(COMMUNICATION);
 		assertThat(disturbanceEntity.getCreated()).isEqualTo(getOffsetDateTime(2021, 9, 23, 9, 5, 48, 198000000));
 		assertThat(disturbanceEntity.getUpdated()).isEqualTo(getOffsetDateTime(2021, 9, 24, 9, 5, 48, 298000000));
@@ -264,21 +267,18 @@ class DisturbanceRepositoryTest {
 	}
 
 	private DisturbanceEntity setupNewDisturbanceEntity(final String disturbanceId) {
-		final var affectedEntity = new AffectedEntity();
-		affectedEntity.setPartyId("partyId-1");
-		affectedEntity.setCoordinates("coordinates-1");
-		affectedEntity.setFacilityId("facility-1");
-
-		final var entity = new DisturbanceEntity();
-		entity.setDisturbanceId(disturbanceId);
-		entity.setCategory(COMMUNICATION);
-		entity.setTitle("title");
-		entity.setDescription("description");
-		entity.setStatus(OPEN);
-		entity.setPlannedStartDate(now(systemDefault()));
-		entity.setPlannedStopDate(now(systemDefault()).plusDays(6));
-		entity.addAffectedEntities(List.of(affectedEntity));
-
-		return entity;
+		return DisturbanceEntity.create()
+			.withDisturbanceId(disturbanceId)
+			.withMunicipalityId(MUNICIPALITY_ID)
+			.withCategory(COMMUNICATION)
+			.withTitle("title")
+			.withDescription("description")
+			.withStatus(OPEN)
+			.withPlannedStartDate(now(systemDefault()))
+			.withPlannedStopDate(now(systemDefault()).plusDays(6))
+			.addAffectedEntities(List.of(AffectedEntity.create()
+				.withPartyId("partyId-1")
+				.withCoordinates("coordinates-1")
+				.withFacilityId("facility-1")));
 	}
 }

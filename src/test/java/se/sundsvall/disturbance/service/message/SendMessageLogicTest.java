@@ -3,6 +3,7 @@ package se.sundsvall.disturbance.service.message;
 import static java.time.ZoneId.systemDefault;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -48,6 +49,7 @@ class SendMessageLogicTest {
 
 	private static final Category CATEGORY = Category.ELECTRICITY;
 	private static final String DISTURBANCE_ID = "disturbanceId";
+	private static final String MUNICIPALITY_ID = "municipalityId";
 	private static final String DESCRIPTION = "Major disturbance in the central parts of town";
 	private static final OffsetDateTime PLANNED_START_DATE = LocalDateTime.of(2021, 11, 1, 12, 0, 6).atZone(systemDefault()).toOffsetDateTime();
 	private static final OffsetDateTime PLANNED_STOP_DATE = LocalDateTime.of(2021, 11, 10, 18, 30, 8).atZone(systemDefault()).toOffsetDateTime();
@@ -76,13 +78,13 @@ class SendMessageLogicTest {
 		final var disturbanceEntity = setupDisturbanceEntity(1, 2, 3, 4, 5, 6);
 
 		// Let 3 of these affecteds have an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
 		// Let 3 of these affecteds be without an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
 
 		// Setup message properties mock
 		when(messageConfigurationMock.getCategoryConfig(CATEGORY)).thenReturn(setupCategoryConfig());
@@ -90,13 +92,13 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCloseMessageToAllApplicableAffecteds(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
-		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
+		verify(messagingClientMock).sendMessage(eq(MUNICIPALITY_ID), messageRequestCaptor.capture());
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
@@ -158,12 +160,12 @@ class SendMessageLogicTest {
 
 		sendMessageLogic.sendCloseMessageToAllApplicableAffecteds(disturbanceEntity);
 
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock);
 		verifyNoInteractions(messagingClientMock);
 	}
@@ -174,9 +176,9 @@ class SendMessageLogicTest {
 		// Set up disturbanceEntity with 6 affecteds.
 		final var disturbanceEntity = setupDisturbanceEntity(1, 2, 3, 4, 5, 6);
 
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
 
 		// Setup message properties mock
 		when(messageConfigurationMock.getCategoryConfig(CATEGORY)).thenReturn(setupCategoryConfig());
@@ -208,10 +210,10 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCloseMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
+		verify(messagingClientMock).sendMessage(eq(MUNICIPALITY_ID), messageRequestCaptor.capture());
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
@@ -277,8 +279,8 @@ class SendMessageLogicTest {
 
 		sendMessageLogic.sendCloseMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
@@ -290,13 +292,13 @@ class SendMessageLogicTest {
 		final var disturbanceEntity = setupDisturbanceEntity(1, 2, 3, 4, 5, 6);
 
 		// Let 3 of these affecteds have an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
 		// Let 3 of these affecteds be without an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
 
 		// Setup message properties mock
 		when(messageConfigurationMock.getCategoryConfig(CATEGORY)).thenReturn(setupCategoryConfig());
@@ -304,13 +306,13 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendUpdateMessage(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
-		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
+		verify(messagingClientMock).sendMessage(eq(MUNICIPALITY_ID), messageRequestCaptor.capture());
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
@@ -371,8 +373,8 @@ class SendMessageLogicTest {
 		disturbanceEntity.setPlannedStartDate(null);
 		disturbanceEntity.setPlannedStopDate(null);
 
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
 
 		// Setup message properties mock
 		when(messageConfigurationMock.getCategoryConfig(CATEGORY)).thenReturn(setupCategoryConfig());
@@ -380,9 +382,9 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendUpdateMessage(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(messagingClientMock).sendMessage(eq(MUNICIPALITY_ID), messageRequestCaptor.capture());
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
@@ -430,12 +432,12 @@ class SendMessageLogicTest {
 
 		sendMessageLogic.sendUpdateMessage(disturbanceEntity);
 
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 		verifyNoInteractions(messageConfigurationMock, messagingClientMock);
 	}
@@ -447,13 +449,13 @@ class SendMessageLogicTest {
 		final var disturbanceEntity = setupDisturbanceEntity(1, 2, 3, 4, 5, 6);
 
 		// Let 3 of these affecteds have an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
 		// Let 3 of these affecteds be without an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
 
 		// Setup message properties mock
 		when(messageConfigurationMock.getCategoryConfig(CATEGORY)).thenReturn(setupCategoryConfig());
@@ -462,13 +464,13 @@ class SendMessageLogicTest {
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
 
-		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
+		verify(messagingClientMock).sendMessage(eq(MUNICIPALITY_ID), messageRequestCaptor.capture());
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
@@ -530,12 +532,12 @@ class SendMessageLogicTest {
 
 		sendMessageLogic.sendCreateMessageToAllApplicableAffecteds(disturbanceEntity);
 
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
@@ -546,9 +548,9 @@ class SendMessageLogicTest {
 		// Set up disturbanceEntity with 6 affecteds.
 		final var disturbanceEntity = setupDisturbanceEntity(1, 2, 3, 4, 5, 6);
 
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
 
 		// Setup message properties mock
 		when(messageConfigurationMock.getCategoryConfig(CATEGORY)).thenReturn(setupCategoryConfig());
@@ -580,10 +582,10 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCreateMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
 		verify(messageConfigurationMock, times(2)).getCategoryConfig(CATEGORY);
-		verify(messagingClientMock).sendMessage(messageRequestCaptor.capture());
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
+		verify(messagingClientMock).sendMessage(eq(MUNICIPALITY_ID), messageRequestCaptor.capture());
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoMoreInteractions(messageConfigurationMock, subscriptionServiceMock, messagingClientMock);
 
 		/**
@@ -649,8 +651,8 @@ class SendMessageLogicTest {
 
 		sendMessageLogic.sendCreateMessageToProvidedApplicableAffecteds(disturbanceEntity, affectedEntitiesOverride);
 
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 		verifyNoInteractions(messagingClientMock, messageConfigurationMock);
 	}
@@ -662,13 +664,13 @@ class SendMessageLogicTest {
 		final var disturbanceEntity = setupDisturbanceEntity(1, 2, 3, 4, 5, 6);
 
 		// Let 3 of these affecteds have an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4)).thenReturn(true);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6)).thenReturn(true);
 		// Let 3 of these affecteds be without an applicable subscription.
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
-		when(subscriptionServiceMock.hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3)).thenReturn(false);
+		when(subscriptionServiceMock.hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5)).thenReturn(false);
 
 		// Setup message properties mock
 		final var categoryConfigMock = Mockito.mock(CategoryConfig.class);
@@ -678,12 +680,12 @@ class SendMessageLogicTest {
 		sendMessageLogic.sendCreateMessageToAllApplicableAffecteds(disturbanceEntity);
 
 		verify(messageConfigurationMock, times(3)).getCategoryConfig(CATEGORY);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
-		verify(subscriptionServiceMock).hasApplicableSubscription(uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(1).toString(), CATEGORY, "facilityId-" + 1);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(2).toString(), CATEGORY, "facilityId-" + 2);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(3).toString(), CATEGORY, "facilityId-" + 3);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(4).toString(), CATEGORY, "facilityId-" + 4);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(5).toString(), CATEGORY, "facilityId-" + 5);
+		verify(subscriptionServiceMock).hasApplicableSubscription(MUNICIPALITY_ID, uuidFromInt(6).toString(), CATEGORY, "facilityId-" + 6);
 		verifyNoInteractions(messagingClientMock);
 		verifyNoMoreInteractions(messageConfigurationMock);
 	}
@@ -693,6 +695,7 @@ class SendMessageLogicTest {
 		final var disturbanceEntity = new DisturbanceEntity();
 		disturbanceEntity.setCategory(CATEGORY);
 		disturbanceEntity.setDisturbanceId(DISTURBANCE_ID);
+		disturbanceEntity.setMunicipalityId(MUNICIPALITY_ID);
 		disturbanceEntity.setDescription(DESCRIPTION);
 		disturbanceEntity.setPlannedStartDate(PLANNED_START_DATE);
 		disturbanceEntity.setPlannedStopDate(PLANNED_STOP_DATE);

@@ -1,23 +1,17 @@
 package se.sundsvall.disturbance.apptest.disturbance;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.LOCATION;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.CREATED;
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withCategory;
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withDisturbanceId;
-
-import java.util.List;
+import static org.springframework.http.HttpStatus.OK;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import se.sundsvall.dept44.test.AbstractAppTest;
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 import se.sundsvall.disturbance.Application;
-import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 
 /**
  * Create disturbance application tests
@@ -31,46 +25,45 @@ import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 })
 class CreateTest extends AbstractAppTest {
 
-	@Autowired
-	private DisturbanceRepository disturbanceRepository;
+	private static final String PATH = "/2281/disturbances";
 
 	@Test
 	void test1_createDisturbance() {
 
-		final var category = Category.COMMUNICATION;
-		final var disturbanceId = "disturbance-1";
-
-		assertThat(disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)))).isNotPresent();
-
-		setupCall()
-			.withServicePath("/disturbances")
+		final var headers = setupCall()
+			.withServicePath(PATH)
 			.withHttpMethod(POST)
 			.withRequest("request.json")
 			.withExpectedResponseStatus(CREATED)
 			.withExpectedResponseBodyIsNull()
-			.withExpectedResponseHeader(LOCATION, List.of("/disturbances/" + category + "/" + disturbanceId))
-			.sendRequestAndVerifyResponse();
+			.sendRequest()
+			.getResponseHeaders();
 
-		assertThat(disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)))).isPresent();
+		setupCall()
+			.withServicePath(headers.get(LOCATION).getFirst())
+			.withHttpMethod(GET)
+			.withExpectedResponseStatus(OK)
+			.withExpectedResponse("response.json")
+			.sendRequestAndVerifyResponse();
 	}
 
 	@Test
 	void test2_createDisturbanceWhenSubscriptionExists() {
 
-		final var category = Category.COMMUNICATION;
-		final var disturbanceId = "disturbance-with-subscription-1";
-
-		assertThat(disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)))).isNotPresent();
-
-		setupCall()
-			.withServicePath("/disturbances")
+		final var headers = setupCall()
+			.withServicePath(PATH)
 			.withHttpMethod(POST)
 			.withRequest("request.json")
 			.withExpectedResponseStatus(CREATED)
 			.withExpectedResponseBodyIsNull()
-			.withExpectedResponseHeader(LOCATION, List.of("/disturbances/" + category + "/" + disturbanceId))
-			.sendRequestAndVerifyResponse();
+			.sendRequest()
+			.getResponseHeaders();
 
-		assertThat(disturbanceRepository.findOne(withCategory(category).and(withDisturbanceId(disturbanceId)))).isPresent();
+		setupCall()
+			.withServicePath(headers.get(LOCATION).getFirst())
+			.withHttpMethod(GET)
+			.withExpectedResponseStatus(OK)
+			.withExpectedResponse("response.json")
+			.sendRequestAndVerifyResponse();
 	}
 }

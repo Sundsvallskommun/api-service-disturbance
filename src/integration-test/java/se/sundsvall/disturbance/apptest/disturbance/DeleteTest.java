@@ -23,6 +23,8 @@ import se.sundsvall.disturbance.api.model.Category;
 })
 class DeleteTest extends AbstractAppTest {
 
+	private static final String PATH = "/2281/disturbances/";
+
 	@Test
 	void test1_deleteDisturbanceWithStatusOpen() {
 
@@ -30,7 +32,7 @@ class DeleteTest extends AbstractAppTest {
 		final var disturbanceId = "disturbance-9";
 
 		setupCall()
-			.withServicePath("/disturbances/" + category + "/" + disturbanceId)
+			.withServicePath(PATH + category + "/" + disturbanceId)
 			.withHttpMethod(DELETE)
 			.withExpectedResponseStatus(NO_CONTENT)
 			.sendRequestAndVerifyResponse();
@@ -43,7 +45,7 @@ class DeleteTest extends AbstractAppTest {
 		final var disturbanceId = "disturbance-10";
 
 		setupCall()
-			.withServicePath("/disturbances/" + category + "/" + disturbanceId)
+			.withServicePath(PATH + category + "/" + disturbanceId)
 			.withHttpMethod(DELETE)
 			.withExpectedResponseStatus(NO_CONTENT)
 			.sendRequestAndVerifyResponse();

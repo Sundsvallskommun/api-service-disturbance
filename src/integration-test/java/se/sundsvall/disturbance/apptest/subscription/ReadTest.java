@@ -22,6 +22,7 @@ import se.sundsvall.disturbance.Application;
 })
 class ReadTest extends AbstractAppTest {
 
+	private static final String PATH = "/2281/subscriptions";
 	private static final String ID = "1";
 	private static final String PARTY_ID = "44f40c52-f550-4fee-860d-eda9c591d6a3";
 
@@ -29,7 +30,7 @@ class ReadTest extends AbstractAppTest {
 	void test1_readSubscriptionById() {
 
 		setupCall()
-			.withServicePath("/subscriptions/" + ID)
+			.withServicePath(PATH + "/" + ID)
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")
@@ -40,7 +41,7 @@ class ReadTest extends AbstractAppTest {
 	void test2_readSubscriptionByPartyId() {
 
 		setupCall()
-			.withServicePath("/subscriptions?partyId=" + PARTY_ID)
+			.withServicePath(PATH + "?partyId=" + PARTY_ID)
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")

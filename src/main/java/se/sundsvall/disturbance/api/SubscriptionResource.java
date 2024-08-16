@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.problem.Problem;
 import org.zalando.problem.violations.ConstraintViolationProblem;
 
@@ -33,6 +32,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import se.sundsvall.dept44.common.validators.annotation.ValidMunicipalityId;
 import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
@@ -41,7 +41,7 @@ import se.sundsvall.disturbance.service.SubscriptionService;
 
 @RestController
 @Validated
-@RequestMapping("/subscriptions")
+@RequestMapping("/{municipalityId}/subscriptions")
 @Tag(name = "Subscription", description = "Subscription operations")
 public class SubscriptionResource {
 
@@ -58,10 +58,12 @@ public class SubscriptionResource {
 	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createSubscription(@RequestBody @Valid final SubscriptionCreateRequest body) {
+	public ResponseEntity<Void> createSubscription(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
+		@RequestBody @Valid final SubscriptionCreateRequest body) {
 
-		final var subscription = subscriptionService.create(body);
-		return created(fromPath("/subscriptions/{id}").buildAndExpand(subscription.getId()).toUri()).header(CONTENT_TYPE, ALL_VALUE).build();
+		final var subscription = subscriptionService.create(municipalityId, body);
+		return created(fromPath("/{municipalityId}/subscriptions/{id}").buildAndExpand(municipalityId, subscription.getId()).toUri()).header(CONTENT_TYPE, ALL_VALUE).build();
 	}
 
 	@GetMapping(produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
@@ -72,9 +74,10 @@ public class SubscriptionResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Subscription> findSubscription(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @RequestParam(name = "partyId") final String partyId) {
 
-		return ok(subscriptionService.findByPartyId(partyId));
+		return ok(subscriptionService.findByMunicipalityIdAndPartyId(municipalityId, partyId));
 	}
 
 	@GetMapping(path = "/{id}", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
@@ -85,9 +88,10 @@ public class SubscriptionResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Subscription> readSubscription(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id) {
 
-		return ok(subscriptionService.read(id));
+		return ok(subscriptionService.read(municipalityId, id));
 	}
 
 	@PutMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
@@ -99,10 +103,11 @@ public class SubscriptionResource {
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Subscription> updateSubscription(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id,
 		@RequestBody @Valid final SubscriptionUpdateRequest body) {
 
-		return ok(subscriptionService.update(id, body));
+		return ok(subscriptionService.update(municipalityId, id, body));
 	}
 
 	@DeleteMapping(path = "/{id}", produces = { APPLICATION_PROBLEM_JSON_VALUE })
@@ -112,9 +117,11 @@ public class SubscriptionResource {
 	@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> deleteSubscription(@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id) {
+	public ResponseEntity<Void> deleteSubscription(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
+		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id) {
 
-		subscriptionService.delete(id);
+		subscriptionService.delete(municipalityId, id);
 		return noContent().build();
 	}
 }

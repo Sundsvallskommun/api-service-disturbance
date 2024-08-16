@@ -11,11 +11,9 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.hibernate.annotations.TimeZoneStorage;
-
-import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.api.model.Status;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -29,11 +27,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Status;
 
 @Entity
 @Table(name = "disturbance",
 	indexes = {
 		@Index(name = "disturbance_id_index", columnList = "disturbance_id"),
+		@Index(name = "municipality_id_index", columnList = "municipality_id"),
 		@Index(name = "category_index", columnList = "category")
 	})
 public class DisturbanceEntity implements Serializable {
@@ -44,6 +45,9 @@ public class DisturbanceEntity implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
+
+	@Column(name = "municipality_id", nullable = false)
+	private String municipalityId;
 
 	@Column(name = "disturbance_id", nullable = false)
 	private String disturbanceId;
@@ -106,6 +110,19 @@ public class DisturbanceEntity implements Serializable {
 
 	public DisturbanceEntity withId(final long id) {
 		this.id = id;
+		return this;
+	}
+
+	public String getMunicipalityId() {
+		return municipalityId;
+	}
+
+	public void setMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
+	}
+
+	public DisturbanceEntity withMunicipalityId(String municipalityId) {
+		this.municipalityId = municipalityId;
 		return this;
 	}
 
@@ -244,11 +261,11 @@ public class DisturbanceEntity implements Serializable {
 	}
 
 	public void setAffectedEntities(final List<AffectedEntity> affectedEntities) {
-		this.affectedEntities = affectedEntities;
+		this.affectedEntities = Optional.ofNullable(affectedEntities).map(ArrayList::new).orElse(null);
 	}
 
 	public DisturbanceEntity withAffectedEntities(final List<AffectedEntity> affectedEntities) {
-		this.affectedEntities = affectedEntities;
+		setAffectedEntities(affectedEntities);
 		return this;
 	}
 
@@ -268,29 +285,25 @@ public class DisturbanceEntity implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(affectedEntities, category, created, deleted, description, disturbanceId, id, plannedStartDate, plannedStopDate, status, title, updated);
+		return Objects.hash(affectedEntities, category, created, deleted, description, disturbanceId, id, municipalityId, plannedStartDate, plannedStopDate, status, title, updated);
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof final DisturbanceEntity other)) {
-			return false;
-		}
-		return Objects.equals(affectedEntities, other.affectedEntities) && Objects.equals(category, other.category) && Objects.equals(created, other.created) && (deleted == other.deleted) && Objects.equals(description, other.description) && Objects.equals(
-			disturbanceId, other.disturbanceId) && (id == other.id) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && Objects.equals(status, other.status) && Objects.equals(title,
-				other.title) && Objects.equals(updated, other.updated);
+	public boolean equals(Object obj) {
+		if (this == obj) { return true; }
+		if (!(obj instanceof final DisturbanceEntity other)) { return false; }
+		return Objects.equals(affectedEntities, other.affectedEntities) && (category == other.category) && Objects.equals(created, other.created) && (deleted == other.deleted) && Objects.equals(description, other.description) && Objects.equals(
+			disturbanceId,
+			other.disturbanceId) && (id == other.id) && Objects.equals(municipalityId, other.municipalityId) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && (status == other.status)
+			&& Objects.equals(title, other.title) && Objects.equals(updated, other.updated);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("DisturbanceEntity [id=").append(id).append(", disturbanceId=").append(disturbanceId).append(", category=").append(category).append(", title=").append(title)
-			.append(", description=").append(description).append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=")
-			.append(plannedStopDate).append(", created=").append(created).append(", updated=").append(updated).append(", deleted=").append(deleted).append(", affectedEntities=")
-			.append(affectedEntities).append("]");
+		builder.append("DisturbanceEntity [id=").append(id).append(", municipalityId=").append(municipalityId).append(", disturbanceId=").append(disturbanceId).append(", category=").append(category).append(", title=").append(title).append(", description=")
+			.append(description).append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate).append(", created=").append(created).append(", updated=").append(updated)
+			.append(", deleted=").append(deleted).append(", affectedEntities=").append(affectedEntities).append("]");
 		return builder.toString();
 	}
 }

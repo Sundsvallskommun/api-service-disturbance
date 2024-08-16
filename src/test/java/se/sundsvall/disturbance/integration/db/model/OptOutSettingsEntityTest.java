@@ -27,6 +27,7 @@ class OptOutSettingsEntityTest {
 
 	@Test
 	void testBean() {
+
 		MatcherAssert.assertThat(OptOutSettingsEntity.class, allOf(
 			hasValidBeanConstructor(),
 			hasValidGettersAndSetters(),
@@ -37,14 +38,16 @@ class OptOutSettingsEntityTest {
 
 	@Test
 	void testNoDirtOnCreatedBean() {
+
 		assertThat(new OptOutSettingsEntity()).hasAllNullFieldsOrPropertiesExcept("id");
 	}
 
 	@Test
 	void testBuilders() {
+
 		final var optOuts = new HashMap<String, String>();
 		final var category = ELECTRICITY;
-		final var opOutSettingsEntity = new OptOutSettingsEntity()
+		final var opOutSettingsEntity = OptOutSettingsEntity.create()
 			.withOptOuts(optOuts)
 			.withCategory(category);
 
@@ -54,6 +57,7 @@ class OptOutSettingsEntityTest {
 
 	@Test
 	void testIdHasCorrectAnnotationsAndValues() {
+
 		final var idField = FieldUtils.getDeclaredField(SubscriptionEntity.class, "id", true);
 		assertThat(idField.getAnnotations()).hasSize(3);
 
@@ -69,6 +73,7 @@ class OptOutSettingsEntityTest {
 
 	@Test
 	void testCategoryHasCorrectAnnotationsAndValues() {
+
 		final var category = FieldUtils.getDeclaredField(OptOutSettingsEntity.class, "category", true);
 		assertThat(category.getAnnotations()).hasSize(1);
 
@@ -78,6 +83,7 @@ class OptOutSettingsEntityTest {
 
 	@Test
 	void testOptOutsHasCorrectAnnotationsAndValues() {
+
 		final var optOuts = FieldUtils.getDeclaredField(OptOutSettingsEntity.class, "optOuts", true);
 		assertThat(optOuts.getAnnotations()).hasSize(2);
 

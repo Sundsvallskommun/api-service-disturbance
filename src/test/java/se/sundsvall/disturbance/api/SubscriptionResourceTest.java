@@ -1,5 +1,6 @@
 package se.sundsvall.disturbance.api;
 
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -9,7 +10,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.List;
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.zalando.problem.Problem;
@@ -37,6 +36,9 @@ import se.sundsvall.disturbance.service.SubscriptionService;
 @ActiveProfiles("junit")
 class SubscriptionResourceTest {
 
+	private static final String PATH = "/{municipalityId}/subscriptions";
+	private static final String MUNICIPALITY_ID = "2281";
+
 	@MockBean
 	private SubscriptionService subscriptionServiceMock;
 
@@ -49,25 +51,26 @@ class SubscriptionResourceTest {
 		// Arrange
 		final var id = 1L;
 		final var request = SubscriptionCreateRequest.create()
-			.withPartyId(UUID.randomUUID().toString())
+			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
 				.withValues(Map.of("key", "value"))));
 
-		when(subscriptionServiceMock.create(any())).thenReturn(Subscription.create().withId(id));
+		when(subscriptionServiceMock.create(any(), any())).thenReturn(Subscription.create().withId(id));
 
 		// Act
-		final var response = webTestClient.post().uri("/subscriptions")
+		final var response = webTestClient.post()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
 			.expectStatus().isCreated()
-			.expectHeader().location("/subscriptions/" + id)
+			.expectHeader().location("/" + MUNICIPALITY_ID + "/subscriptions/" + id)
 			.expectBody().isEmpty();
 
 		// Assert
 		assertThat(response).isNotNull();
-		verify(subscriptionServiceMock).create(request);
+		verify(subscriptionServiceMock).create(MUNICIPALITY_ID, request);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 	}
 
@@ -77,16 +80,16 @@ class SubscriptionResourceTest {
 		// Arrange
 		final var id = 1L;
 		final var subscription = Subscription.create()
-			.withPartyId(UUID.randomUUID().toString())
+			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
 				.withValues(Map.of("key", "value"))));
 
-		when(subscriptionServiceMock.read(anyLong())).thenReturn(subscription);
+		when(subscriptionServiceMock.read(any(), anyLong())).thenReturn(subscription);
 
 		// Act
 		final var response = webTestClient.get()
-			.uri(builder -> builder.path("subscriptions/{id}").build(Map.of("id", id)))
+			.uri(builder -> builder.path(PATH + "/{id}").build(Map.of("municipalityId", MUNICIPALITY_ID, "id", id)))
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().contentType(APPLICATION_JSON)
@@ -96,7 +99,7 @@ class SubscriptionResourceTest {
 
 		// Assert
 		assertThat(response).isNotNull();
-		verify(subscriptionServiceMock).read(id);
+		verify(subscriptionServiceMock).read(MUNICIPALITY_ID, id);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 	}
 
@@ -106,17 +109,18 @@ class SubscriptionResourceTest {
 		// Arrange
 		final var partyId = UUID.randomUUID().toString();
 		final var subscription = Subscription.create()
-			.withPartyId(UUID.randomUUID().toString())
+			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
 				.withValues(Map.of("key", "value"))));
 
-		when(subscriptionServiceMock.findByPartyId(any())).thenReturn(subscription);
+		when(subscriptionServiceMock.findByMunicipalityIdAndPartyId(any(), any())).thenReturn(subscription);
 
 		// Act
 		final var response = webTestClient.get()
-			.uri(builder -> builder.path("/subscriptions")
-				.queryParam("partyId", partyId).build())
+			.uri(builder -> builder.path(PATH)
+				.queryParam("partyId", partyId)
+				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().contentType(APPLICATION_JSON)
@@ -126,7 +130,7 @@ class SubscriptionResourceTest {
 
 		// Assert
 		assertThat(response).isNotNull();
-		verify(subscriptionServiceMock).findByPartyId(partyId);
+		verify(subscriptionServiceMock).findByMunicipalityIdAndPartyId(MUNICIPALITY_ID, partyId);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 	}
 
@@ -140,15 +144,16 @@ class SubscriptionResourceTest {
 
 		final var subscription = Subscription.create()
 			.withId(id)
-			.withPartyId(UUID.randomUUID().toString())
+			.withPartyId(randomUUID().toString())
 			.withOptOutSettings(List.of(OptOutSetting.create()
 				.withCategory(Category.ELECTRICITY)
 				.withValues(Map.of("key", "value"))));
 
-		when(subscriptionServiceMock.update(anyLong(), any())).thenReturn(subscription);
+		when(subscriptionServiceMock.update(any(), anyLong(), any())).thenReturn(subscription);
 
 		// Act
-		final var response = webTestClient.put().uri("/subscriptions/{id}", id)
+		final var response = webTestClient.put()
+			.uri(builder -> builder.path(PATH + "/{id}").build(Map.of("municipalityId", MUNICIPALITY_ID, "id", id)))
 			.contentType(APPLICATION_JSON)
 			.bodyValue(subscriptionUpdateRequest)
 			.exchange()
@@ -160,7 +165,7 @@ class SubscriptionResourceTest {
 
 		// Assert
 		assertThat(response).isNotNull();
-		verify(subscriptionServiceMock).update(id, subscriptionUpdateRequest);
+		verify(subscriptionServiceMock).update(MUNICIPALITY_ID, id, subscriptionUpdateRequest);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 	}
 
@@ -170,11 +175,11 @@ class SubscriptionResourceTest {
 		// Arrange
 		final var id = 1L;
 
-		doNothing().when(subscriptionServiceMock).delete(anyLong());
+		doNothing().when(subscriptionServiceMock).delete(any(), anyLong());
 
 		// Act
 		final var response = webTestClient.delete()
-			.uri(builder -> builder.path("subscriptions/{id}").build(Map.of("id", id)))
+			.uri(builder -> builder.path(PATH + "/{id}").build(Map.of("municipalityId", MUNICIPALITY_ID, "id", id)))
 			.exchange()
 			.expectStatus().isNoContent()
 			.expectBodyList(Subscription.class)
@@ -183,7 +188,7 @@ class SubscriptionResourceTest {
 
 		// Assert
 		assertThat(response).isNotNull();
-		verify(subscriptionServiceMock).delete(id);
+		verify(subscriptionServiceMock).delete(MUNICIPALITY_ID, id);
 		verifyNoMoreInteractions(subscriptionServiceMock);
 	}
 }

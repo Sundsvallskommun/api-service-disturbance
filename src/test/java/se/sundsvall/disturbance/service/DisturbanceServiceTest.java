@@ -19,7 +19,6 @@ import static org.zalando.problem.Status.NOT_FOUND;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDisturbanceEntity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +48,8 @@ import se.sundsvall.disturbance.service.message.SendMessageLogic;
 @ExtendWith(MockitoExtension.class)
 class DisturbanceServiceTest {
 
+	private static final String MUNICIPALITY_ID = "2281";
+
 	@Mock
 	private DisturbanceRepository disturbanceRepositoryMock;
 
@@ -62,50 +63,50 @@ class DisturbanceServiceTest {
 	private ArgumentCaptor<DisturbanceEntity> disturbanceEntityCaptor;
 
 	@Test
-	void findByDisturbanceIdAndCategorySuccess() {
+	void findByMunicipalityIdAndCategoryAndDisturbanceId() {
 
 		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 		final var status = Status.OPEN;
 
-		final var disturbanceEntity = new DisturbanceEntity();
-		disturbanceEntity.setDisturbanceId(disturbanceId);
-		disturbanceEntity.setCategory(category);
-		disturbanceEntity.setStatus(status);
+		final var disturbanceEntity = DisturbanceEntity.create()
+			.withDisturbanceId(disturbanceId)
+			.withCategory(category)
+			.withStatus(status);
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Optional.of(disturbanceEntity));
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(disturbanceEntity));
 
 		// Act
-		final var disturbance = disturbanceService.findByCategoryAndDisturbanceId(category, disturbanceId);
+		final var disturbance = disturbanceService.findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 
 		// Assert
 		assertThat(disturbance).isNotNull();
 		assertThat(disturbance.getCategory()).isEqualByComparingTo(Category.COMMUNICATION);
 		assertThat(disturbance.getId()).isEqualTo(disturbanceId);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
 
 	@Test
-	void findByDisturbanceIdAndCategoryNotFound() {
+	void findByMunicipalityIdAndCategoryAndDisturbanceIdNotFound() {
 
 		// Arrange
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "12345";
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(empty());
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(empty());
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.findByCategoryAndDisturbanceId(category, disturbanceId));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId));
 
 		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'12345'!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -126,18 +127,18 @@ class DisturbanceServiceTest {
 				Affected.create().withPartyId("partyId-2").withReference("reference-2"),
 				Affected.create().withPartyId("partyId-3").withReference("reference-3")));
 
-		final var disturbanceEntity = toDisturbanceEntity(disturbanceCreateRequest);
+		final var disturbanceEntity = toDisturbanceEntity(MUNICIPALITY_ID, disturbanceCreateRequest);
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(disturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(empty());
+		when(disturbanceRepositoryMock.save(any())).thenReturn(disturbanceEntity);
 
 		// Act
-		final var disturbance = disturbanceService.createDisturbance(disturbanceCreateRequest);
+		final var disturbance = disturbanceService.createDisturbance(MUNICIPALITY_ID, disturbanceCreateRequest);
 
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verify(sendMessageLogicMock).sendCreateMessageToAllApplicableAffecteds(disturbanceEntity);
 
@@ -155,6 +156,7 @@ class DisturbanceServiceTest {
 		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(disturbanceCreateRequest.getCategory());
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
+		assertThat(disturbanceEntityCaptorValue.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 		assertThat(disturbanceEntityCaptorValue.getPlannedStartDate()).isEqualTo(disturbanceCreateRequest.getPlannedStartDate());
 		assertThat(disturbanceEntityCaptorValue.getPlannedStopDate()).isEqualTo(disturbanceCreateRequest.getPlannedStopDate());
 		assertThat(disturbanceEntityCaptorValue.getStatus()).isEqualTo(disturbanceCreateRequest.getStatus());
@@ -177,18 +179,18 @@ class DisturbanceServiceTest {
 				Affected.create().withPartyId("partyId-2").withReference("reference-2"),
 				Affected.create().withPartyId("partyId-3").withReference("reference-3")));
 
-		final var disturbanceEntity = toDisturbanceEntity(disturbanceCreateRequest);
+		final var disturbanceEntity = toDisturbanceEntity(MUNICIPALITY_ID, disturbanceCreateRequest);
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(disturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(empty());
+		when(disturbanceRepositoryMock.save(any())).thenReturn(disturbanceEntity);
 
 		// Act
-		final var disturbance = disturbanceService.createDisturbance(disturbanceCreateRequest);
+		final var disturbance = disturbanceService.createDisturbance(MUNICIPALITY_ID, disturbanceCreateRequest);
 
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock); // No interactions here if status is CLOSED.
@@ -202,6 +204,7 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
+		assertThat(disturbanceEntityCaptorValue.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(disturbanceCreateRequest.getCategory());
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
@@ -226,18 +229,18 @@ class DisturbanceServiceTest {
 				Affected.create().withPartyId("partyId-2").withReference("reference-2"),
 				Affected.create().withPartyId("partyId-3").withReference("reference-3")));
 
-		final var disturbanceEntity = toDisturbanceEntity(disturbanceCreateRequest);
+		final var disturbanceEntity = toDisturbanceEntity(MUNICIPALITY_ID, disturbanceCreateRequest);
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(disturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(empty());
+		when(disturbanceRepositoryMock.save(any())).thenReturn(disturbanceEntity);
 
 		// Act
-		final var disturbance = disturbanceService.createDisturbance(disturbanceCreateRequest);
+		final var disturbance = disturbanceService.createDisturbance(MUNICIPALITY_ID, disturbanceCreateRequest);
 
 		// Assert
 		assertThat(disturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
@@ -253,6 +256,7 @@ class DisturbanceServiceTest {
 				tuple("partyId-1", "reference-1"),
 				tuple("partyId-2", "reference-2"),
 				tuple("partyId-3", "reference-3"));
+		assertThat(disturbanceEntityCaptorValue.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 		assertThat(disturbanceEntityCaptorValue.getCategory()).isEqualTo(disturbanceCreateRequest.getCategory());
 		assertThat(disturbanceEntityCaptorValue.getDescription()).isEqualTo(disturbanceCreateRequest.getDescription());
 		assertThat(disturbanceEntityCaptorValue.getDisturbanceId()).isEqualTo(disturbanceCreateRequest.getId());
@@ -278,16 +282,16 @@ class DisturbanceServiceTest {
 				Affected.create().withPartyId("partyId-2").withReference("reference-2"),
 				Affected.create().withPartyId("partyId-3").withReference("reference-3")));
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(new DisturbanceEntity()));
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(DisturbanceEntity.create()));
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.createDisturbance(disturbanceCreateRequest));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.createDisturbance(MUNICIPALITY_ID, disturbanceCreateRequest));
 
 		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Conflict: A disturbance with category:'COMMUNICATION' and id:'id' already exists!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, disturbanceCreateRequest.getCategory(), disturbanceCreateRequest.getId());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -300,10 +304,10 @@ class DisturbanceServiceTest {
 		final var partyId = "partyId";
 		final var statusFilter = List.of(Status.OPEN);
 
-		when(disturbanceRepositoryMock.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter)).thenReturn(createDisturbanceEntities());
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(any(), any(), any(), any())).thenReturn(createDisturbanceEntities());
 
 		// Act
-		final var disturbances = disturbanceService.findByPartyIdAndCategoryAndStatus(partyId, categoryFilter, statusFilter);
+		final var disturbances = disturbanceService.findByMunicipalityIdAndPartyIdAndCategoryAndStatus(MUNICIPALITY_ID, partyId, categoryFilter, statusFilter);
 
 		// Assert
 		assertThat(disturbances).isNotNull();
@@ -314,7 +318,7 @@ class DisturbanceServiceTest {
 		assertThat(disturbances.get(1).getId()).isEqualTo("disturbanceId2");
 		assertThat(disturbances.get(1).getStatus()).isEqualByComparingTo(Status.OPEN);
 
-		verify(disturbanceRepositoryMock).findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, partyId, categoryFilter, statusFilter);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -327,15 +331,15 @@ class DisturbanceServiceTest {
 		final var partyId = "partyId";
 		final var statusFilter = List.of(Status.OPEN);
 
-		when(disturbanceRepositoryMock.findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter)).thenReturn(emptyList());
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(any(), any(), any(), any())).thenReturn(emptyList());
 
 		// Act
-		final var disturbances = disturbanceService.findByPartyIdAndCategoryAndStatus(partyId, categoryFilter, statusFilter);
+		final var disturbances = disturbanceService.findByMunicipalityIdAndPartyIdAndCategoryAndStatus(MUNICIPALITY_ID, partyId, categoryFilter, statusFilter);
 
 		// Assert
 		assertThat(disturbances).isNotNull().isEmpty();
 
-		verify(disturbanceRepositoryMock).findByAffectedEntitiesPartyIdAndCategoryInAndStatusIn(partyId, categoryFilter, statusFilter);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, partyId, categoryFilter, statusFilter);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -348,21 +352,18 @@ class DisturbanceServiceTest {
 		final var disturbanceId = "12345";
 		final var status = Status.OPEN;
 
-		final var disturbanceEntity = new DisturbanceEntity();
-		disturbanceEntity.setDisturbanceId(disturbanceId);
-		disturbanceEntity.setCategory(category);
-		disturbanceEntity.setStatus(status);
+		final var disturbanceEntity = DisturbanceEntity.create()
+			.withDisturbanceId(disturbanceId)
+			.withCategory(category)
+			.withStatus(status);
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(Optional.of(disturbanceEntity));
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(disturbanceEntity));
 
 		// Act
-		disturbanceService.deleteDisturbance(category, disturbanceId);
-
-		final var updatedDisturbanceEntity = disturbanceEntity;
-		updatedDisturbanceEntity.setDeleted(true);
+		disturbanceService.deleteDisturbance(MUNICIPALITY_ID, category, disturbanceId);
 
 		// Assert
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
 		verifyNoInteractions(sendMessageLogicMock);
@@ -382,16 +383,16 @@ class DisturbanceServiceTest {
 		final var category = Category.COMMUNICATION;
 		final var disturbanceId = "disturbanceId";
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(category, disturbanceId)).thenReturn(empty());
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(empty());
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.deleteDisturbance(category, disturbanceId));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.deleteDisturbance(MUNICIPALITY_ID, category, disturbanceId));
 
 		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'disturbanceId'!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -410,45 +411,45 @@ class DisturbanceServiceTest {
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withStatus(se.sundsvall.disturbance.api.model.Status.CLOSED);
 
-		final var e1 = new AffectedEntity();
-		e1.setPartyId("partyId-1");
-		e1.setReference("reference-1");
-		e1.setFacilityId("facilityId-1");
-		e1.setCoordinates("coordinate-1");
+		final var e1 = AffectedEntity.create()
+			.withPartyId("partyId-1")
+			.withReference("reference-1")
+			.withFacilityId("facilityId-1")
+			.withCoordinates("coordinate-1");
 
-		final var e2 = new AffectedEntity();
-		e2.setPartyId("partyId-2");
-		e2.setReference("reference-2");
-		e2.setFacilityId("facilityId-2");
-		e2.setCoordinates("coordinate-2");
+		final var e2 = AffectedEntity.create()
+			.withPartyId("partyId-2")
+			.withReference("reference-2")
+			.withFacilityId("facilityId-2")
+			.withCoordinates("coordinate-2");
 
-		final var e3 = new AffectedEntity();
-		e3.setPartyId("partyId-3");
-		e3.setReference("reference-3");
-		e3.setFacilityId("facilityId-3");
-		e3.setCoordinates("coordinate-3");
+		final var e3 = AffectedEntity.create()
+			.withPartyId("partyId-3")
+			.withReference("reference-3")
+			.withFacilityId("facilityId-3")
+			.withCoordinates("coordinate-3");
 
-		final var existingDisturbanceEntity = new DisturbanceEntity();
-		existingDisturbanceEntity.setCategory(category);
-		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(Status.OPEN);
-		existingDisturbanceEntity.setTitle(title);
-		existingDisturbanceEntity.setDescription(description);
-		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
-		existingDisturbanceEntity.setPlannedStopDate(plannedStopDate);
-		existingDisturbanceEntity.setAffectedEntities(List.of(e1, e2, e3));
+		final var existingDisturbanceEntity = DisturbanceEntity.create()
+			.withCategory(category)
+			.withDisturbanceId(disturbanceId)
+			.withStatus(Status.OPEN)
+			.withTitle(title)
+			.withDescription(description)
+			.withPlannedStartDate(plannedStartDate)
+			.withPlannedStopDate(plannedStopDate)
+			.withAffectedEntities(List.of(e1, e2, e3));
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(existingDisturbanceEntity));
+		when(disturbanceRepositoryMock.save(any())).thenReturn(existingDisturbanceEntity);
 
 		// Act
-		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
+		final var updatedDisturbance = disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest);
 
 		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendCloseMessageToAllApplicableAffecteds(existingDisturbanceEntity);
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
 
@@ -488,45 +489,45 @@ class DisturbanceServiceTest {
 				Affected.create().withPartyId("partyId-2").withReference("reference-2").withFacilityId("facilityId-2").withCoordinates("coordinate-2"),
 				Affected.create().withPartyId("partyId-3").withReference("reference-3").withFacilityId("facilityId-3").withCoordinates("coordinate-3")));
 
-		final var e1 = new AffectedEntity();
-		e1.setPartyId("partyId-1");
-		e1.setReference("reference-1");
-		e1.setFacilityId("facilityId-1");
-		e1.setCoordinates("coordinate-1");
+		final var e1 = AffectedEntity.create()
+			.withPartyId("partyId-1")
+			.withReference("reference-1")
+			.withFacilityId("facilityId-1")
+			.withCoordinates("coordinate-1");
 
-		final var e2 = new AffectedEntity();
-		e2.setPartyId("partyId-2");
-		e2.setReference("reference-2");
-		e2.setFacilityId("facilityId-2");
-		e2.setCoordinates("coordinate-2");
+		final var e2 = AffectedEntity.create()
+			.withPartyId("partyId-2")
+			.withReference("reference-2")
+			.withFacilityId("facilityId-2")
+			.withCoordinates("coordinate-2");
 
-		final var e3 = new AffectedEntity();
-		e3.setPartyId("partyId-3");
-		e3.setReference("reference-3");
-		e3.setFacilityId("facilityId-3");
-		e3.setCoordinates("coordinate-3");
+		final var e3 = AffectedEntity.create()
+			.withPartyId("partyId-3")
+			.withReference("reference-3")
+			.withFacilityId("facilityId-3")
+			.withCoordinates("coordinate-3");
 
-		final var existingDisturbanceEntity = new DisturbanceEntity();
-		existingDisturbanceEntity.setCategory(category);
-		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(status);
-		existingDisturbanceEntity.setTitle(title);
-		existingDisturbanceEntity.setDescription(description);
-		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
-		existingDisturbanceEntity.setPlannedStopDate(plannedStopDate);
-		existingDisturbanceEntity.setAffectedEntities(new ArrayList<>(List.of(e1, e2, e3)));
+		final var existingDisturbanceEntity = DisturbanceEntity.create()
+			.withCategory(category)
+			.withDisturbanceId(disturbanceId)
+			.withStatus(status)
+			.withTitle(title)
+			.withDescription(description)
+			.withPlannedStartDate(plannedStartDate)
+			.withPlannedStopDate(plannedStopDate)
+			.withAffectedEntities(List.of(e1, e2, e3));
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(existingDisturbanceEntity));
+		when(disturbanceRepositoryMock.save(any())).thenReturn(existingDisturbanceEntity);
 
 		// Act
-		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
+		final var updatedDisturbance = disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest);
 
 		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendCloseMessageToProvidedApplicableAffecteds(existingDisturbanceEntity, List.of(e1));
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
 
@@ -572,52 +573,52 @@ class DisturbanceServiceTest {
 				Affected.create().withPartyId("partyId-3").withReference("reference-3").withFacilityId("facilityId-3").withCoordinates("coordinate-3"),
 				Affected.create().withPartyId("partyId-4").withReference("reference-4").withFacilityId("facilityId-4").withCoordinates("coordinate-4")));
 
-		final var e1 = new AffectedEntity();
-		e1.setPartyId("partyId-1");
-		e1.setReference("reference-1");
-		e1.setFacilityId("facilityId-1");
-		e1.setCoordinates("coordinate-1");
+		final var e1 = AffectedEntity.create()
+			.withPartyId("partyId-1")
+			.withReference("reference-1")
+			.withFacilityId("facilityId-1")
+			.withCoordinates("coordinate-1");
 
-		final var e2 = new AffectedEntity();
-		e2.setPartyId("partyId-2");
-		e2.setReference("reference-2");
-		e2.setFacilityId("facilityId-2");
-		e2.setCoordinates("coordinate-2");
+		final var e2 = AffectedEntity.create()
+			.withPartyId("partyId-2")
+			.withReference("reference-2")
+			.withFacilityId("facilityId-2")
+			.withCoordinates("coordinate-2");
 
-		final var e3 = new AffectedEntity();
-		e3.setPartyId("partyId-3");
-		e3.setReference("reference-3");
-		e3.setFacilityId("facilityId-3");
-		e3.setCoordinates("coordinate-3");
+		final var e3 = AffectedEntity.create()
+			.withPartyId("partyId-3")
+			.withReference("reference-3")
+			.withFacilityId("facilityId-3")
+			.withCoordinates("coordinate-3");
 
-		final var e4 = new AffectedEntity();
-		e4.setPartyId("partyId-4");
-		e4.setReference("reference-4");
-		e4.setFacilityId("facilityId-4");
-		e4.setCoordinates("coordinate-4");
+		final var e4 = AffectedEntity.create()
+			.withPartyId("partyId-4")
+			.withReference("reference-4")
+			.withFacilityId("facilityId-4")
+			.withCoordinates("coordinate-4");
 
-		final var existingDisturbanceEntity = new DisturbanceEntity();
-		existingDisturbanceEntity.setCategory(category);
-		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(status);
-		existingDisturbanceEntity.setTitle(existingTitle);
-		existingDisturbanceEntity.setDescription(existingDescription);
-		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
-		existingDisturbanceEntity.setPlannedStopDate(existingPlannedStopDate);
-		existingDisturbanceEntity.setAffectedEntities(new ArrayList<>(List.of(e1, e2, e3)));
+		final var existingDisturbanceEntity = DisturbanceEntity.create()
+			.withCategory(category)
+			.withDisturbanceId(disturbanceId)
+			.withStatus(status)
+			.withTitle(existingTitle)
+			.withDescription(existingDescription)
+			.withPlannedStartDate(plannedStartDate)
+			.withPlannedStopDate(existingPlannedStopDate)
+			.withAffectedEntities(List.of(e1, e2, e3));
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(existingDisturbanceEntity));
+		when(disturbanceRepositoryMock.save(any())).thenReturn(existingDisturbanceEntity);
 
 		// Act
-		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
+		final var updatedDisturbance = disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest);
 
 		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendUpdateMessage(disturbanceEntityCaptor.capture());
 		verify(sendMessageLogicMock).sendCreateMessageToProvidedApplicableAffecteds(disturbanceEntityCaptor.capture(), eq(List.of(e4)));
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 
 		// Loop through the captor values (for sendMessageLogicMock and disturbanceRepositoryMock).
@@ -649,16 +650,16 @@ class DisturbanceServiceTest {
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withStatus(se.sundsvall.disturbance.api.model.Status.CLOSED);
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(empty());
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(empty());
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest));
 
 		// Assert
 		assertThat(throwableProblem.getMessage()).isEqualTo("Not Found: No disturbance found for category:'COMMUNICATION' and id:'12345'!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(NOT_FOUND);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -672,22 +673,22 @@ class DisturbanceServiceTest {
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withDescription("Test");
 
-		final var existingDisturbanceEntity = new DisturbanceEntity();
-		existingDisturbanceEntity.setCategory(category);
-		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(Status.CLOSED);
+		final var existingDisturbanceEntity = DisturbanceEntity.create()
+			.withCategory(category)
+			.withDisturbanceId(disturbanceId)
+			.withStatus(Status.CLOSED);
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(existingDisturbanceEntity));
 
 		// Act
-		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest));
+		final var throwableProblem = assertThrows(ThrowableProblem.class, () -> disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest));
 
 		// Assert
 		assertThat(throwableProblem.getMessage())
 			.isEqualTo("Conflict: The disturbance with category:'COMMUNICATION' and id:'12345' is closed! No updates are allowed on closed disturbances!");
 		assertThat(throwableProblem.getStatus()).isEqualTo(CONFLICT);
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock);
 	}
@@ -712,44 +713,44 @@ class DisturbanceServiceTest {
 			.withDescription(newDescription)
 			.withPlannedStopDate(newPlannedStopDate);
 
-		final var e1 = new AffectedEntity();
-		e1.setPartyId("partyId-1");
-		e1.setReference("reference-1");
-		e1.setFacilityId("facilityId-1");
-		e1.setCoordinates("coordinate-1");
+		final var e1 = AffectedEntity.create()
+			.withPartyId("partyId-1")
+			.withReference("reference-1")
+			.withFacilityId("facilityId-1")
+			.withCoordinates("coordinate-1");
 
-		final var e2 = new AffectedEntity();
-		e2.setPartyId("partyId-2");
-		e2.setReference("reference-2");
-		e2.setFacilityId("facilityId-2");
-		e2.setCoordinates("coordinate-2");
+		final var e2 = AffectedEntity.create()
+			.withPartyId("partyId-2")
+			.withReference("reference-2")
+			.withFacilityId("facilityId-2")
+			.withCoordinates("coordinate-2");
 
-		final var e3 = new AffectedEntity();
-		e3.setPartyId("partyId-3");
-		e3.setReference("reference-3");
-		e3.setFacilityId("facilityId-3");
-		e3.setCoordinates("coordinate-3");
+		final var e3 = AffectedEntity.create()
+			.withPartyId("partyId-3")
+			.withReference("reference-3")
+			.withFacilityId("facilityId-3")
+			.withCoordinates("coordinate-3");
 
-		final var existingDisturbanceEntity = new DisturbanceEntity();
-		existingDisturbanceEntity.setCategory(category);
-		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(status);
-		existingDisturbanceEntity.setTitle(existingTitle);
-		existingDisturbanceEntity.setDescription(existingDescription);
-		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
-		existingDisturbanceEntity.setPlannedStopDate(existingPlannedStopDate);
-		existingDisturbanceEntity.setAffectedEntities(new ArrayList<>(List.of(e1, e2, e3)));
+		final var existingDisturbanceEntity = DisturbanceEntity.create()
+			.withCategory(category)
+			.withDisturbanceId(disturbanceId)
+			.withStatus(status)
+			.withTitle(existingTitle)
+			.withDescription(existingDescription)
+			.withPlannedStartDate(plannedStartDate)
+			.withPlannedStopDate(existingPlannedStopDate)
+			.withAffectedEntities(List.of(e1, e2, e3));
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(existingDisturbanceEntity));
+		when(disturbanceRepositoryMock.save(any())).thenReturn(existingDisturbanceEntity);
 
 		// Act
-		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
+		final var updatedDisturbance = disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest);
 
 		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock);
 		verifyNoInteractions(sendMessageLogicMock); // No messages sent if status is PLANNED.
@@ -790,45 +791,45 @@ class DisturbanceServiceTest {
 		final var disturbanceUpdateRequest = DisturbanceUpdateRequest.create()
 			.withStatus(newStatus);
 
-		final var e1 = new AffectedEntity();
-		e1.setPartyId("partyId-1");
-		e1.setReference("reference-1");
-		e1.setFacilityId("facilityId-1");
-		e1.setCoordinates("coordinate-1");
+		final var e1 = AffectedEntity.create()
+			.withPartyId("partyId-1")
+			.withReference("reference-1")
+			.withFacilityId("facilityId-1")
+			.withCoordinates("coordinate-1");
 
-		final var e2 = new AffectedEntity();
-		e2.setPartyId("partyId-2");
-		e2.setReference("reference-2");
-		e2.setFacilityId("facilityId-2");
-		e2.setCoordinates("coordinate-2");
+		final var e2 = AffectedEntity.create()
+			.withPartyId("partyId-2")
+			.withReference("reference-2")
+			.withFacilityId("facilityId-2")
+			.withCoordinates("coordinate-2");
 
-		final var e3 = new AffectedEntity();
-		e3.setPartyId("partyId-3");
-		e3.setReference("reference-3");
-		e3.setFacilityId("facilityId-3");
-		e3.setCoordinates("coordinate-3");
+		final var e3 = AffectedEntity.create()
+			.withPartyId("partyId-3")
+			.withReference("reference-3")
+			.withFacilityId("facilityId-3")
+			.withCoordinates("coordinate-3");
 
-		final var existingDisturbanceEntity = new DisturbanceEntity();
-		existingDisturbanceEntity.setCategory(category);
-		existingDisturbanceEntity.setDisturbanceId(disturbanceId);
-		existingDisturbanceEntity.setStatus(existingStatus);
-		existingDisturbanceEntity.setTitle(existingTitle);
-		existingDisturbanceEntity.setDescription(existingDescription);
-		existingDisturbanceEntity.setPlannedStartDate(plannedStartDate);
-		existingDisturbanceEntity.setPlannedStopDate(existingPlannedStopDate);
-		existingDisturbanceEntity.setAffectedEntities(new ArrayList<>(List.of(e1, e2, e3)));
+		final var existingDisturbanceEntity = DisturbanceEntity.create()
+			.withCategory(category)
+			.withDisturbanceId(disturbanceId)
+			.withStatus(existingStatus)
+			.withTitle(existingTitle)
+			.withDescription(existingDescription)
+			.withPlannedStartDate(plannedStartDate)
+			.withPlannedStopDate(existingPlannedStopDate)
+			.withAffectedEntities(List.of(e1, e2, e3));
 
-		when(disturbanceRepositoryMock.findByCategoryAndDisturbanceId(any(Category.class), any(String.class))).thenReturn(Optional.of(existingDisturbanceEntity));
-		when(disturbanceRepositoryMock.save(any(DisturbanceEntity.class))).thenReturn(existingDisturbanceEntity);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(existingDisturbanceEntity));
+		when(disturbanceRepositoryMock.save(any())).thenReturn(existingDisturbanceEntity);
 
 		// Act
-		final var updatedDisturbance = disturbanceService.updateDisturbance(category, disturbanceId, disturbanceUpdateRequest);
+		final var updatedDisturbance = disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest);
 
 		// Assert
 		assertThat(updatedDisturbance).isNotNull();
 
 		verify(sendMessageLogicMock).sendCreateMessageToAllApplicableAffecteds(disturbanceEntityCaptor.capture()); // New message is sent when status goes from PLANNED -> OPEN.
-		verify(disturbanceRepositoryMock).findByCategoryAndDisturbanceId(category, disturbanceId);
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 		verifyNoMoreInteractions(disturbanceRepositoryMock, sendMessageLogicMock);
 
@@ -858,29 +859,27 @@ class DisturbanceServiceTest {
 		@Mock List<DisturbanceEntity> disturbanceEntitiesMock,
 		@Mock List<Disturbance> disturbancesMock) {
 
-		when(disturbanceRepositoryMock.findByStatusAndCategory(any(), any())).thenReturn(disturbanceEntitiesMock);
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndStatusAndCategory(any(), any(), any())).thenReturn(disturbanceEntitiesMock);
 		try (MockedStatic<DisturbanceMapper> disturbanceMapperMock = Mockito.mockStatic(DisturbanceMapper.class)) {
 			disturbanceMapperMock.when(() -> DisturbanceMapper.toDisturbances(any())).thenReturn(disturbancesMock);
 
-			final var result = disturbanceService.findByStatusAndCategory(statusFilterMock, categoryFilterMock);
+			final var result = disturbanceService.findByMunicipalityIdAndStatusAndCategory(MUNICIPALITY_ID, statusFilterMock, categoryFilterMock);
 
-			verify(disturbanceRepositoryMock).findByStatusAndCategory(same(statusFilterMock), same(categoryFilterMock));
+			verify(disturbanceRepositoryMock).findByMunicipalityIdAndStatusAndCategory(eq(MUNICIPALITY_ID), same(statusFilterMock), same(categoryFilterMock));
 			disturbanceMapperMock.verify(() -> DisturbanceMapper.toDisturbances(same(disturbanceEntitiesMock)));
 			assertThat(result).isSameAs(disturbancesMock);
 		}
 	}
 
 	private List<DisturbanceEntity> createDisturbanceEntities() {
-		final var disturbanceEntity1 = new DisturbanceEntity();
-		disturbanceEntity1.setDisturbanceId("disturbanceId1");
-		disturbanceEntity1.setCategory(Category.COMMUNICATION);
-		disturbanceEntity1.setStatus(Status.OPEN);
-
-		final var disturbanceEntity2 = new DisturbanceEntity();
-		disturbanceEntity2.setDisturbanceId("disturbanceId2");
-		disturbanceEntity2.setCategory(Category.COMMUNICATION);
-		disturbanceEntity2.setStatus(Status.OPEN);
-
-		return List.of(disturbanceEntity1, disturbanceEntity2);
+		return List.of(
+			DisturbanceEntity.create()
+				.withDisturbanceId("disturbanceId1")
+				.withCategory(Category.COMMUNICATION)
+				.withStatus(Status.OPEN),
+			DisturbanceEntity.create()
+				.withDisturbanceId("disturbanceId2")
+				.withCategory(Category.COMMUNICATION)
+				.withStatus(Status.OPEN));
 	}
 }

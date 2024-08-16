@@ -33,7 +33,7 @@ class SchemaVerificationTest {
 		final var generatedSchema = Files.readString(Path.of(generatedSchemaFile));
 
 		assertThat(generatedSchema)
-			.as(String.format("Please reflect modifications to entities in file: %s", STORED_SCHEMA_FILE))
+			.as("Please reflect modifications to entities in file: %s".formatted(STORED_SCHEMA_FILE))
 			.isEqualToNormalizingWhitespace(storedSchema);
 	}
 

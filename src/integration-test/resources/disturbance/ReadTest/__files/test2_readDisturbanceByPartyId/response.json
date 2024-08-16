@@ -1,6 +1,7 @@
 [
 	{
 		"id": "disturbance-3",
+		"municipalityId": "2281",
 		"category": "ELECTRICITY",
 		"title": "Title",
 		"description": "Description",
@@ -18,6 +19,7 @@
 	},
 	{
 		"id": "disturbance-4",
+		"municipalityId": "2281",
 		"category": "COMMUNICATION",
 		"title": "Title",
 		"description": "Description",

@@ -35,11 +35,15 @@ public interface DisturbanceSpecification {
 	}
 
 	static Specification<DisturbanceEntity> withPartyId(String partyId) {
-		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.join(DisturbanceEntity_.AFFECTED_ENTITIES).get(AffectedEntity_.PARTY_ID), partyId);
+		return (disturbanceEntity, cq, cb) -> cb.equal(disturbanceEntity.join(DisturbanceEntity_.AFFECTED_ENTITIES).get(AffectedEntity_.PARTY_ID), partyId);
+	}
+
+	static Specification<DisturbanceEntity> withMunicipalityId(String municipalityId) {
+		return (disturbanceEntity, cq, cb) -> cb.equal(disturbanceEntity.get(DisturbanceEntity_.MUNICIPALITY_ID), municipalityId);
 	}
 
 	static Specification<DisturbanceEntity> withDisturbanceId(String disturbanceId) {
-		return (disturbanceEntity, cq, cb) -> cb.like(disturbanceEntity.get(DisturbanceEntity_.DISTURBANCE_ID), disturbanceId);
+		return (disturbanceEntity, cq, cb) -> cb.equal(disturbanceEntity.get(DisturbanceEntity_.DISTURBANCE_ID), disturbanceId);
 	}
 
 	static Specification<DisturbanceEntity> withCategory(Category category) {
