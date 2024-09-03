@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>6.0.0</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<version>6.0.1</version>
+		<relativePath />
+		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
 	<artifactId>api-service-disturbance</artifactId>
@@ -26,7 +26,7 @@
 			<groupId>se.sundsvall.dept44</groupId>
 			<artifactId>dept44-starter-feign</artifactId>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>se.sundsvall.dept44</groupId>
 			<artifactId>dept44-common-validators</artifactId>
 		</dependency>
@@ -41,8 +41,8 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-collections4</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
 			<version>${commons-collections.version}</version>
 		</dependency>
 		<dependency>
@@ -99,8 +99,8 @@
 				<configuration>
 					<excludes>
 						<exclude>**/se/sundsvall/disturbance/Application*</exclude>
-						<exclude>**/generated/se/sundsvall/**/*</exclude> <!-- API model classes -->
-						<exclude>**/*Entity_*</exclude> <!-- JPAModelGen classes -->
+						<exclude>**/generated/se/sundsvall/**/*</exclude>						<!-- API model classes -->
+						<exclude>**/*Entity_*</exclude>						<!-- JPAModelGen classes -->
 					</excludes>
 				</configuration>
 			</plugin>
@@ -147,8 +147,8 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${generated-sources-path}/models</source> <!-- API model classes -->
-								<source>${generated-sources-path}/annotations</source> <!-- JPAModelGen classes -->
+								<source>${generated-sources-path}/models</source>								<!-- API model classes -->
+								<source>${generated-sources-path}/annotations</source>								<!-- JPAModelGen classes -->
 							</sources>
 						</configuration>
 					</execution>
