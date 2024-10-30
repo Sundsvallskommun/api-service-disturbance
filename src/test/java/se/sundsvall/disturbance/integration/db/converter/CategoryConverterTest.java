@@ -15,7 +15,9 @@ class CategoryConverterTest {
 	private final CategoryConverter categoryConverter = new CategoryConverter();
 
 	@ParameterizedTest
-	@EnumSource(value = Category.class, names = {"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
+	@EnumSource(value = Category.class, names = {
+		"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"
+	})
 	void testConvertToDatabaseColumn(Category category) {
 		final var communication = categoryConverter.convertToDatabaseColumn(category);
 		assertThat(communication).isNotNull();
@@ -28,7 +30,9 @@ class CategoryConverterTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"})
+	@ValueSource(strings = {
+		"COMMUNICATION", "DISTRICT_COOLING", "DISTRICT_HEATING", "ELECTRICITY", "ELECTRICITY_TRADE", "WASTE_MANAGEMENT", "WATER"
+	})
 	void testConvertToEntityAttribute(String category) {
 		final var communication = categoryConverter.convertToEntityAttribute(category);
 		assertThat(communication).isNotNull();

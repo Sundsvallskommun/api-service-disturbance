@@ -25,9 +25,9 @@ public class MappingUtils {
 	 *
 	 * Result: This method will return [<ELEMENT-2>]
 	 *
-	 * @param oldDisturbanceEntity the old DisturbanceEntity.
-	 * @param newDisturbanceEntity the new DisturbanceEntity.
-	 * @return Returns the difference (removed elements) from oldDisturbanceEntity.
+	 * @param  oldDisturbanceEntity the old DisturbanceEntity.
+	 * @param  newDisturbanceEntity the new DisturbanceEntity.
+	 * @return                      Returns the difference (removed elements) from oldDisturbanceEntity.
 	 */
 	public static List<AffectedEntity> getRemovedAffectedEntities(final DisturbanceEntity oldDisturbanceEntity, final DisturbanceEntity newDisturbanceEntity) {
 		// If affectedEntities in newDisturbanceEntity isn't set (i.e. is null), just return an empty list.
@@ -50,9 +50,9 @@ public class MappingUtils {
 	 *
 	 * Result: This method will return [<ELEMENT-4>]
 	 *
-	 * @param oldDisturbanceEntity the old DisturbanceEntity.
-	 * @param newDisturbanceEntity the new DisturbanceEntity.
-	 * @return Returns the added elements from newDisturbanceEntity.
+	 * @param  oldDisturbanceEntity the old DisturbanceEntity.
+	 * @param  newDisturbanceEntity the new DisturbanceEntity.
+	 * @return                      Returns the added elements from newDisturbanceEntity.
 	 */
 	public static List<AffectedEntity> getAddedAffectedEntities(final DisturbanceEntity oldDisturbanceEntity, final DisturbanceEntity newDisturbanceEntity) {
 		if (isNull(oldDisturbanceEntity) || isNull(oldDisturbanceEntity.getAffectedEntities())) {

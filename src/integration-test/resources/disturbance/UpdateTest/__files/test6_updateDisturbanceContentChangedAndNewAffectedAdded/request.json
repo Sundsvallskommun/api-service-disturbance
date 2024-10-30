@@ -2,16 +2,16 @@
 	"description": "Description updated.",
 	"affecteds": [
 		{
-			"partyId": "b6d929c8-fac3-4ac6-8b15-d255bad864df",
 			"reference": "Streetname 11",
 			"facilityId": "facility-11",
-			"coordinates": "coordinate-11"
+			"coordinates": "coordinate-11",
+			"partyId": "b6d929c8-fac3-4ac6-8b15-d255bad864df"
 		},
 		{
-			"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3",
 			"reference": "Streetname 22",
 			"facilityId": "facility-22",
-			"coordinates": "coordinate-22"
+			"coordinates": "coordinate-22",
+			"partyId": "44f40c52-f550-4fee-860d-eda9c591d6a3"
 		}
 	]
 }

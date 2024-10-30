@@ -60,8 +60,10 @@ public class OptOutSetting {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		final var that = (OptOutSetting) o;
 		return Objects.equals(category, that.category) && Objects.equals(values, that.values);
 	}
@@ -69,8 +71,8 @@ public class OptOutSetting {
 	@Override
 	public String toString() {
 		return "OptOutSetting{" +
-				"category='" + category + '\'' +
-				", values=" + values +
-				'}';
+			"category='" + category + '\'' +
+			", values=" + values +
+			'}';
 	}
 }

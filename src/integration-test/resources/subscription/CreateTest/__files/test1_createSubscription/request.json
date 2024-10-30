@@ -1,11 +1,7 @@
 {
-	"partyId": "728be31b-fb94-403d-89f0-5a39890508cc",
-	"optOutSettings": [
-		{
-			"category": "ELECTRICITY",
-			"values": {
-				"facilityId": "123456"
-			}
-		}
-	]
+	"optOutSettings": [{
+		"values": {"facilityId": "123456"},
+		"category": "ELECTRICITY"
+	}],
+	"partyId": "728be31b-fb94-403d-89f0-5a39890508cc"
 }
