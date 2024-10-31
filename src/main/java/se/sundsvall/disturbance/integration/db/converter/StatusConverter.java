@@ -10,7 +10,7 @@ public class StatusConverter implements AttributeConverter<Status, String> {
 
 	@Override
 	public String convertToDatabaseColumn(Status attribute) {
-		if(attribute == null) {
+		if (attribute == null) {
 			return null;
 		} else {
 			return attribute.toString();

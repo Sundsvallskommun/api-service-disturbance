@@ -10,7 +10,7 @@ public class CategoryConverter implements AttributeConverter<Category, String> {
 
 	@Override
 	public String convertToDatabaseColumn(Category attribute) {
-		if(attribute == null) {
+		if (attribute == null) {
 			return null;
 		} else {
 			return attribute.toString();

@@ -22,6 +22,8 @@ public interface MessagingClient {
 	 * @param  messageRequest with a list of messages.
 	 * @return                a MessageResult
 	 */
-	@PostMapping(path = "/{municipalityId}/messages?async=true", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE }, consumes = APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/{municipalityId}/messages?async=true", produces = {
+		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
+	}, consumes = APPLICATION_JSON_VALUE)
 	MessageResult sendMessage(@PathVariable("municipalityId") String municipalityId, MessageRequest messageRequest);
 }

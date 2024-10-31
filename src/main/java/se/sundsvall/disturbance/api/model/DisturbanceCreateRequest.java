@@ -162,18 +162,21 @@ public class DisturbanceCreateRequest {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		DisturbanceCreateRequest that = (DisturbanceCreateRequest) o;
-		return Objects.equals(id, that.id) && category == that.category && Objects.equals(title, that.title) && Objects.equals(description, that.description) && status == that.status && Objects.equals(plannedStartDate, that.plannedStartDate) && Objects.equals(plannedStopDate, that.plannedStopDate) && Objects.equals(affecteds, that.affecteds);
+		return Objects.equals(id, that.id) && category == that.category && Objects.equals(title, that.title) && Objects.equals(description, that.description) && status == that.status && Objects.equals(plannedStartDate, that.plannedStartDate) && Objects
+			.equals(plannedStopDate, that.plannedStopDate) && Objects.equals(affecteds, that.affecteds);
 	}
 
 	@Override
 	public String toString() {
 		final var builder = new StringBuilder();
 		builder.append("DisturbanceCreateRequest [id=").append(id).append(", category=").append(category).append(", title=").append(title).append(", description=")
-				.append(description).append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate)
-				.append(", affecteds=").append(affecteds).append("]");
+			.append(description).append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate)
+			.append(", affecteds=").append(affecteds).append("]");
 		return builder.toString();
 	}
 }

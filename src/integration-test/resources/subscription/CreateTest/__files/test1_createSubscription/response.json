@@ -1,14 +1,10 @@
 {
-	"id": 12,
+	"optOutSettings": [{
+		"values": {"facilityId": "123456"},
+		"category": "ELECTRICITY"
+	}],
 	"municipalityId": "2281",
-	"partyId": "728be31b-fb94-403d-89f0-5a39890508cc",
-	"optOutSettings": [
-		{
-			"category": "ELECTRICITY",
-			"values": {
-				"facilityId": "123456"
-			}
-		}
-	],
-	"created": "${json-unit.any-string}"
+	"created": "${json-unit.any-string}",
+	"id": 12,
+	"partyId": "728be31b-fb94-403d-89f0-5a39890508cc"
 }

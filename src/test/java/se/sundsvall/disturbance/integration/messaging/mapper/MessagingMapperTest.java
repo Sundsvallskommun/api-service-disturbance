@@ -82,9 +82,9 @@ class MessagingMapperTest {
 		final var filters = MessagingMapper.toFilters(Category.WATER, "facilityId");
 
 		assertThat(filters)
-				.containsExactlyInAnyOrderEntriesOf(Map.ofEntries(
-						entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
-						entry(Filter.FACILITY_ID.toString(), List.of("facilityId")),
-						entry(Filter.CATEGORY.toString(), List.of(Category.WATER.toString()))));
+			.containsExactlyInAnyOrderEntriesOf(Map.ofEntries(
+				entry(Filter.TYPE.toString(), List.of(ISSUE_TYPE)),
+				entry(Filter.FACILITY_ID.toString(), List.of("facilityId")),
+				entry(Filter.CATEGORY.toString(), List.of(Category.WATER.toString()))));
 	}
 }

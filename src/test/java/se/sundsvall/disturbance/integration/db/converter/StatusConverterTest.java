@@ -15,7 +15,9 @@ class StatusConverterTest {
 	private final StatusConverter statusConverter = new StatusConverter();
 
 	@ParameterizedTest
-	@EnumSource(value = Status.class, names = {"OPEN", "CLOSED", "PLANNED"})
+	@EnumSource(value = Status.class, names = {
+		"OPEN", "CLOSED", "PLANNED"
+	})
 	void testConvertToDatabaseColumn(Status status) {
 		final var communication = statusConverter.convertToDatabaseColumn(status);
 		assertThat(communication).isNotNull();
@@ -28,7 +30,9 @@ class StatusConverterTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"OPEN", "CLOSED", "PLANNED"})
+	@ValueSource(strings = {
+		"OPEN", "CLOSED", "PLANNED"
+	})
 	void testConvertToEntityAttribute(String status) {
 		final var communication = statusConverter.convertToEntityAttribute(status);
 		assertThat(communication).isNotNull();

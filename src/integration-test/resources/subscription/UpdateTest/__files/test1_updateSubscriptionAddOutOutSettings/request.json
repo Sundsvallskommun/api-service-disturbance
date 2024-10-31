@@ -1,22 +1,14 @@
-{
-	"optOutSettings": [
-		{
-			"category": "ELECTRICITY",
-			"values": {
-				"facilityId": "123456"
-			}
-		},
-		{
-			"category": "ELECTRICITY",
-			"values": {
-				"facilityId": "123456"
-			}
-		},
-		{
-			"category": "COMMUNICATION",
-			"values": {
-				"facilityId": "connectionPoint-123"
-			}
-		}
-	]
-}
+{"optOutSettings": [
+	{
+		"values": {"facilityId": "123456"},
+		"category": "ELECTRICITY"
+	},
+	{
+		"values": {"facilityId": "123456"},
+		"category": "ELECTRICITY"
+	},
+	{
+		"values": {"facilityId": "connectionPoint-123"},
+		"category": "COMMUNICATION"
+	}
+]}

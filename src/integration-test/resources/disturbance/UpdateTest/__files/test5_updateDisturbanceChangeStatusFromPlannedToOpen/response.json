@@ -1,31 +1,31 @@
 {
-	"id": "disturbance-12",
 	"municipalityId": "2281",
-	"category": "ELECTRICITY",
-	"description": "Description",
-	"affecteds": [
-		{
-			"partyId": "00000001-0000-1000-8000-00805f9b34fb",
-			"reference": "Streetname 11",
-			"facilityId": "facility-11",
-			"coordinates": "coordinate-11"
-		},
-		{
-			"partyId": "00000002-0000-1000-8000-00805f9b34fb",
-			"reference": "Streetname 22",
-			"facilityId": "facility-22",
-			"coordinates": "coordinate-22"
-		},
-		{
-			"partyId": "00000003-0000-1000-8000-00805f9b34fb",
-			"reference": "Streetname 33",
-			"facilityId": "facility-33",
-			"coordinates": "coordinate-33"
-		}
-	],
 	"plannedStartDate": "2021-12-31T11:30:45+01:00",
 	"plannedStopDate": "2022-01-11T11:30:45+01:00",
-	"status": "OPEN",
+	"description": "Description",
+	"id": "disturbance-12",
+	"affecteds": [
+		{
+			"reference": "Streetname 11",
+			"facilityId": "facility-11",
+			"coordinates": "coordinate-11",
+			"partyId": "00000001-0000-1000-8000-00805f9b34fb"
+		},
+		{
+			"reference": "Streetname 22",
+			"facilityId": "facility-22",
+			"coordinates": "coordinate-22",
+			"partyId": "00000002-0000-1000-8000-00805f9b34fb"
+		},
+		{
+			"reference": "Streetname 33",
+			"facilityId": "facility-33",
+			"coordinates": "coordinate-33",
+			"partyId": "00000003-0000-1000-8000-00805f9b34fb"
+		}
+	],
+	"category": "ELECTRICITY",
 	"title": "Title",
-	"updated": "${json-unit.any-string}"
+	"updated": "${json-unit.any-string}",
+	"status": "OPEN"
 }
