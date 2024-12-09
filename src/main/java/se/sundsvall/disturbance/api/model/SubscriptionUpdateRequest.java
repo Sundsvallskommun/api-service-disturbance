@@ -1,10 +1,9 @@
 package se.sundsvall.disturbance.api.model;
 
-import java.util.List;
-import java.util.Objects;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Objects;
 
 @Schema(description = "Subscription update request model")
 public class SubscriptionUpdateRequest {

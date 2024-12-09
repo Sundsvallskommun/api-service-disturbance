@@ -6,15 +6,6 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Optional.ofNullable;
 import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.hibernate.annotations.TimeZoneStorage;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +18,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import org.hibernate.annotations.TimeZoneStorage;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 

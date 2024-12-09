@@ -1,5 +1,17 @@
 package se.sundsvall.disturbance.api;
 
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
+import static org.zalando.problem.Status.BAD_REQUEST;
+
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,19 +28,6 @@ import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
 import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.service.DisturbanceService;
-
-import java.util.List;
-import java.util.Map;
-
-import static java.util.UUID.randomUUID;
-import static org.apache.commons.lang3.StringUtils.repeat;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
-import static org.zalando.problem.Status.BAD_REQUEST;
 
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")

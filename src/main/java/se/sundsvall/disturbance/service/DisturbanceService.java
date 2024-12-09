@@ -19,13 +19,11 @@ import static se.sundsvall.disturbance.service.util.MappingUtils.getAddedAffecte
 import static se.sundsvall.disturbance.service.util.MappingUtils.getRemovedAffectedEntities;
 
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zalando.problem.Problem;
-
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
 import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;

@@ -13,20 +13,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Random;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Random;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class SubscriptionEntityTest {
 

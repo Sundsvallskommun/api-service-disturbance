@@ -1,53 +1,81 @@
 {
 	"request": {
 		"method": "POST",
-		"queryParameters": {"async": {"equalTo": "true"}},
-		"bodyPatterns": [{"equalToJson": {"messages": [
+		"queryParameters": {
+			"async": {
+				"equalTo": "true"
+			}
+		},
+		"bodyPatterns": [
 			{
-				"sender": {
-					"sms": {"name": "[TEST] ServaNet"},
-					"email": {
-						"address": "test@sundsvall.se",
-						"name": "[TEST] ServaNet"
-					}
-				},
-				"subject": "[TEST] Driftstörning på Streetname 111",
-				"filters": {
-					"facilityId": ["facility-11"],
-					"category": ["COMMUNICATION"],
-					"type": ["DISTURBANCE"]
-				},
-				"message": "[TEST] Hej! Just nu har vi en driftstörning i fibernätet på Streetname 111 som vi felsöker. Hälsningar, ServaNet",
-				"party": {
-					"externalReferences": [],
-					"partyId": "fbfbd90c-4c47-11ec-81d3-0242ac130003"
-				}
-			},
-			{
-				"sender": {
-					"sms": {"name": "[TEST] ServaNet"},
-					"email": {
-						"address": "test@sundsvall.se",
-						"name": "[TEST] ServaNet"
-					}
-				},
-				"subject": "[TEST] Driftstörning på Streetname 333",
-				"filters": {
-					"facilityId": ["facility-33"],
-					"category": ["COMMUNICATION"],
-					"type": ["DISTURBANCE"]
-				},
-				"message": "[TEST] Hej! Just nu har vi en driftstörning i fibernätet på Streetname 333 som vi felsöker. Hälsningar, ServaNet",
-				"party": {
-					"externalReferences": [],
-					"partyId": "257f6aa0-4c48-11ec-81d3-0242ac130003"
+				"equalToJson": {
+					"messages": [
+						{
+							"sender": {
+								"sms": {
+									"name": "[TEST] ServaNet"
+								},
+								"email": {
+									"address": "test@sundsvall.se",
+									"name": "[TEST] ServaNet"
+								}
+							},
+							"subject": "[TEST] Driftstörning på Streetname 111",
+							"filters": {
+								"facilityId": [
+									"facility-11"
+								],
+								"category": [
+									"COMMUNICATION"
+								],
+								"type": [
+									"DISTURBANCE"
+								]
+							},
+							"message": "[TEST] Hej! Just nu har vi en driftstörning i fibernätet på Streetname 111 som vi felsöker. Hälsningar, ServaNet",
+							"party": {
+								"externalReferences": [],
+								"partyId": "fbfbd90c-4c47-11ec-81d3-0242ac130003"
+							}
+						},
+						{
+							"sender": {
+								"sms": {
+									"name": "[TEST] ServaNet"
+								},
+								"email": {
+									"address": "test@sundsvall.se",
+									"name": "[TEST] ServaNet"
+								}
+							},
+							"subject": "[TEST] Driftstörning på Streetname 333",
+							"filters": {
+								"facilityId": [
+									"facility-33"
+								],
+								"category": [
+									"COMMUNICATION"
+								],
+								"type": [
+									"DISTURBANCE"
+								]
+							},
+							"message": "[TEST] Hej! Just nu har vi en driftstörning i fibernätet på Streetname 333 som vi felsöker. Hälsningar, ServaNet",
+							"party": {
+								"externalReferences": [],
+								"partyId": "257f6aa0-4c48-11ec-81d3-0242ac130003"
+							}
+						}
+					]
 				}
 			}
-		]}}],
+		],
 		"urlPath": "/api-messaging/2281/messages"
 	},
 	"response": {
-		"headers": {"Content-Type": "application/json"},
+		"headers": {
+			"Content-Type": "application/json"
+		},
 		"bodyFileName": "test2_createDisturbanceWhenSubscriptionExists/mocking/api-messaging-messages-response.json",
 		"status": 200
 	},

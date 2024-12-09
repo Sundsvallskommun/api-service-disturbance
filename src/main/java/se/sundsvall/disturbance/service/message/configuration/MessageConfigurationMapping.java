@@ -1,7 +1,6 @@
 package se.sundsvall.disturbance.service.message.configuration;
 
 import java.util.Map;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

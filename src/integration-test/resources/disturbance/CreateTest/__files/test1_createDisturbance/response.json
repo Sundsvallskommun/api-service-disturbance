@@ -5,12 +5,14 @@
 	"plannedStopDate": "2021-01-14T09:09:00+01:00",
 	"description": "Major disturbance in city",
 	"id": "disturbance-1",
-	"affecteds": [{
-		"reference": "Streetname 123",
-		"facilityId": "facility-123",
-		"coordinates": "coordinate-123",
-		"partyId": "81471222-5798-11e9-ae24-57fa13b361e1"
-	}],
+	"affecteds": [
+		{
+			"reference": "Streetname 123",
+			"facilityId": "facility-123",
+			"coordinates": "coordinate-123",
+			"partyId": "81471222-5798-11e9-ae24-57fa13b361e1"
+		}
+	],
 	"category": "COMMUNICATION",
 	"title": "Disturbance",
 	"status": "OPEN"

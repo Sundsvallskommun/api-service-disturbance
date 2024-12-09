@@ -17,11 +17,9 @@ import static se.sundsvall.disturbance.service.mapper.SubscriptionMapper.toUpdat
 
 import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zalando.problem.Problem;
-
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Subscription;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;

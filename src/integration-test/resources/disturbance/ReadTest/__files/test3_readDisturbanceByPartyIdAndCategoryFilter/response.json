@@ -1,16 +1,20 @@
-[{
-	"municipalityId": "2281",
-	"plannedStartDate": "2021-12-31T11:30:45+01:00",
-	"plannedStopDate": "2022-01-11T11:30:45+01:00",
-	"description": "Description",
-	"id": "disturbance-4",
-	"affecteds": [{
-		"reference": "Streetname 11",
-		"facilityId": "facility-11",
-		"coordinates": "coordinate-11",
-		"partyId": "c76ae496-3aed-11ec-8d3d-0242ac130003"
-	}],
-	"category": "COMMUNICATION",
-	"title": "Title",
-	"status": "CLOSED"
-}]
+[
+	{
+		"municipalityId": "2281",
+		"plannedStartDate": "2021-12-31T11:30:45+01:00",
+		"plannedStopDate": "2022-01-11T11:30:45+01:00",
+		"description": "Description",
+		"id": "disturbance-4",
+		"affecteds": [
+			{
+				"reference": "Streetname 11",
+				"facilityId": "facility-11",
+				"coordinates": "coordinate-11",
+				"partyId": "c76ae496-3aed-11ec-8d3d-0242ac130003"
+			}
+		],
+		"category": "COMMUNICATION",
+		"title": "Title",
+		"status": "CLOSED"
+	}
+]

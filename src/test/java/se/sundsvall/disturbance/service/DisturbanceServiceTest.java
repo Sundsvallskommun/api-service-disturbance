@@ -21,7 +21,6 @@ import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDistur
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -32,7 +31,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.zalando.problem.ThrowableProblem;
-
 import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;

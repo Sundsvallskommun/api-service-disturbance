@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
 import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Category;
 
