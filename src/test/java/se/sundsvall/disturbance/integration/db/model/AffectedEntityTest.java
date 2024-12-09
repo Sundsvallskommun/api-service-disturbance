@@ -10,7 +10,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
 
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 
 class AffectedEntityTest {

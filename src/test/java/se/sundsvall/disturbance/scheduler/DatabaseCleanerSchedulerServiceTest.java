@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import static se.sundsvall.disturbance.api.model.Status.CLOSED;
 
 import java.time.OffsetDateTime;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,7 +18,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
 
 @ExtendWith(MockitoExtension.class)

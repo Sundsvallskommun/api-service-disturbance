@@ -11,13 +11,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.ISSUE_TYPE;
 
+import generated.se.sundsvall.messaging.Email;
+import generated.se.sundsvall.messaging.Message;
+import generated.se.sundsvall.messaging.MessageParty;
+import generated.se.sundsvall.messaging.MessageRequest;
+import generated.se.sundsvall.messaging.MessageSender;
+import generated.se.sundsvall.messaging.Sms;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,13 +31,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import generated.se.sundsvall.messaging.Email;
-import generated.se.sundsvall.messaging.Message;
-import generated.se.sundsvall.messaging.MessageParty;
-import generated.se.sundsvall.messaging.MessageRequest;
-import generated.se.sundsvall.messaging.MessageSender;
-import generated.se.sundsvall.messaging.Sms;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;

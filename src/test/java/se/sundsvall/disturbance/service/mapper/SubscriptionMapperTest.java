@@ -11,9 +11,7 @@ import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import se.sundsvall.disturbance.api.model.OptOutSetting;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;

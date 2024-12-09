@@ -3,7 +3,6 @@ package se.sundsvall.disturbance.service.message.configuration;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 
 import org.springframework.stereotype.Component;
-
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
 

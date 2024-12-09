@@ -1,9 +1,8 @@
 package se.sundsvall.disturbance.integration.db.converter;
 
-import se.sundsvall.disturbance.api.model.Status;
-
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import se.sundsvall.disturbance.api.model.Status;
 
 @Converter(autoApply = true)
 public class StatusConverter implements AttributeConverter<Status, String> {

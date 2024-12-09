@@ -9,20 +9,18 @@ import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMap
 import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toSms;
 import static se.sundsvall.disturbance.service.util.DateUtils.toMessageDateFormat;
 
+import generated.se.sundsvall.messaging.Message;
+import generated.se.sundsvall.messaging.MessageRequest;
+import generated.se.sundsvall.messaging.MessageSender;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import generated.se.sundsvall.messaging.Message;
-import generated.se.sundsvall.messaging.MessageRequest;
-import generated.se.sundsvall.messaging.MessageSender;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;

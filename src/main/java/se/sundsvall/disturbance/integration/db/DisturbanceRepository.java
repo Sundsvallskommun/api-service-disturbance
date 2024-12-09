@@ -7,15 +7,13 @@ import static se.sundsvall.disturbance.integration.db.specification.DisturbanceS
 import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withPartyId;
 import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withStatusFilter;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;

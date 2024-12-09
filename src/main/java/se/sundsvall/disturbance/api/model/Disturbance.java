@@ -2,13 +2,12 @@ package se.sundsvall.disturbance.api.model;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Objects;
-
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Schema(description = "Disturbance model")
 public class Disturbance {

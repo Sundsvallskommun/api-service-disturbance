@@ -1,8 +1,12 @@
 {
-	"optOutSettings": [{
-		"values": {"facilityId": "123456"},
-		"category": "ELECTRICITY"
-	}],
+	"optOutSettings": [
+		{
+			"values": {
+				"facilityId": "123456"
+			},
+			"category": "ELECTRICITY"
+		}
+	],
 	"municipalityId": "2281",
 	"created": "${json-unit.any-string}",
 	"id": 12,

@@ -1,11 +1,15 @@
 {
 	"optOutSettings": [
 		{
-			"values": {"facilityId": "123456"},
+			"values": {
+				"facilityId": "123456"
+			},
 			"category": "ELECTRICITY"
 		},
 		{
-			"values": {"facilityId": "connectionPoint-123"},
+			"values": {
+				"facilityId": "connectionPoint-123"
+			},
 			"category": "COMMUNICATION"
 		}
 	],

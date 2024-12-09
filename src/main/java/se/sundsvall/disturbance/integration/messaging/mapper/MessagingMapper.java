@@ -2,16 +2,15 @@ package se.sundsvall.disturbance.integration.messaging.mapper;
 
 import static java.util.Map.entry;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageParty;
 import generated.se.sundsvall.messaging.MessageSender;
 import generated.se.sundsvall.messaging.Sms;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import se.sundsvall.disturbance.api.model.Category;
 
 public class MessagingMapper {

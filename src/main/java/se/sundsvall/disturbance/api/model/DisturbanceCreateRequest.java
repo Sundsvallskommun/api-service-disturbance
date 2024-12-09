@@ -2,15 +2,14 @@ package se.sundsvall.disturbance.api.model;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Objects;
-
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Schema(description = "Disturbance create request model")
 public class DisturbanceCreateRequest {

@@ -1,9 +1,8 @@
 package se.sundsvall.disturbance.integration.db.converter;
 
-import se.sundsvall.disturbance.api.model.Category;
-
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import se.sundsvall.disturbance.api.model.Category;
 
 @Converter(autoApply = true)
 public class CategoryConverter implements AttributeConverter<Category, String> {

@@ -6,7 +6,6 @@ import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.util.List;
-
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 

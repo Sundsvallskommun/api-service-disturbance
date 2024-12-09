@@ -1,9 +1,5 @@
 package se.sundsvall.disturbance.integration.db.model;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Objects;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -15,6 +11,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Objects;
 import se.sundsvall.disturbance.api.model.Category;
 
 @Entity

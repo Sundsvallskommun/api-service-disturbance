@@ -15,7 +15,6 @@ import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.zalando.problem.Problem;
-
 import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.OptOutSetting;

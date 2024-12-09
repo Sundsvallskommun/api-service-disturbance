@@ -2,12 +2,11 @@ package se.sundsvall.disturbance.api.model;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 
 @Schema(description = "Subscription model", accessMode = READ_ONLY)
 public class Subscription {

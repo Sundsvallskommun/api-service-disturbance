@@ -9,18 +9,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
 import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Test;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Arrays;
+import java.util.HashMap;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 import se.sundsvall.disturbance.api.model.Category;
 
 class OptOutSettingsEntityTest {
