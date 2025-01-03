@@ -9,7 +9,7 @@ import java.util.List;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 
-public class MappingUtils {
+public final class MappingUtils {
 
 	private MappingUtils() {}
 

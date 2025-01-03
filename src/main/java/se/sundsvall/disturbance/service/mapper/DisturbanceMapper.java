@@ -18,7 +18,7 @@ import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.service.util.MappingUtils;
 
-public class DisturbanceMapper {
+public final class DisturbanceMapper {
 
 	private DisturbanceMapper() {}
 
