@@ -1,6 +1,6 @@
 package se.sundsvall.disturbance.service;
 
-class ServiceConstants {
+final class ServiceConstants {
 
 	private ServiceConstants() {}
 

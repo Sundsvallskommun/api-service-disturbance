@@ -45,24 +45,25 @@ import se.sundsvall.disturbance.service.DisturbanceService;
 @Validated
 @RequestMapping("/{municipalityId}/disturbances")
 @Tag(name = "Disturbance", description = "Disturbance operations")
-public class DisturbanceResource {
+class DisturbanceResource {
 
 	private final DisturbanceService disturbanceService;
 
-	public DisturbanceResource(DisturbanceService disturbanceService) {
+	DisturbanceResource(DisturbanceService disturbanceService) {
 		this.disturbanceService = disturbanceService;
 	}
 
-	@PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_PROBLEM_JSON_VALUE)
-	@Operation(summary = "Create a new disturbance.")
-	@ApiResponse(responseCode = "201", headers = @Header(name = LOCATION, description = "Location of the created resource.", schema = @Schema(type = "string")), description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
-		Problem.class, ConstraintViolationProblem.class
-	})))
-	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createDisturbance(
+	@PostMapping(consumes = APPLICATION_JSON_VALUE)
+	@Operation(summary = "Create a new disturbance.", responses = {
+		@ApiResponse(responseCode = "201", headers = @Header(name = LOCATION, description = "Location of the created resource.", schema = @Schema(type = "string")), description = "Successful operation", useReturnTypeSchema = true),
+		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+			Problem.class, ConstraintViolationProblem.class
+		}))),
+		@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
+	})
+	ResponseEntity<Void> createDisturbance(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@RequestBody @Valid final DisturbanceCreateRequest body) {
 
@@ -72,17 +73,16 @@ public class DisturbanceResource {
 			.build();
 	}
 
-	@GetMapping(produces = {
-		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
+	@GetMapping(produces = APPLICATION_JSON_VALUE)
+	@Operation(summary = "Return all disturbances filtered on status and category.", responses = {
+		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true),
+		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+			Problem.class, ConstraintViolationProblem.class
+		}))),
+		@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	})
-	@Operation(summary = "Return all disturbances filtered on status and category.")
-	@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
-		Problem.class, ConstraintViolationProblem.class
-	})))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<List<Disturbance>> getDisturbances(
+	ResponseEntity<List<Disturbance>> getDisturbances(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
 		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(value = "category", required = false) final List<Category> category) {
@@ -90,18 +90,17 @@ public class DisturbanceResource {
 		return ok(disturbanceService.findByMunicipalityIdAndStatusAndCategory(municipalityId, status, category));
 	}
 
-	@GetMapping(path = "/{category}/{disturbanceId}", produces = {
-		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
+	@GetMapping(path = "/{category}/{disturbanceId}", produces = APPLICATION_JSON_VALUE)
+	@Operation(summary = "Return information about a specific disturbance.", responses = {
+		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true),
+		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+			Problem.class, ConstraintViolationProblem.class
+		}))),
+		@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	})
-	@Operation(summary = "Return information about a specific disturbance.")
-	@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
-		Problem.class, ConstraintViolationProblem.class
-	})))
-	@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Disturbance> getDisturbance(
+	ResponseEntity<Disturbance> getDisturbance(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
 		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId) {
@@ -109,18 +108,17 @@ public class DisturbanceResource {
 		return ok(disturbanceService.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, category, disturbanceId));
 	}
 
-	@GetMapping(path = "/affecteds/{partyId}", produces = {
-		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
+	@GetMapping(path = "/affecteds/{partyId}", produces = APPLICATION_JSON_VALUE)
+	@Operation(summary = "Return all present disturbances for a person or an organization.", responses = {
+		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true),
+		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+			Problem.class, ConstraintViolationProblem.class
+		}))),
+		@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	})
-	@Operation(summary = "Return all present disturbances for a person or an organization.")
-	@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
-		Problem.class, ConstraintViolationProblem.class
-	})))
-	@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<List<Disturbance>> getDisturbancesByPartyId(
+	ResponseEntity<List<Disturbance>> getDisturbancesByPartyId(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @PathVariable(name = "partyId") final String partyId,
 		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
@@ -129,19 +127,18 @@ public class DisturbanceResource {
 		return ok(disturbanceService.findByMunicipalityIdAndPartyIdAndCategoryAndStatus(municipalityId, partyId, category, status));
 	}
 
-	@PatchMapping(path = "/{category}/{disturbanceId}", consumes = APPLICATION_JSON_VALUE, produces = {
-		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
+	@PatchMapping(path = "/{category}/{disturbanceId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	@Operation(summary = "Manage updates of a disturbance. Should be used when the set of affected persons/organizations is changed or the disturbance description is updated.", responses = {
+		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true),
+		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+			Problem.class, ConstraintViolationProblem.class
+		}))),
+		@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	})
-	@Operation(summary = "Manage updates of a disturbance. Should be used when the set of affected persons/organizations is changed or the disturbance description is updated.")
-	@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
-		Problem.class, ConstraintViolationProblem.class
-	})))
-	@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Disturbance> updateDisturbance(
+	ResponseEntity<Disturbance> updateDisturbance(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
 		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId,
@@ -150,18 +147,17 @@ public class DisturbanceResource {
 		return ok(disturbanceService.updateDisturbance(municipalityId, category, disturbanceId, body));
 	}
 
-	@DeleteMapping(path = "/{category}/{disturbanceId}", produces = {
-		APPLICATION_PROBLEM_JSON_VALUE
+	@DeleteMapping(path = "/{category}/{disturbanceId}")
+	@Operation(summary = "Delete a disturbance. Should be used when the disturbance is resolved. Any affected persons/organizations (with notification subscriptions) will be notified of the resolved disturbance.", responses = {
+		@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true),
+		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+			Problem.class, ConstraintViolationProblem.class
+		}))),
+		@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))),
+		@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	})
-	@Operation(summary = "Delete a disturbance. Should be used when the disturbance is resolved. Any affected persons/organizations (with notification subscriptions) will be notified of the resolved disturbance.")
-	@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
-		Problem.class, ConstraintViolationProblem.class
-	})))
-	@ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	@ApiResponse(responseCode = "502", description = "Bad Gateway", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> deleteDisturbance(
+	ResponseEntity<Void> deleteDisturbance(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
 		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId) {

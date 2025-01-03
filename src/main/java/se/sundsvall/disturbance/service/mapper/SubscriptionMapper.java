@@ -11,7 +11,7 @@ import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
 import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
 import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
 
-public class SubscriptionMapper {
+public final class SubscriptionMapper {
 
 	private SubscriptionMapper() {}
 

@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 import se.sundsvall.disturbance.api.model.Category;
 
-public class MessagingMapper {
+public final class MessagingMapper {
 
 	public static final String ISSUE_TYPE = "DISTURBANCE";
 
