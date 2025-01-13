@@ -17,7 +17,7 @@
 		<commons-text.version>1.13.0</commons-text.version>
 		<commons-collections.version>4.4</commons-collections.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
-		<shedlock.version>6.0.2</shedlock.version>
+		<shedlock.version>6.2.0</shedlock.version>
 	</properties>
 	<dependencies>
 		<dependency>
