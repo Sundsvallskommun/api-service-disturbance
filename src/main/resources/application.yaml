@@ -45,9 +45,11 @@ resilience4j:
 #========================================
 scheduler:
   dbcleaner:
+    name: dbcleaner
     cron: "0 0 2 * * *"
     deleteDisturbancesOlderThanMonths: 24
     shedlock-lock-at-most-for: PT10M
+    maximum-execution-time: PT10M
 
 #----------------------------------------
 # Message configuration
