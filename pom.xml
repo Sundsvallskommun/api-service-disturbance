@@ -14,7 +14,7 @@
 	<name>api-service-disturbance</name>
 	<properties>
 		<!-- Service properties -->
-		<commons-text.version>1.13.0</commons-text.version>
+		<commons-text.version>1.13.1</commons-text.version>
 		<commons-collections.version>4.4</commons-collections.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 	</properties>
