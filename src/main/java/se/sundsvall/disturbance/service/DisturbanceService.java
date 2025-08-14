@@ -2,7 +2,6 @@ package se.sundsvall.disturbance.service;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.zalando.problem.Status.CONFLICT;
 import static org.zalando.problem.Status.NOT_FOUND;
 import static se.sundsvall.disturbance.api.model.Status.CLOSED;
@@ -19,6 +18,7 @@ import static se.sundsvall.disturbance.service.util.MappingUtils.getAddedAffecte
 import static se.sundsvall.disturbance.service.util.MappingUtils.getRemovedAffectedEntities;
 
 import java.util.List;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -183,10 +183,10 @@ public class DisturbanceService {
 	 * @return           true if the content is changed, false otherwise.
 	 */
 	private boolean contentIsChanged(final DisturbanceEntity oldEntity, final DisturbanceEntity newEntity) {
-		final var contentIsChanged = (nonNull(newEntity.getDescription()) && !equalsIgnoreCase(oldEntity.getDescription(), newEntity.getDescription())) ||
-			(nonNull(newEntity.getTitle()) && !equalsIgnoreCase(oldEntity.getTitle(), newEntity.getTitle())) ||
-			(nonNull(newEntity.getPlannedStartDate()) && !equalsIgnoreCase(String.valueOf(oldEntity.getPlannedStartDate()), String.valueOf(newEntity.getPlannedStartDate()))) ||
-			(nonNull(newEntity.getPlannedStopDate()) && !equalsIgnoreCase(String.valueOf(oldEntity.getPlannedStopDate()), String.valueOf(newEntity.getPlannedStopDate()))) ||
+		final var contentIsChanged = (nonNull(newEntity.getDescription()) && !Strings.CI.equals(oldEntity.getDescription(), newEntity.getDescription())) ||
+			(nonNull(newEntity.getTitle()) && !Strings.CI.equals(oldEntity.getTitle(), newEntity.getTitle())) ||
+			(nonNull(newEntity.getPlannedStartDate()) && !Strings.CI.equals(String.valueOf(oldEntity.getPlannedStartDate()), String.valueOf(newEntity.getPlannedStartDate()))) ||
+			(nonNull(newEntity.getPlannedStopDate()) && !Strings.CI.equals(String.valueOf(oldEntity.getPlannedStopDate()), String.valueOf(newEntity.getPlannedStopDate()))) ||
 			(hasStatusOpen(newEntity) && hasStatusPlanned(oldEntity));
 
 		if (contentIsChanged) {
