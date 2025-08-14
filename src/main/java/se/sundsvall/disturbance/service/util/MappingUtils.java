@@ -3,9 +3,9 @@ package se.sundsvall.disturbance.service.util;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.util.List;
+import org.apache.commons.lang3.Strings;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 
@@ -68,8 +68,8 @@ public final class MappingUtils {
 
 	private static boolean existsInList(final AffectedEntity objectToCheck, final List<AffectedEntity> list) {
 		return ofNullable(list).orElse(emptyList()).stream()
-			.anyMatch(entity -> equalsIgnoreCase(entity.getPartyId(), objectToCheck.getPartyId()) &&
-				equalsIgnoreCase(entity.getReference(), objectToCheck.getReference()) &&
-				equalsIgnoreCase(entity.getFacilityId(), objectToCheck.getFacilityId()));
+			.anyMatch(entity -> Strings.CI.equals(entity.getPartyId(), objectToCheck.getPartyId()) &&
+				Strings.CI.equals(entity.getReference(), objectToCheck.getReference()) &&
+				Strings.CI.equals(entity.getFacilityId(), objectToCheck.getFacilityId()));
 	}
 }

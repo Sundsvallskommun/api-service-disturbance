@@ -80,7 +80,7 @@ class SubscriptionResource {
 	})
 	ResponseEntity<Subscription> findSubscription(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @RequestParam(name = "partyId") final String partyId) {
+		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @RequestParam final String partyId) {
 
 		return ok(subscriptionService.findByMunicipalityIdAndPartyId(municipalityId, partyId));
 	}
@@ -97,7 +97,7 @@ class SubscriptionResource {
 	})
 	ResponseEntity<Subscription> readSubscription(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id) {
+		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable final long id) {
 
 		return ok(subscriptionService.read(municipalityId, id));
 	}
@@ -115,7 +115,7 @@ class SubscriptionResource {
 	})
 	ResponseEntity<Subscription> updateSubscription(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id,
+		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable final long id,
 		@RequestBody @Valid final SubscriptionUpdateRequest body) {
 
 		return ok(subscriptionService.update(municipalityId, id, body));
@@ -133,7 +133,7 @@ class SubscriptionResource {
 	})
 	ResponseEntity<Void> deleteSubscription(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable(name = "id") final long id) {
+		@Parameter(name = "id", description = "Subscription ID", required = true, example = "1234") @PathVariable final long id) {
 
 		subscriptionService.delete(municipalityId, id);
 		return noContent().build();

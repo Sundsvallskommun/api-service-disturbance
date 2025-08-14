@@ -84,8 +84,8 @@ class DisturbanceResource {
 	})
 	ResponseEntity<List<Disturbance>> getDisturbances(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
-		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(value = "category", required = false) final List<Category> category) {
+		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(required = false) final List<Status> status,
+		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(required = false) final List<Category> category) {
 
 		return ok(disturbanceService.findByMunicipalityIdAndStatusAndCategory(municipalityId, status, category));
 	}
@@ -102,8 +102,8 @@ class DisturbanceResource {
 	})
 	ResponseEntity<Disturbance> getDisturbance(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
-		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId) {
+		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable final Category category,
+		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable final String disturbanceId) {
 
 		return ok(disturbanceService.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, category, disturbanceId));
 	}
@@ -120,9 +120,9 @@ class DisturbanceResource {
 	})
 	ResponseEntity<List<Disturbance>> getDisturbancesByPartyId(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @PathVariable(name = "partyId") final String partyId,
-		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(value = "status", required = false) final List<Status> status,
-		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(value = "category", required = false) final List<Category> category) {
+		@Parameter(name = "partyId", description = "PartyId (e.g. a personId or an organizationId)", required = true, example = "81471222-5798-11e9-ae24-57fa13b361e1") @ValidUuid @PathVariable final String partyId,
+		@Parameter(name = "status", description = "Status filter parameter") @RequestParam(required = false) final List<Status> status,
+		@Parameter(name = "category", description = "Category filter parameter") @RequestParam(required = false) final List<Category> category) {
 
 		return ok(disturbanceService.findByMunicipalityIdAndPartyIdAndCategoryAndStatus(municipalityId, partyId, category, status));
 	}
@@ -140,8 +140,8 @@ class DisturbanceResource {
 	})
 	ResponseEntity<Disturbance> updateDisturbance(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
-		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId,
+		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable final Category category,
+		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable final String disturbanceId,
 		@RequestBody @Valid final DisturbanceUpdateRequest body) {
 
 		return ok(disturbanceService.updateDisturbance(municipalityId, category, disturbanceId, body));
@@ -159,8 +159,8 @@ class DisturbanceResource {
 	})
 	ResponseEntity<Void> deleteDisturbance(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281", required = true) @ValidMunicipalityId @PathVariable final String municipalityId,
-		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable(name = "category") final Category category,
-		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable(name = "disturbanceId") final String disturbanceId) {
+		@Parameter(name = "category", description = "Disturbance category", required = true) @PathVariable final Category category,
+		@Parameter(name = "disturbanceId", description = "Disturbance ID", required = true, example = "435553") @PathVariable final String disturbanceId) {
 
 		disturbanceService.deleteDisturbance(municipalityId, category, disturbanceId);
 		return noContent().build();
