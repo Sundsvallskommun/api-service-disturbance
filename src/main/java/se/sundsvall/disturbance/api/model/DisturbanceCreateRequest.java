@@ -14,7 +14,7 @@ import java.util.Objects;
 @Schema(description = "Disturbance create request model")
 public class DisturbanceCreateRequest {
 
-	@Schema(description = "Disturbance ID", example = "435553", requiredMode = REQUIRED)
+	@Schema(description = "Disturbance ID", examples = "435553", requiredMode = REQUIRED)
 	@NotNull
 	@Size(max = 255)
 	private String id;
@@ -23,12 +23,12 @@ public class DisturbanceCreateRequest {
 	@NotNull
 	private Category category;
 
-	@Schema(description = "Title", example = "Disturbance", requiredMode = REQUIRED)
+	@Schema(description = "Title", examples = "Disturbance", requiredMode = REQUIRED)
 	@NotNull
 	@Size(max = 255)
 	private String title;
 
-	@Schema(description = "Description", example = "Major disturbance", requiredMode = REQUIRED)
+	@Schema(description = "Description", examples = "Major disturbance", requiredMode = REQUIRED)
 	@NotNull
 	@Size(max = 8192)
 	private String description;
@@ -172,10 +172,15 @@ public class DisturbanceCreateRequest {
 
 	@Override
 	public String toString() {
-		final var builder = new StringBuilder();
-		builder.append("DisturbanceCreateRequest [id=").append(id).append(", category=").append(category).append(", title=").append(title).append(", description=")
-			.append(description).append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate)
-			.append(", affecteds=").append(affecteds).append("]");
-		return builder.toString();
+		return "DisturbanceCreateRequest{" +
+			"id='" + id + '\'' +
+			", category=" + category +
+			", title='" + title + '\'' +
+			", description='" + description + '\'' +
+			", status=" + status +
+			", plannedStartDate=" + plannedStartDate +
+			", plannedStopDate=" + plannedStopDate +
+			", affecteds=" + affecteds +
+			'}';
 	}
 }

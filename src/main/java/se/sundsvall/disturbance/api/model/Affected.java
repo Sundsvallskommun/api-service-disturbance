@@ -11,19 +11,19 @@ import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
 @Schema(description = "Affected persons and/or organizations model")
 public class Affected {
 
-	@Schema(description = "PartyId (e.g. a personId or an organizationId)", example = "81471222-5798-11e9-ae24-57fa13b361e1", requiredMode = REQUIRED)
+	@Schema(description = "PartyId (e.g. a personId or an organizationId)", examples = "81471222-5798-11e9-ae24-57fa13b361e1", requiredMode = REQUIRED)
 	@ValidUuid
 	private String partyId;
 
-	@Schema(description = "Reference information", example = "Streetname 123")
+	@Schema(description = "Reference information", examples = "Streetname 123")
 	@NotNull
 	@Size(max = 512)
 	private String reference;
 
-	@Schema(description = "Facitlity-ID. The unique facility identifier", example = "735999109175011012")
+	@Schema(description = "Facitlity-ID. The unique facility identifier", examples = "735999109175011012")
 	private String facilityId;
 
-	@Schema(description = "The coordinates to the facility on the format:{coordinate-system}:N{north-coordinate}:E{east-coordinate}", example = "SWEREF 991715:N6919620.98828125:E152414.77734375")
+	@Schema(description = "The coordinates to the facility on the format:{coordinate-system}:N{north-coordinate}:E{east-coordinate}", examples = "SWEREF 991715:N6919620.98828125:E152414.77734375")
 	private String coordinates;
 
 	public static Affected create() {
@@ -104,8 +104,11 @@ public class Affected {
 
 	@Override
 	public String toString() {
-		final var builder = new StringBuilder();
-		builder.append("Affected [partyId=").append(partyId).append(", reference=").append(reference).append(", facilityId=").append(facilityId).append(", coordinates=").append(coordinates).append("]");
-		return builder.toString();
+		return "Affected{" +
+			"partyId='" + partyId + '\'' +
+			", reference='" + reference + '\'' +
+			", facilityId='" + facilityId + '\'' +
+			", coordinates='" + coordinates + '\'' +
+			'}';
 	}
 }

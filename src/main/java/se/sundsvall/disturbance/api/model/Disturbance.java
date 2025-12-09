@@ -12,10 +12,10 @@ import java.util.Objects;
 @Schema(description = "Disturbance model")
 public class Disturbance {
 
-	@Schema(description = "Disturbance ID", example = "435553")
+	@Schema(description = "Disturbance ID", examples = "435553")
 	private String id;
 
-	@Schema(description = "Municipality ID", example = "2281", accessMode = READ_ONLY)
+	@Schema(description = "Municipality ID", examples = "2281", accessMode = READ_ONLY)
 	private String municipalityId;
 
 	@Schema(implementation = Category.class)
@@ -26,10 +26,10 @@ public class Disturbance {
 	@NotNull
 	private Status status;
 
-	@Schema(description = "Title", example = "Disturbance")
+	@Schema(description = "Title", examples = "Disturbance")
 	private String title;
 
-	@Schema(description = "Description", example = "Major disturbance in city")
+	@Schema(description = "Description", examples = "Major disturbance in city")
 	private String description;
 
 	@Schema(description = "Planned start date for the disturbance")
@@ -201,8 +201,12 @@ public class Disturbance {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final Disturbance other)) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof final Disturbance other)) {
+			return false;
+		}
 		return Objects.equals(affecteds, other.affecteds) && (category == other.category) && Objects.equals(created, other.created) && Objects.equals(description, other.description) && Objects.equals(id, other.id) && Objects.equals(municipalityId,
 			other.municipalityId) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && (status == other.status) && Objects.equals(title, other.title) && Objects.equals(updated,
 				other.updated);
@@ -210,9 +214,18 @@ public class Disturbance {
 
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Disturbance [id=").append(id).append(", municipalityId=").append(municipalityId).append(", category=").append(category).append(", status=").append(status).append(", title=").append(title).append(", description=").append(description)
-			.append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate).append(", created=").append(created).append(", updated=").append(updated).append(", affecteds=").append(affecteds).append("]");
-		return builder.toString();
+		return "Disturbance{" +
+			"id='" + id + '\'' +
+			", municipalityId='" + municipalityId + '\'' +
+			", category=" + category +
+			", status=" + status +
+			", title='" + title + '\'' +
+			", description='" + description + '\'' +
+			", plannedStartDate=" + plannedStartDate +
+			", plannedStopDate=" + plannedStopDate +
+			", created=" + created +
+			", updated=" + updated +
+			", affecteds=" + affecteds +
+			'}';
 	}
 }
