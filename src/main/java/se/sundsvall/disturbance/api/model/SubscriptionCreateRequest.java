@@ -12,7 +12,7 @@ import se.sundsvall.dept44.common.validators.annotation.ValidUuid;
 public class SubscriptionCreateRequest {
 
 	@ValidUuid
-	@Schema(description = "PartyId (e.g. a personId or an organizationId)", example = "81471222-5798-11e9-ae24-57fa13b361e1", requiredMode = REQUIRED)
+	@Schema(description = "PartyId (e.g. a personId or an organizationId)", examples = "81471222-5798-11e9-ae24-57fa13b361e1", requiredMode = REQUIRED)
 	private String partyId;
 
 	@Schema(description = "Opt-out settings")
@@ -55,15 +55,20 @@ public class SubscriptionCreateRequest {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final SubscriptionCreateRequest other)) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof final SubscriptionCreateRequest other)) {
+			return false;
+		}
 		return Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId);
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("SubscriptionCreateRequest [partyId=").append(partyId).append(", optOutSettings=").append(optOutSettings).append("]");
-		return builder.toString();
+		return "SubscriptionCreateRequest{" +
+			"partyId='" + partyId + '\'' +
+			", optOutSettings=" + optOutSettings +
+			'}';
 	}
 }

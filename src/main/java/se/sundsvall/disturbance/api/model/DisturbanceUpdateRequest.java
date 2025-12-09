@@ -13,11 +13,11 @@ import java.util.Objects;
 @Schema(description = "Disturbance update request model")
 public class DisturbanceUpdateRequest {
 
-	@Schema(description = "Title", example = "Disturbance", requiredMode = REQUIRED)
+	@Schema(description = "Title", examples = "Disturbance", requiredMode = REQUIRED)
 	@Size(max = 255)
 	private String title;
 
-	@Schema(description = "Description", example = "Major disturbance")
+	@Schema(description = "Description", examples = "Major disturbance")
 	@Size(max = 8192)
 	private String description;
 
@@ -138,9 +138,13 @@ public class DisturbanceUpdateRequest {
 
 	@Override
 	public String toString() {
-		final var builder = new StringBuilder();
-		builder.append("DisturbanceUpdateRequest [title=").append(title).append(", description=").append(description).append(", status=").append(status)
-			.append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate).append(", affecteds=").append(affecteds).append("]");
-		return builder.toString();
+		return "DisturbanceUpdateRequest{" +
+			"title='" + title + '\'' +
+			", description='" + description + '\'' +
+			", status=" + status +
+			", plannedStartDate=" + plannedStartDate +
+			", plannedStopDate=" + plannedStopDate +
+			", affecteds=" + affecteds +
+			'}';
 	}
 }

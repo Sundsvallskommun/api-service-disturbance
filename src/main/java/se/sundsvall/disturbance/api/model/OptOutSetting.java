@@ -11,7 +11,7 @@ import java.util.Objects;
 @Schema(description = "Opt-out setting model")
 public class OptOutSetting {
 
-	@Schema(requiredMode = REQUIRED, description = "Category of the disturbance", example = "ELECTRICITY")
+	@Schema(requiredMode = REQUIRED, description = "Category of the disturbance", examples = "ELECTRICITY")
 	@NotNull
 	private Category category;
 
@@ -19,7 +19,9 @@ public class OptOutSetting {
 		Key/value pairs of opt-out values. E.g. ["facilityId" : "12345"].
 		If multiple entries are added, they will have an "and"-relation. I.e. all properties must match in order for the opt-out to be evaluated as true.""",
 		implementation = Map.class,
-		example = "{\"facilityId\": \"123456\"}")
+		examples = {
+			"facilityId", "123456"
+		})
 	private Map<@NotBlank String, @NotBlank String> values;
 
 	public static OptOutSetting create() {

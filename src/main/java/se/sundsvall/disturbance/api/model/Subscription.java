@@ -11,13 +11,13 @@ import java.util.Objects;
 @Schema(description = "Subscription model", accessMode = READ_ONLY)
 public class Subscription {
 
-	@Schema(description = "Subscription ID", example = "1234")
+	@Schema(description = "Subscription ID", examples = "1234")
 	private Long id;
 
-	@Schema(description = "Municipality ID", example = "2281", accessMode = READ_ONLY)
+	@Schema(description = "Municipality ID", examples = "2281", accessMode = READ_ONLY)
 	private String municipalityId;
 
-	@Schema(description = "PartyId (e.g. a personId or an organizationId)", example = "81471222-5798-11e9-ae24-57fa13b361e1")
+	@Schema(description = "PartyId (e.g. a personId or an organizationId)", examples = "81471222-5798-11e9-ae24-57fa13b361e1")
 	private String partyId;
 
 	@Schema(description = "Opt out settings")
@@ -118,17 +118,25 @@ public class Subscription {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final Subscription other)) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof final Subscription other)) {
+			return false;
+		}
 		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(municipalityId, other.municipalityId) && Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId) && Objects
 			.equals(updated, other.updated);
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Subscription [id=").append(id).append(", municipalityId=").append(municipalityId).append(", partyId=").append(partyId).append(", optOutSettings=").append(optOutSettings).append(", created=").append(created).append(", updated=")
-			.append(updated).append("]");
-		return builder.toString();
+		return "Subscription{" +
+			"id=" + id +
+			", municipalityId='" + municipalityId + '\'' +
+			", partyId='" + partyId + '\'' +
+			", optOutSettings=" + optOutSettings +
+			", created=" + created +
+			", updated=" + updated +
+			'}';
 	}
 }

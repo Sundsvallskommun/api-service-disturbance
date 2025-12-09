@@ -35,15 +35,19 @@ public class SubscriptionUpdateRequest {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final SubscriptionUpdateRequest other)) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof final SubscriptionUpdateRequest other)) {
+			return false;
+		}
 		return Objects.equals(optOutSettings, other.optOutSettings);
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("SubscriptionUpdateRequest [optOutSettings=").append(optOutSettings).append("]");
-		return builder.toString();
+		return "SubscriptionUpdateRequest{" +
+			"optOutSettings=" + optOutSettings +
+			'}';
 	}
 }
