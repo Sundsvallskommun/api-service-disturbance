@@ -6,7 +6,7 @@ _Handles communication regarding new, ongoing and completed disturbances in the 
 
 ### Prerequisites
 
-- **Java 21 or higher**
+- **Java 25 or higher**
 - **Maven**
 - **MariaDB**
 - **Git**
