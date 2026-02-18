@@ -1,7 +1,5 @@
 package se.sundsvall.disturbance.integration.db.specification;
 
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-
 import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import se.sundsvall.disturbance.api.model.Category;
@@ -9,6 +7,8 @@ import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity_;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity_;
+
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 public interface DisturbanceSpecification {
 

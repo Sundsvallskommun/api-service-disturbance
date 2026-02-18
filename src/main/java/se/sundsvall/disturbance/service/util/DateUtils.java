@@ -1,10 +1,10 @@
 package se.sundsvall.disturbance.service.util;
 
-import static java.util.Objects.nonNull;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+
+import static java.util.Objects.nonNull;
 
 public final class DateUtils {
 

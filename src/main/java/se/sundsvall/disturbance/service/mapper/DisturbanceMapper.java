@@ -1,10 +1,5 @@
 package se.sundsvall.disturbance.service.mapper;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static se.sundsvall.dept44.util.DateUtils.toOffsetDateTimeWithLocalOffset;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +12,11 @@ import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
 import se.sundsvall.disturbance.service.util.MappingUtils;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static se.sundsvall.dept44.util.DateUtils.toOffsetDateTimeWithLocalOffset;
 
 public final class DisturbanceMapper {
 

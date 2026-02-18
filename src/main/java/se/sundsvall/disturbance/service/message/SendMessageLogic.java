@@ -1,14 +1,5 @@
 package se.sundsvall.disturbance.service.message;
 
-import static java.lang.System.lineSeparator;
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toEmail;
-import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toFilters;
-import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toMessage;
-import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toParty;
-import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toSms;
-import static se.sundsvall.disturbance.service.util.DateUtils.toMessageDateFormat;
-
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageRequest;
 import generated.se.sundsvall.messaging.MessageSender;
@@ -28,6 +19,15 @@ import se.sundsvall.disturbance.integration.messaging.MessagingClient;
 import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
+
+import static java.lang.System.lineSeparator;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toEmail;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toFilters;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toMessage;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toParty;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.toSms;
+import static se.sundsvall.disturbance.service.util.DateUtils.toMessageDateFormat;
 
 @Component
 public class SendMessageLogic {

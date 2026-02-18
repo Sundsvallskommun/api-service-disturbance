@@ -1,9 +1,5 @@
 package se.sundsvall.disturbance.scheduler;
 
-import static java.time.OffsetDateTime.now;
-import static java.time.ZoneId.systemDefault;
-import static se.sundsvall.disturbance.api.model.Status.CLOSED;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.slf4j.Logger;
@@ -12,6 +8,10 @@ import org.springframework.stereotype.Component;
 import se.sundsvall.dept44.scheduling.Dept44Scheduled;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
+
+import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
+import static se.sundsvall.disturbance.api.model.Status.CLOSED;
 
 @Component
 public class DatabaseCleanerSchedulerService {

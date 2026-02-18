@@ -1,5 +1,17 @@
 package se.sundsvall.disturbance.service;
 
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.zalando.problem.Problem;
+import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Subscription;
+import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
+import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
+import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
+import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
+
 import static io.micrometer.common.util.StringUtils.isBlank;
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneId.systemDefault;
@@ -14,18 +26,6 @@ import static se.sundsvall.disturbance.service.ServiceConstants.ERROR_SUBSCRIPTI
 import static se.sundsvall.disturbance.service.mapper.SubscriptionMapper.toSubscription;
 import static se.sundsvall.disturbance.service.mapper.SubscriptionMapper.toSubscriptionEntity;
 import static se.sundsvall.disturbance.service.mapper.SubscriptionMapper.toUpdatedSubscriptionEntity;
-
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.zalando.problem.Problem;
-import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.api.model.Subscription;
-import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
-import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
-import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
-import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
 
 @Service
 public class SubscriptionService {

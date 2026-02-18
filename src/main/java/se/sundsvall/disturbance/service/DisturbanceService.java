@@ -1,5 +1,20 @@
 package se.sundsvall.disturbance.service;
 
+import java.util.List;
+import org.apache.commons.lang3.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.zalando.problem.Problem;
+import se.sundsvall.disturbance.api.model.Category;
+import se.sundsvall.disturbance.api.model.Disturbance;
+import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
+import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
+import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
+import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
+import se.sundsvall.disturbance.service.message.SendMessageLogic;
+
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.zalando.problem.Status.CONFLICT;
@@ -16,21 +31,6 @@ import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDistur
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toMergedDisturbanceEntity;
 import static se.sundsvall.disturbance.service.util.MappingUtils.getAddedAffectedEntities;
 import static se.sundsvall.disturbance.service.util.MappingUtils.getRemovedAffectedEntities;
-
-import java.util.List;
-import org.apache.commons.lang3.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.zalando.problem.Problem;
-import se.sundsvall.disturbance.api.model.Category;
-import se.sundsvall.disturbance.api.model.Disturbance;
-import se.sundsvall.disturbance.api.model.DisturbanceCreateRequest;
-import se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest;
-import se.sundsvall.disturbance.integration.db.DisturbanceRepository;
-import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
-import se.sundsvall.disturbance.service.message.SendMessageLogic;
 
 @Service
 public class DisturbanceService {

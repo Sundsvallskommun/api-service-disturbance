@@ -1,8 +1,5 @@
 package se.sundsvall.disturbance.service.mapper;
 
-import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-
 import java.util.List;
 import se.sundsvall.disturbance.api.model.OptOutSetting;
 import se.sundsvall.disturbance.api.model.Subscription;
@@ -10,6 +7,9 @@ import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
 import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
 import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
 import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 
 public final class SubscriptionMapper {
 
