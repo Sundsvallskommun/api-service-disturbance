@@ -1,13 +1,13 @@
 package se.sundsvall.disturbance.service.util;
 
-import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-import static java.util.Optional.ofNullable;
-
 import java.util.List;
 import org.apache.commons.lang3.Strings;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
 
 public final class MappingUtils {
 

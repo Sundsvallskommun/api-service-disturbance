@@ -1,10 +1,10 @@
 package se.sundsvall.disturbance.service.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class DateUtilsTest {
 

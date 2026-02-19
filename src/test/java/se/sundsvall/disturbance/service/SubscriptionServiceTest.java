@@ -1,18 +1,5 @@
 package se.sundsvall.disturbance.service;
 
-import static java.util.Optional.empty;
-import static java.util.UUID.randomUUID;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.zalando.problem.Status.CONFLICT;
-import static org.zalando.problem.Status.NOT_FOUND;
-import static se.sundsvall.disturbance.api.model.Category.DISTRICT_COOLING;
-import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +15,19 @@ import se.sundsvall.disturbance.api.model.SubscriptionUpdateRequest;
 import se.sundsvall.disturbance.integration.db.SubscriptionRepository;
 import se.sundsvall.disturbance.integration.db.model.OptOutSettingsEntity;
 import se.sundsvall.disturbance.integration.db.model.SubscriptionEntity;
+
+import static java.util.Optional.empty;
+import static java.util.UUID.randomUUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.zalando.problem.Status.CONFLICT;
+import static org.zalando.problem.Status.NOT_FOUND;
+import static se.sundsvall.disturbance.api.model.Category.DISTRICT_COOLING;
+import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
 @ExtendWith(MockitoExtension.class)
 class SubscriptionServiceTest {

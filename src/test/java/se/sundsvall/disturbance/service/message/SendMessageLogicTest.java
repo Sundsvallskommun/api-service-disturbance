@@ -1,16 +1,5 @@
 package se.sundsvall.disturbance.service.message;
 
-import static java.time.ZoneId.systemDefault;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.ISSUE_TYPE;
-
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.Message;
 import generated.se.sundsvall.messaging.MessageParty;
@@ -41,6 +30,17 @@ import se.sundsvall.disturbance.service.SubscriptionService;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfiguration;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping;
 import se.sundsvall.disturbance.service.message.configuration.MessageConfigurationMapping.CategoryConfig;
+
+import static java.time.ZoneId.systemDefault;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static se.sundsvall.disturbance.integration.messaging.mapper.MessagingMapper.ISSUE_TYPE;
 
 @ExtendWith(MockitoExtension.class)
 class SendMessageLogicTest {

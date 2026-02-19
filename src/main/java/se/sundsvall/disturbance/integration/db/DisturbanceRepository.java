@@ -1,12 +1,5 @@
 package se.sundsvall.disturbance.integration.db;
 
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withCategory;
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withCategoryFilter;
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withDisturbanceId;
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withMunicipalityId;
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withPartyId;
-import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withStatusFilter;
-
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -17,6 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Status;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
+
+import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withCategory;
+import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withCategoryFilter;
+import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withDisturbanceId;
+import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withMunicipalityId;
+import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withPartyId;
+import static se.sundsvall.disturbance.integration.db.specification.DisturbanceSpecification.withStatusFilter;
 
 @Transactional
 @CircuitBreaker(name = "disturbanceRepository")

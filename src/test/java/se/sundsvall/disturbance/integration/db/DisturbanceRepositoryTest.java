@@ -1,19 +1,5 @@
 package se.sundsvall.disturbance.integration.db;
 
-import static java.time.OffsetDateTime.now;
-import static java.time.ZoneId.systemDefault;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.assertj.core.api.Assertions.within;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
-import static se.sundsvall.disturbance.api.model.Category.COMMUNICATION;
-import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
-import static se.sundsvall.disturbance.api.model.Status.CLOSED;
-import static se.sundsvall.disturbance.api.model.Status.OPEN;
-import static se.sundsvall.disturbance.api.model.Status.PLANNED;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -27,6 +13,20 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import se.sundsvall.disturbance.integration.db.model.AffectedEntity;
 import se.sundsvall.disturbance.integration.db.model.DisturbanceEntity;
+
+import static java.time.OffsetDateTime.now;
+import static java.time.ZoneId.systemDefault;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.within;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
+import static se.sundsvall.disturbance.api.model.Category.COMMUNICATION;
+import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
+import static se.sundsvall.disturbance.api.model.Status.CLOSED;
+import static se.sundsvall.disturbance.api.model.Status.OPEN;
+import static se.sundsvall.disturbance.api.model.Status.PLANNED;
 
 /**
  * Disturbance repository tests.
