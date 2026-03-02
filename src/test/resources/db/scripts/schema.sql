@@ -17,10 +17,10 @@
         planned_stop_date datetime(6),
         updated datetime(6),
         description varchar(8192) not null,
-        category varchar(255) not null,
+        category varchar(255) not null check ((category in ('DISTRICT_COOLING','WASTE_MANAGEMENT','ELECTRICITY_TRADE','DISTRICT_HEATING','COMMUNICATION','ELECTRICITY','WATER'))),
         disturbance_id varchar(255) not null,
         municipality_id varchar(255) not null,
-        status varchar(255) not null,
+        status varchar(255) not null check ((status in ('CLOSED','OPEN','PLANNED'))),
         title varchar(255),
         primary key (id)
     ) engine=InnoDB;
@@ -28,7 +28,7 @@
     create table opt_out_settings (
         id bigint not null auto_increment,
         subscription_id bigint,
-        category varchar(255) not null,
+        category varchar(255) not null check ((category in ('DISTRICT_COOLING','WASTE_MANAGEMENT','ELECTRICITY_TRADE','DISTRICT_HEATING','COMMUNICATION','ELECTRICITY','WATER'))),
         primary key (id)
     ) engine=InnoDB;
 

@@ -5,12 +5,13 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.zalando.problem.Problem;
-import org.zalando.problem.violations.ConstraintViolationProblem;
-import org.zalando.problem.violations.Violation;
+import se.sundsvall.dept44.problem.Problem;
+import se.sundsvall.dept44.problem.violations.ConstraintViolationProblem;
+import se.sundsvall.dept44.problem.violations.Violation;
 import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.OptOutSetting;
 import se.sundsvall.disturbance.api.model.SubscriptionCreateRequest;
@@ -22,11 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
-import static org.zalando.problem.Status.BAD_REQUEST;
 import static se.sundsvall.disturbance.api.model.Category.ELECTRICITY;
 
+@AutoConfigureWebTestClient
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class SubscriptionResourceFailuresTest {
@@ -58,8 +60,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response).isNotNull();
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.SubscriptionResource.createSubscription(java.lang.String,se.sundsvall.disturbance.api.model.SubscriptionCreateRequest)");
+		assertThat(response.getDetail()).isEqualTo("Failed to read request");
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}
@@ -83,7 +84,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("partyId", "not a valid UUID"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -113,7 +114,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("partyId", "not a valid UUID"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -144,7 +145,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("createSubscription.municipalityId", "not a valid municipality ID"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -175,7 +176,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("optOutSettings[0].category", "must not be null"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -207,7 +208,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("optOutSettings[0].values[ ]", "must not be blank"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -239,7 +240,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("optOutSettings[0].values[facilityId]", "must not be blank"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -261,8 +262,7 @@ class SubscriptionResourceFailuresTest {
 		// Assert
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-		assertThat(response.getDetail()).isEqualTo(
-			"Required request parameter 'partyId' for method parameter type String is not present");
+		assertThat(response.getDetail()).isEqualTo("Required parameter 'partyId' is not present.");
 
 		verifyNoInteractions(subscriptionServiceMock);
 	}
@@ -289,7 +289,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("findSubscription.partyId", "not a valid UUID"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -318,7 +318,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("findSubscription.municipalityId", "not a valid municipality ID"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -349,7 +349,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("optOutSettings[0].category", "must not be null"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -381,7 +381,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("optOutSettings[0].values[ ]", "must not be blank"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -413,7 +413,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("optOutSettings[0].values[facilityId]", "must not be blank"));
 
 		verifyNoInteractions(subscriptionServiceMock);
@@ -446,7 +446,7 @@ class SubscriptionResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("updateSubscription.municipalityId", "not a valid municipality ID"));
 
 		verifyNoInteractions(subscriptionServiceMock);
