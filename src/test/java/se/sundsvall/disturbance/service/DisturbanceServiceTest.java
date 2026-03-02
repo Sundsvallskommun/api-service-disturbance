@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zalando.problem.ThrowableProblem;
+import se.sundsvall.dept44.problem.ThrowableProblem;
 import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
 import se.sundsvall.disturbance.api.model.Disturbance;
@@ -39,8 +39,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.zalando.problem.Status.CONFLICT;
-import static org.zalando.problem.Status.NOT_FOUND;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static se.sundsvall.disturbance.service.mapper.DisturbanceMapper.toDisturbanceEntity;
 
 @ExtendWith(MockitoExtension.class)

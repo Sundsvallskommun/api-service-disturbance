@@ -5,12 +5,13 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.zalando.problem.Problem;
-import org.zalando.problem.violations.ConstraintViolationProblem;
-import org.zalando.problem.violations.Violation;
+import se.sundsvall.dept44.problem.Problem;
+import se.sundsvall.dept44.problem.violations.ConstraintViolationProblem;
+import se.sundsvall.dept44.problem.violations.Violation;
 import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Affected;
 import se.sundsvall.disturbance.api.model.Category;
@@ -25,10 +26,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
-import static org.zalando.problem.Status.BAD_REQUEST;
 
+@AutoConfigureWebTestClient
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class DisturbanceResourceFailuresTest {
@@ -64,8 +66,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response).isNotNull();
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.disturbance.api.DisturbanceResource.createDisturbance(java.lang.String,se.sundsvall.disturbance.api.model.DisturbanceCreateRequest)");
+		assertThat(response.getDetail()).isEqualTo("Failed to read request");
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -89,8 +90,8 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(
+			.extracting(Violation::field, Violation::message)
+			.containsExactlyInAnyOrder(
 				tuple("category", "must not be null"),
 				tuple("description", "must not be null"),
 				tuple("id", "must not be null"),
@@ -126,7 +127,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("id", "must not be null"));
 
 		verifyNoInteractions(disturbanceServiceMock);
@@ -158,7 +159,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("category", "must not be null"));
 
 		verifyNoInteractions(disturbanceServiceMock);
@@ -195,8 +196,8 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(
+			.extracting(Violation::field, Violation::message)
+			.containsExactlyInAnyOrder(
 				tuple("affecteds[1].partyId", "not a valid UUID"),
 				tuple("affecteds[1].reference", "must not be null"));
 
@@ -233,8 +234,8 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(
+			.extracting(Violation::field, Violation::message)
+			.containsExactlyInAnyOrder(
 				tuple("affecteds[0].reference", "size must be between 0 and 512"),
 				tuple("description", "size must be between 0 and 8192"),
 				tuple("id", "size must be between 0 and 255"),
@@ -271,7 +272,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("createDisturbance.municipalityId", "not a valid municipality ID"));
 
 		verifyNoInteractions(disturbanceServiceMock);
@@ -298,7 +299,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("getDisturbancesByPartyId.partyId", "not a valid UUID"));
 
 		verifyNoInteractions(disturbanceServiceMock);
@@ -324,8 +325,7 @@ class DisturbanceResourceFailuresTest {
 		// Assert
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Method parameter 'category': Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Category] for value [invalid-category]");
+		assertThat(response.getDetail()).isEqualTo("Failed to convert 'category' with value: 'invalid-category'");
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -350,8 +350,7 @@ class DisturbanceResourceFailuresTest {
 		// Assert
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Method parameter 'status': Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Status] for value [invalid-status]");
+		assertThat(response.getDetail()).isEqualTo("Failed to convert 'status' with value: 'invalid-status'");
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -377,7 +376,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(tuple("getDisturbancesByPartyId.municipalityId", "not a valid municipality ID"));
 
 		verifyNoInteractions(disturbanceServiceMock);
@@ -408,8 +407,7 @@ class DisturbanceResourceFailuresTest {
 		// Assert
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: org.springframework.http.ResponseEntity<se.sundsvall.disturbance.api.model.Disturbance> se.sundsvall.disturbance.api.DisturbanceResource.updateDisturbance(java.lang.String,se.sundsvall.disturbance.api.model.Category,java.lang.String,se.sundsvall.disturbance.api.model.DisturbanceUpdateRequest)");
+		assertThat(response.getDetail()).isEqualTo("Failed to read request");
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -444,8 +442,8 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(
+			.extracting(Violation::field, Violation::message)
+			.containsExactlyInAnyOrder(
 				tuple("affecteds[1].partyId", "not a valid UUID"),
 				tuple("affecteds[1].reference", "must not be null"));
 
@@ -480,8 +478,8 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
-			.containsExactly(
+			.extracting(Violation::field, Violation::message)
+			.containsExactlyInAnyOrder(
 				tuple("affecteds[0].reference", "size must be between 0 and 512"),
 				tuple("description", "size must be between 0 and 8192"),
 				tuple("title", "size must be between 0 and 255"));
@@ -519,7 +517,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(
 				tuple("updateDisturbance.municipalityId", "not a valid municipality ID"));
 
@@ -545,8 +543,7 @@ class DisturbanceResourceFailuresTest {
 		// Assert
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Method parameter 'category': Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Category] for value [invalid-category]");
+		assertThat(response.getDetail()).isEqualTo("Failed to convert 'category' with value: 'invalid-category'");
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -570,8 +567,7 @@ class DisturbanceResourceFailuresTest {
 		// Assert
 		assertThat(response.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo(
-			"Method parameter 'status': Failed to convert value of type 'java.lang.String' to required type 'java.util.List'; Failed to convert from type [java.lang.String] to type [@io.swagger.v3.oas.annotations.Parameter @org.springframework.web.bind.annotation.RequestParam se.sundsvall.disturbance.api.model.Status] for value [invalid-status]");
+		assertThat(response.getDetail()).isEqualTo("Failed to convert 'status' with value: 'invalid-status'");
 
 		verifyNoInteractions(disturbanceServiceMock);
 	}
@@ -596,7 +592,7 @@ class DisturbanceResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Constraint Violation");
 		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getViolations())
-			.extracting(Violation::getField, Violation::getMessage)
+			.extracting(Violation::field, Violation::message)
 			.containsExactly(
 				tuple("getDisturbances.municipalityId", "not a valid municipality ID"));
 
