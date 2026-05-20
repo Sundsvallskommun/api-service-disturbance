@@ -269,7 +269,7 @@ public class DisturbanceEntity {
 			if (this.affectedEntities == null) {
 				this.affectedEntities = new ArrayList<>();
 			}
-			entities.stream().forEach(e -> {
+			entities.forEach(e -> {
 				e.setDisturbanceEntity(this);
 				this.affectedEntities.add(e);
 			});
@@ -279,30 +279,36 @@ public class DisturbanceEntity {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(affectedEntities, category, created, deleted, description, disturbanceId, id, municipalityId, plannedStartDate, plannedStopDate, status, title, updated);
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass())
+			return false;
+		DisturbanceEntity that = (DisturbanceEntity) o;
+		return id == that.id && deleted == that.deleted && Objects.equals(municipalityId, that.municipalityId) && Objects.equals(disturbanceId, that.disturbanceId) && category == that.category && Objects.equals(title, that.title)
+			&& Objects.equals(description, that.description) && status == that.status && Objects.equals(plannedStartDate, that.plannedStartDate) && Objects.equals(plannedStopDate, that.plannedStopDate) && Objects.equals(
+				created, that.created) && Objects.equals(updated, that.updated) && Objects.equals(affectedEntities, that.affectedEntities);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof final DisturbanceEntity other)) {
-			return false;
-		}
-		return Objects.equals(affectedEntities, other.affectedEntities) && (category == other.category) && Objects.equals(created, other.created) && (deleted == other.deleted) && Objects.equals(description, other.description) && Objects.equals(
-			disturbanceId,
-			other.disturbanceId) && (id == other.id) && Objects.equals(municipalityId, other.municipalityId) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && (status == other.status)
-			&& Objects.equals(title, other.title) && Objects.equals(updated, other.updated);
+	public int hashCode() {
+		return Objects.hash(id, municipalityId, disturbanceId, category, title, description, status, plannedStartDate, plannedStopDate, created, updated, deleted, affectedEntities);
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("DisturbanceEntity [id=").append(id).append(", municipalityId=").append(municipalityId).append(", disturbanceId=").append(disturbanceId).append(", category=").append(category).append(", title=").append(title).append(", description=")
-			.append(description).append(", status=").append(status).append(", plannedStartDate=").append(plannedStartDate).append(", plannedStopDate=").append(plannedStopDate).append(", created=").append(created).append(", updated=").append(updated)
-			.append(", deleted=").append(deleted).append(", affectedEntities=").append(affectedEntities).append("]");
-		return builder.toString();
+		return "DisturbanceEntity{" +
+			"id=" + id +
+			", municipalityId='" + municipalityId + '\'' +
+			", disturbanceId='" + disturbanceId + '\'' +
+			", category=" + category +
+			", title='" + title + '\'' +
+			", description='" + description + '\'' +
+			", status=" + status +
+			", plannedStartDate=" + plannedStartDate +
+			", plannedStopDate=" + plannedStopDate +
+			", created=" + created +
+			", updated=" + updated +
+			", deleted=" + deleted +
+			", affectedEntities=" + affectedEntities +
+			'}';
 	}
 }
