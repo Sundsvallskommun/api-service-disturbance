@@ -12,7 +12,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,7 @@ import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 		@Index(name = "municipality_id_index", columnList = "municipality_id"),
 		@Index(name = "category_index", columnList = "category")
 	})
-public class DisturbanceEntity implements Serializable {
-
-	private static final long serialVersionUID = -4882470746578837725L;
+public class DisturbanceEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -288,8 +285,12 @@ public class DisturbanceEntity implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final DisturbanceEntity other)) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof final DisturbanceEntity other)) {
+			return false;
+		}
 		return Objects.equals(affectedEntities, other.affectedEntities) && (category == other.category) && Objects.equals(created, other.created) && (deleted == other.deleted) && Objects.equals(description, other.description) && Objects.equals(
 			disturbanceId,
 			other.disturbanceId) && (id == other.id) && Objects.equals(municipalityId, other.municipalityId) && Objects.equals(plannedStartDate, other.plannedStartDate) && Objects.equals(plannedStopDate, other.plannedStopDate) && (status == other.status)

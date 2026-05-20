@@ -7,7 +7,7 @@ info:
     url: https://opensource.org/licenses/MIT
   version: "5.0"
 servers:
-  - url: http://localhost:57259
+  - url: http://localhost:64258
     description: Generated server url
 tags:
   - name: Disturbance
@@ -602,7 +602,9 @@ paths:
     get:
       tags:
         - Disturbance
-      summary: Return all present disturbances for a person or an organization.
+      summary: Return all present disturbances for a person or an organization. The
+        'affected' list in each returned disturbance is filtered to only contain entries
+        matching the provided partyId.
       operationId: getDisturbancesByPartyId
       parameters:
         - name: municipalityId
@@ -691,16 +693,16 @@ components:
     Problem:
       type: object
       properties:
-        title:
-          type: string
-        detail:
-          type: string
         instance:
           type: string
           format: uri
         type:
           type: string
           format: uri
+        title:
+          type: string
+        detail:
+          type: string
         status:
           type: integer
           format: int32
@@ -719,13 +721,13 @@ components:
             $ref: "#/components/schemas/Violation"
         title:
           type: string
-        causeAsProblem:
-          $ref: "#/components/schemas/ThrowableProblem"
-        detail:
-          type: string
         instance:
           type: string
           format: uri
+        detail:
+          type: string
+        causeAsProblem:
+          $ref: "#/components/schemas/ThrowableProblem"
     ThrowableProblem:
       type: object
       properties:

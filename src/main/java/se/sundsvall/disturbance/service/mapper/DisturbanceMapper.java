@@ -23,6 +23,10 @@ public final class DisturbanceMapper {
 	private DisturbanceMapper() {}
 
 	public static Disturbance toDisturbance(final DisturbanceEntity disturbanceEntity) {
+		return toDisturbance(disturbanceEntity, null);
+	}
+
+	public static Disturbance toDisturbance(final DisturbanceEntity disturbanceEntity, final String partyIdFilter) {
 		return Disturbance.create()
 			.withMunicipalityId(disturbanceEntity.getMunicipalityId())
 			.withCategory(disturbanceEntity.getCategory())
@@ -30,7 +34,7 @@ public final class DisturbanceMapper {
 			.withDescription(disturbanceEntity.getDescription())
 			.withId(disturbanceEntity.getDisturbanceId())
 			.withDescription(disturbanceEntity.getDescription())
-			.withAffecteds(toAffecteds(disturbanceEntity.getAffectedEntities()))
+			.withAffecteds(toAffected(disturbanceEntity.getAffectedEntities(), partyIdFilter))
 			.withStatus(disturbanceEntity.getStatus())
 			.withCreated(disturbanceEntity.getCreated())
 			.withPlannedStartDate(disturbanceEntity.getPlannedStartDate())
@@ -64,7 +68,7 @@ public final class DisturbanceMapper {
 	}
 
 	/**
-	 * Merge all new values from "newEntity" the the "oldEntity". Values are only used (copied) if they are not null.
+	 * Merge all new values from "newEntity" the "oldEntity". Values are only used (copied) if they are not null.
 	 *
 	 * @param  oldEntity the old entity.
 	 * @param  newEntity the new (changed) entity.
@@ -81,7 +85,7 @@ public final class DisturbanceMapper {
 				oldEntity.getAffectedEntities().removeAll(removedAffectedEntities);
 			}
 
-			// Remove new affectedEntities that isn't new (i.e. added).
+			// Remove new affectedEntities that isn't new (i.e., added).
 			newEntity.getAffectedEntities().retainAll(addedAffectedEntities);
 
 			// Add remaining new affectedEntities to the old affectedEntities list.
@@ -97,12 +101,12 @@ public final class DisturbanceMapper {
 		return oldEntity;
 	}
 
-	private static List<AffectedEntity> toAffectedEntities(final List<Affected> affecteds) {
-		if (isNull(affecteds)) {
+	private static List<AffectedEntity> toAffectedEntities(final List<Affected> affected) {
+		if (isNull(affected)) {
 			return null;
 		}
 
-		return new ArrayList<>(affecteds.stream()
+		return new ArrayList<>(affected.stream()
 			.filter(Objects::nonNull)
 			.distinct() // Remove duplicates
 			.map(DisturbanceMapper::toAffectedEntity)
@@ -117,13 +121,14 @@ public final class DisturbanceMapper {
 			.withReference(affected.getReference());
 	}
 
-	private static List<Affected> toAffecteds(final List<AffectedEntity> affectedEntityList) {
+	private static List<Affected> toAffected(final List<AffectedEntity> affectedEntityList, final String partyIdFilter) {
 		if (isNull(affectedEntityList)) {
 			return null;
 		}
 
 		return affectedEntityList.stream()
 			.filter(Objects::nonNull)
+			.filter(affectedEntity -> isNull(partyIdFilter) || partyIdFilter.equals(affectedEntity.getPartyId()))
 			.map(DisturbanceMapper::toAffected)
 			.toList();
 	}
@@ -137,9 +142,13 @@ public final class DisturbanceMapper {
 	}
 
 	public static List<Disturbance> toDisturbances(final List<DisturbanceEntity> disturbanceEntities) {
+		return toDisturbances(disturbanceEntities, null);
+	}
+
+	public static List<Disturbance> toDisturbances(final List<DisturbanceEntity> disturbanceEntities, final String partyIdFilter) {
 		return disturbanceEntities.stream()
 			.filter(Objects::nonNull)
-			.map(DisturbanceMapper::toDisturbance)
+			.map(disturbanceEntity -> toDisturbance(disturbanceEntity, partyIdFilter))
 			.toList();
 	}
 }

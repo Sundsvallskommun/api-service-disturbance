@@ -14,7 +14,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,7 @@ import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 		@Index(name = "party_id_index", columnList = "party_id"),
 		@Index(name = "municipality_id_index", columnList = "municipality_id")
 	})
-public class SubscriptionEntity implements Serializable {
-
-	private static final long serialVersionUID = -8971474792184802872L;
+public class SubscriptionEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -168,8 +165,12 @@ public class SubscriptionEntity implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final SubscriptionEntity other)) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof final SubscriptionEntity other)) {
+			return false;
+		}
 		return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(municipalityId, other.municipalityId) && Objects.equals(optOutSettings, other.optOutSettings) && Objects.equals(partyId, other.partyId) && Objects
 			.equals(updated, other.updated);
 	}

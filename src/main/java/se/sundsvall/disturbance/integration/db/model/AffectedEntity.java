@@ -11,7 +11,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -19,9 +18,7 @@ import java.util.Objects;
 	indexes = {
 		@Index(name = "party_id_index", columnList = "party_id")
 	})
-public class AffectedEntity implements Serializable {
-
-	private static final long serialVersionUID = 8835799401886595749L;
+public class AffectedEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

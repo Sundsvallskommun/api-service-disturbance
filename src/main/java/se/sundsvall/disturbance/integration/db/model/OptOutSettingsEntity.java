@@ -11,16 +11,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 import se.sundsvall.disturbance.api.model.Category;
 
 @Entity
 @Table(name = "opt_out_settings")
-public class OptOutSettingsEntity implements Serializable {
-
-	private static final long serialVersionUID = -6411620272543678958L;
+public class OptOutSettingsEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,8 +87,12 @@ public class OptOutSettingsEntity implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (!(obj instanceof final OptOutSettingsEntity other)) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof final OptOutSettingsEntity other)) {
+			return false;
+		}
 		return (category == other.category) && Objects.equals(id, other.id) && Objects.equals(optOuts, other.optOuts);
 	}
 

@@ -322,6 +322,42 @@ class DisturbanceServiceTest {
 	}
 
 	@Test
+	void findByPartyIdAndCategoryFiltersAffectedsToRequestedPartyId() {
+
+		// Arrange
+		final var categoryFilter = List.of(Category.COMMUNICATION);
+		final var partyId = "party-1";
+		final var otherPartyId = "party-2";
+		final var statusFilter = List.of(Status.OPEN);
+
+		final var disturbanceEntity = DisturbanceEntity.create()
+			.withDisturbanceId("disturbanceId1")
+			.withCategory(Category.COMMUNICATION)
+			.withStatus(Status.OPEN)
+			.withAffectedEntities(List.of(
+				AffectedEntity.create().withPartyId(partyId).withFacilityId("facility-A").withReference("ref-A").withCoordinates("coord-A"),
+				AffectedEntity.create().withPartyId(otherPartyId).withFacilityId("facility-B").withReference("ref-B").withCoordinates("coord-B"),
+				AffectedEntity.create().withPartyId(partyId).withFacilityId("facility-C").withReference("ref-C").withCoordinates("coord-C")));
+
+		when(disturbanceRepositoryMock.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(any(), any(), any(), any())).thenReturn(List.of(disturbanceEntity));
+
+		// Act
+		final var disturbances = disturbanceService.findByMunicipalityIdAndPartyIdAndCategoryAndStatus(MUNICIPALITY_ID, partyId, categoryFilter, statusFilter);
+
+		// Assert
+		assertThat(disturbances).hasSize(1);
+		assertThat(disturbances.get(0).getAffecteds())
+			.extracting(Affected::getPartyId, Affected::getFacilityId)
+			.containsExactly(
+				tuple(partyId, "facility-A"),
+				tuple(partyId, "facility-C"));
+
+		verify(disturbanceRepositoryMock).findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(MUNICIPALITY_ID, partyId, categoryFilter, statusFilter);
+		verifyNoMoreInteractions(disturbanceRepositoryMock);
+		verifyNoInteractions(sendMessageLogicMock);
+	}
+
+	@Test
 	void findByPartyIdAndCategoryNotFound() {
 
 		// Arrange
