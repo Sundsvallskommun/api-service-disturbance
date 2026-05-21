@@ -41,6 +41,8 @@ INSERT INTO affected (party_id, reference, facility_id, coordinates, parent_id) 
 	('0d64c132-3aea-11ec-8d3d-0242ac130003', 'Streetname 22', 'facility-22', 'coordinate-22', 2),
 	('0d64c42a-3aea-11ec-8d3d-0242ac130003', 'Streetname 33', 'facility-33', 'coordinate-33', 2),
 	('c76ae496-3aed-11ec-8d3d-0242ac130003', 'Streetname 11', 'facility-11', 'coordinate-11', 3),
+	('other-party-a', 'Other Street 1', 'other-facility-1', 'other-coordinate-1', 3),
+	('other-party-b', 'Other Street 2', 'other-facility-2', 'other-coordinate-2', 3),
 	('c76ae496-3aed-11ec-8d3d-0242ac130003', 'Streetname 11', 'facility-11', 'coordinate-11', 4),
 	('00000001-0000-1000-8000-00805f9b34fb', 'Streetname 11', 'facility-11', 'coordinate-11', 5),
 	('00000002-0000-1000-8000-00805f9b34fb', 'Streetname 22', 'facility-22', 'coordinate-22', 5),

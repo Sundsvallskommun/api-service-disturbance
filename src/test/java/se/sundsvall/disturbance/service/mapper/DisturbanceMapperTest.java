@@ -66,6 +66,76 @@ class DisturbanceMapperTest {
 	}
 
 	@Test
+	void toDisturbanceWithPartyIdFilterOnlyReturnsAffectedsForRequestedParty() {
+
+		final var requestedPartyId = "partyId-1";
+
+		final var affectedEntity1 = AffectedEntity.create()
+			.withPartyId(requestedPartyId)
+			.withReference("reference-1")
+			.withFacilityId("facilityId-1")
+			.withCoordinates("coordinate-1");
+
+		final var affectedEntity2 = AffectedEntity.create()
+			.withPartyId("partyId-2")
+			.withReference("reference-2")
+			.withFacilityId("facilityId-2")
+			.withCoordinates("coordinate-2");
+
+		final var affectedEntity3 = AffectedEntity.create()
+			.withPartyId(requestedPartyId)
+			.withReference("reference-3")
+			.withFacilityId("facilityId-3")
+			.withCoordinates("coordinate-3");
+
+		final var disturbanceEntity = DisturbanceEntity.create()
+			.withDisturbanceId("disturbanceId")
+			.withCategory(Category.COMMUNICATION)
+			.withStatus(Status.OPEN)
+			.withAffectedEntities(List.of(affectedEntity1, affectedEntity2, affectedEntity3));
+
+		final var disturbance = DisturbanceMapper.toDisturbance(disturbanceEntity, requestedPartyId);
+
+		assertThat(disturbance.getAffecteds())
+			.extracting(Affected::getFacilityId, Affected::getCoordinates, Affected::getPartyId, Affected::getReference)
+			.containsExactly(
+				tuple("facilityId-1", "coordinate-1", requestedPartyId, "reference-1"),
+				tuple("facilityId-3", "coordinate-3", requestedPartyId, "reference-3"));
+	}
+
+	@Test
+	void toDisturbancesWithPartyIdFilterFiltersAcrossAllDisturbances() {
+
+		final var requestedPartyId = "partyId-1";
+
+		final var disturbanceEntity1 = DisturbanceEntity.create()
+			.withDisturbanceId("disturbanceId-1")
+			.withCategory(Category.COMMUNICATION)
+			.withStatus(Status.OPEN)
+			.withAffectedEntities(List.of(
+				AffectedEntity.create().withPartyId(requestedPartyId).withFacilityId("facility-A"),
+				AffectedEntity.create().withPartyId("partyId-2").withFacilityId("facility-B")));
+
+		final var disturbanceEntity2 = DisturbanceEntity.create()
+			.withDisturbanceId("disturbanceId-2")
+			.withCategory(Category.COMMUNICATION)
+			.withStatus(Status.OPEN)
+			.withAffectedEntities(List.of(
+				AffectedEntity.create().withPartyId("partyId-3").withFacilityId("facility-C"),
+				AffectedEntity.create().withPartyId(requestedPartyId).withFacilityId("facility-D")));
+
+		final var disturbances = DisturbanceMapper.toDisturbances(List.of(disturbanceEntity1, disturbanceEntity2), requestedPartyId);
+
+		assertThat(disturbances).hasSize(2);
+		assertThat(disturbances.get(0).getAffecteds())
+			.extracting(Affected::getPartyId, Affected::getFacilityId)
+			.containsExactly(tuple(requestedPartyId, "facility-A"));
+		assertThat(disturbances.get(1).getAffecteds())
+			.extracting(Affected::getPartyId, Affected::getFacilityId)
+			.containsExactly(tuple(requestedPartyId, "facility-D"));
+	}
+
+	@Test
 	void toDisturbanceEntityFromDisturbanceCreateRequest() {
 
 		final var municipalityId = "municipalityId";

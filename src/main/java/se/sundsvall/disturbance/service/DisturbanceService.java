@@ -53,7 +53,7 @@ public class DisturbanceService {
 
 	@Transactional
 	public List<Disturbance> findByMunicipalityIdAndPartyIdAndCategoryAndStatus(final String municipalityId, final String partyId, final List<Category> categoryFilter, final List<se.sundsvall.disturbance.api.model.Status> statusFilter) {
-		return toDisturbances(disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(municipalityId, partyId, categoryFilter, statusFilter));
+		return toDisturbances(disturbanceRepository.findByMunicipalityIdAndAffectedEntitiesPartyIdAndCategoryInAndStatusIn(municipalityId, partyId, categoryFilter, statusFilter), partyId);
 	}
 
 	@Transactional
@@ -85,7 +85,7 @@ public class DisturbanceService {
 	@Transactional
 	public Disturbance updateDisturbance(final String municipalityId, final Category category, final String disturbanceId, final DisturbanceUpdateRequest disturbanceUpdateRequest) {
 
-		// Get existing disturbance entity.
+		// Get an existing disturbance entity.
 		final var existingDisturbanceEntity = disturbanceRepository.findByMunicipalityIdAndCategoryAndDisturbanceId(municipalityId, category, disturbanceId)
 			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, ERROR_DISTURBANCE_NOT_FOUND.formatted(category, disturbanceId)));
 
@@ -94,14 +94,14 @@ public class DisturbanceService {
 			throw Problem.valueOf(CONFLICT, ERROR_DISTURBANCE_CLOSED_NO_UPDATES_ALLOWED.formatted(category, disturbanceId));
 		}
 
-		// Get new (incoming) disturbance entity.
+		// Get a new (incoming) disturbance entity.
 		final var incomingDisturbanceEntity = toDisturbanceEntity(category, disturbanceId, disturbanceUpdateRequest);
 
-		// Get added and removed affecteds.
-		final var removedAffecteds = getRemovedAffectedEntities(existingDisturbanceEntity, incomingDisturbanceEntity);
-		final var addedAffecteds = getAddedAffectedEntities(existingDisturbanceEntity, incomingDisturbanceEntity);
+		// Get added and removed affected.
+		final var removedAffected = getRemovedAffectedEntities(existingDisturbanceEntity, incomingDisturbanceEntity);
+		final var addedAffected = getAddedAffectedEntities(existingDisturbanceEntity, incomingDisturbanceEntity);
 
-		// Send "close" message if status is changed to CLOSED.
+		// Send a "close" message if the status is changed to CLOSED.
 		if (isChangedToStatusClosed(existingDisturbanceEntity, incomingDisturbanceEntity)) {
 			LOGGER.info("Disturbance status was changed to CLOSED: '{}'. Sending close messages.", incomingDisturbanceEntity);
 			sendMessageLogic.sendCloseMessageToAllApplicableAffecteds(existingDisturbanceEntity);
@@ -109,33 +109,31 @@ public class DisturbanceService {
 			// Return since there is no need to continue after this.
 			return toDisturbance(disturbanceRepository.save(toMergedDisturbanceEntity(existingDisturbanceEntity, incomingDisturbanceEntity)));
 		}
-		// Send "close" message to affecteds that was removed from the disturbance (but not if status is PLANNED).
-		if (isNotEmpty(removedAffecteds) && !hasStatusPlanned(existingDisturbanceEntity)) {
-			LOGGER.info("Removed affecteds was discovered: '{}'. Sending close messages.", removedAffecteds);
-			sendMessageLogic.sendCloseMessageToProvidedApplicableAffecteds(existingDisturbanceEntity, removedAffecteds);
+		// Send a "close" message to the affected that was removed from the disturbance (but not if status is PLANNED).
+		if (isNotEmpty(removedAffected) && !hasStatusPlanned(existingDisturbanceEntity)) {
+			LOGGER.info("Removed affected was discovered: '{}'. Sending close messages.", removedAffected);
+			sendMessageLogic.sendCloseMessageToProvidedApplicableAffecteds(existingDisturbanceEntity, removedAffected);
 		}
-		// Send "create" message to affecteds that was added to the disturbance (but not if status is PLANNED).
-		if (isNotEmpty(addedAffecteds) && !hasStatusPlanned(existingDisturbanceEntity)) {
-			LOGGER.info("Added affecteds was discovered: '{}'. Sending create messages.", addedAffecteds);
-			sendMessageLogic.sendCreateMessageToProvidedApplicableAffecteds(existingDisturbanceEntity, addedAffecteds);
+		// Send a "create" message to the affected that was added to the disturbance (but not if status is PLANNED).
+		if (isNotEmpty(addedAffected) && !hasStatusPlanned(existingDisturbanceEntity)) {
+			LOGGER.info("Added affected was discovered: '{}'. Sending create messages.", addedAffected);
+			sendMessageLogic.sendCreateMessageToProvidedApplicableAffecteds(existingDisturbanceEntity, addedAffected);
 		}
 
-		/**
-		 * Perform attribute value checks. These checks must be performed before the toMergedDisturbanceEntity-call, since the
-		 * old disturbance entity will be modified with the new values.
-		 */
+		// Perform attribute value checks. These checks must be performed before the toMergedDisturbanceEntity-call, since the
+		// old disturbance entity will be modified with the new values.
 		final var disturbanceContentIsChanged = contentIsChanged(existingDisturbanceEntity, incomingDisturbanceEntity);
 		final var disturbanceStatusIsChangedFromPlannedToOpen = hasStatusPlanned(existingDisturbanceEntity) && hasStatusOpen(incomingDisturbanceEntity);
 
 		// Merge new and old entities.
 		final var mergedDisturbanceEntity = toMergedDisturbanceEntity(existingDisturbanceEntity, incomingDisturbanceEntity);
 
-		// Send "create" message to all affecteds, if the disturbance status is changed from PLANNED TO OPEN.
+		// Send a "create" message to all affected if the disturbance status is changed from PLANNED TO OPEN.
 		if (disturbanceStatusIsChangedFromPlannedToOpen) {
 			LOGGER.info("Disturbance status changed from PLANNED to OPEN: '{}'. Sending create messages.", mergedDisturbanceEntity);
 			sendMessageLogic.sendCreateMessageToAllApplicableAffecteds(mergedDisturbanceEntity);
 		}
-		// Send "update" message to all affecteds, if the disturbance content is updated (but not for status PLANNED).
+		// Send an "update" message to all affected if the disturbance content is updated (but not for status PLANNED).
 		else if (disturbanceContentIsChanged && !hasStatusPlanned(mergedDisturbanceEntity)) {
 			LOGGER.info("Disturbance content was changed: '{}'. Sending update messages.", mergedDisturbanceEntity);
 			sendMessageLogic.sendUpdateMessage(mergedDisturbanceEntity);
@@ -172,11 +170,11 @@ public class DisturbanceService {
 	}
 
 	/**
-	 * Check if parameters in the newEntity are not null (i.e. they are set in the PATCH request). If set (i.e. not null):
-	 * Check if the values differs from the existing ones that are stored in the oldEntity.
-	 *
-	 * The attributes that are checked are: description, title, plannedStartDate and plannedStopDate (and also if status is
-	 * changed from PLANNED to OPEN).
+	 * Check if parameters in the newEntity are not null (i.e., they are set in the PATCH request). If set (i.e., not null):
+	 * Check if the values differ from the existing ones that are stored in the oldEntity.
+	 * <p>
+	 * The attributes that are checked are: description, title, plannedStartDate and plannedStopDate (and also if the status
+	 * is changed from PLANNED to OPEN).
 	 *
 	 * @param  oldEntity the old entity
 	 * @param  newEntity the new (changed) entity

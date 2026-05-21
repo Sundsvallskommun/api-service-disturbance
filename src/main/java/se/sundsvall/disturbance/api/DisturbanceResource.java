@@ -109,7 +109,7 @@ class DisturbanceResource {
 	}
 
 	@GetMapping(path = "/affecteds/{partyId}", produces = APPLICATION_JSON_VALUE)
-	@Operation(summary = "Return all present disturbances for a person or an organization.", responses = {
+	@Operation(summary = "Return all present disturbances for a person or an organization. The 'affected' list in each returned disturbance is filtered to only contain entries matching the provided partyId.", responses = {
 		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true),
 		@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
 			Problem.class, ConstraintViolationProblem.class

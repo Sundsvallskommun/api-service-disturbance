@@ -43,6 +43,18 @@
 				"facilityId": "facility-11",
 				"coordinates": "coordinate-11",
 				"partyId": "c76ae496-3aed-11ec-8d3d-0242ac130003"
+			},
+			{
+				"reference": "Other Street 1",
+				"facilityId": "other-facility-1",
+				"coordinates": "other-coordinate-1",
+				"partyId": "other-party-a"
+			},
+			{
+				"reference": "Other Street 2",
+				"facilityId": "other-facility-2",
+				"coordinates": "other-coordinate-2",
+				"partyId": "other-party-b"
 			}
 		],
 		"category": "ELECTRICITY",
