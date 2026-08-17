@@ -15,7 +15,7 @@
 	<properties>
 		<!-- Service properties -->
 		<commons-text.version>1.15.0</commons-text.version>
-		<commons-collections.version>4.5.0</commons-collections.version>
+		<commons-collections.version>4.6.0</commons-collections.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 	</properties>
 	<dependencies>
