@@ -95,7 +95,8 @@ public class DisturbanceService {
 		}
 
 		// Get a new (incoming) disturbance entity.
-		final var incomingDisturbanceEntity = toDisturbanceEntity(category, disturbanceId, disturbanceUpdateRequest);
+		// With the municipality ID, so that added affecteds can be matched to their subscriptions.
+		final var incomingDisturbanceEntity = toDisturbanceEntity(category, disturbanceId, disturbanceUpdateRequest).withMunicipalityId(municipalityId);
 
 		// Get added and removed affected.
 		final var removedAffected = getRemovedAffectedEntities(existingDisturbanceEntity, incomingDisturbanceEntity);
