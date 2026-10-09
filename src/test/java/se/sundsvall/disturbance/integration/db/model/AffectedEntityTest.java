@@ -1,5 +1,6 @@
 package se.sundsvall.disturbance.integration.db.model;
 
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +10,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCodeExcl
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToStringExcluding;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
 
@@ -49,6 +51,21 @@ class AffectedEntityTest {
 		assertThat(bean.getId()).isEqualTo(id);
 		assertThat(bean.getPartyId()).isEqualTo(partyId);
 		assertThat(bean.getReference()).isEqualTo(reference);
+	}
+
+	@Test
+	void hashCodeIsConsistentWithEquals() {
+		final var affected = AffectedEntity.create().withPartyId("partyId").withReference("reference").withDisturbanceEntity(DisturbanceEntity.create().withDisturbanceId("1"));
+		final var sameAffectedOfAnotherDisturbance = AffectedEntity.create().withPartyId("partyId").withReference("reference").withDisturbanceEntity(DisturbanceEntity.create().withDisturbanceId("2"));
+
+		assertThat(affected).isEqualTo(sameAffectedOfAnotherDisturbance).hasSameHashCodeAs(sameAffectedOfAnotherDisturbance);
+	}
+
+	@Test
+	void hashCodeOfAttachedAffectedDoesNotRecurse() {
+		final var disturbance = DisturbanceEntity.create().addAffectedEntities(List.of(AffectedEntity.create().withPartyId("partyId")));
+
+		assertThatNoException().isThrownBy(disturbance::hashCode);
 	}
 
 	@Test

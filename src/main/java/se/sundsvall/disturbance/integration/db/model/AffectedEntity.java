@@ -125,7 +125,7 @@ public class AffectedEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(facilityId, coordinates, disturbanceEntity, id, partyId, reference);
+		return Objects.hash(facilityId, coordinates, id, partyId, reference);
 	}
 
 	@Override
