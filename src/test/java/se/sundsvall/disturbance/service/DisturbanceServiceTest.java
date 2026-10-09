@@ -1,6 +1,7 @@
 package se.sundsvall.disturbance.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -644,6 +646,14 @@ class DisturbanceServiceTest {
 		when(disturbanceRepositoryMock.findByMunicipalityIdAndCategoryAndDisturbanceId(any(), any(), any())).thenReturn(Optional.of(existingDisturbanceEntity));
 		when(disturbanceRepositoryMock.save(any())).thenReturn(existingDisturbanceEntity);
 
+		// Read when the create messages are sent: the added affecteds are moved to the existing disturbance afterwards
+		final var municipalityIdsOfAddedAffecteds = new ArrayList<String>();
+		doAnswer(invocation -> {
+			final List<AffectedEntity> addedAffecteds = invocation.getArgument(1);
+			addedAffecteds.forEach(affectedEntity -> municipalityIdsOfAddedAffecteds.add(affectedEntity.getDisturbanceEntity().getMunicipalityId()));
+			return null;
+		}).when(sendMessageLogicMock).sendCreateMessageToProvidedApplicableAffecteds(any(), any());
+
 		// Act
 		final var updatedDisturbance = disturbanceService.updateDisturbance(MUNICIPALITY_ID, category, disturbanceId, disturbanceUpdateRequest);
 
@@ -653,6 +663,9 @@ class DisturbanceServiceTest {
 		verify(sendMessageLogicMock).sendUpdateMessage(disturbanceEntityCaptor.capture());
 		verify(sendMessageLogicMock).sendCreateMessageToProvidedApplicableAffecteds(disturbanceEntityCaptor.capture(), eq(List.of(e4)));
 		verify(disturbanceRepositoryMock).findByMunicipalityIdAndCategoryAndDisturbanceId(MUNICIPALITY_ID, category, disturbanceId);
+
+		// The added affected is matched to its subscription by the municipality ID of its disturbance
+		assertThat(municipalityIdsOfAddedAffecteds).containsExactly(MUNICIPALITY_ID);
 		verify(disturbanceRepositoryMock).save(disturbanceEntityCaptor.capture());
 
 		// Loop through the captor values (for sendMessageLogicMock and disturbanceRepositoryMock).
