@@ -1,15 +1,14 @@
 package se.sundsvall.disturbance.apptest.disturbance;
 
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
-
 import se.sundsvall.dept44.test.AbstractAppTest;
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 import se.sundsvall.disturbance.Application;
 import se.sundsvall.disturbance.api.model.Category;
+
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 /**
  * Delete disturbance application tests
