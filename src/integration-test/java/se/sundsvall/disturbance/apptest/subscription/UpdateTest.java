@@ -1,14 +1,13 @@
 package se.sundsvall.disturbance.apptest.subscription;
 
-import static org.springframework.http.HttpMethod.PUT;
-import static org.springframework.http.HttpStatus.OK;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
-
 import se.sundsvall.dept44.test.AbstractAppTest;
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 import se.sundsvall.disturbance.Application;
+
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * Update subscription application tests
